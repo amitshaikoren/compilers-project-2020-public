@@ -62,7 +62,7 @@ public class Main {
                 outFile.flush();
                 outFile.close();
             }
-        //
+
         } catch (FileNotFoundException e) {
             System.out.println("Error reading file: " + e);
             e.printStackTrace();
