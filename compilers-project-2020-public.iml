@@ -5,9 +5,11 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tools" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/examples" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="tools" level="project" />
+    <orderEntry type="library" exported="" name="tools" level="project" />
+    <orderEntry type="library" name="compilers-project-2020-public" level="project" />
   </component>
 </module>

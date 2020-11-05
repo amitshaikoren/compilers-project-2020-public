@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="compilers-project-2020-public">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/examples/ast" />
+      <root url="file://$PROJECT_DIR$/examples/ex1" />
+      <root url="file://$PROJECT_DIR$/src" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$" recursive="false" />
+  </library>
+</component>
