@@ -52,8 +52,15 @@ public class Main {
                     } else {
                         throw new IllegalArgumentException("unknown rename type " + type);
                     }
+                    SymbolTable programScopeSymbolTable;
+                    LookupTable varLookupTable; // var -> symboltable
+                    LookupTable methodLookupTable; // method -> symboltable
 
-                    throw new UnsupportedOperationException("TODO - Ex. 1");
+                    CreateSymbolTableVistor symbolTableVistor  = new CreateSymbolTableVistor;
+                    symbolTableVistor.visit(prog);
+
+
+
 
                 } else {
                     throw new IllegalArgumentException("unknown command line action " + action);
