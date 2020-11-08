@@ -52,11 +52,11 @@ public class Main {
                     } else {
                         throw new IllegalArgumentException("unknown rename type " + type);
                     }
-                    SymbolTable programScopeSymbolTable;
+
                     LookupTable varLookupTable; // var -> symboltable
                     LookupTable methodLookupTable; // method -> symboltable
 
-                    CreateSymbolTableVistor symbolTableVistor  = new CreateSymbolTableVistor;
+                    AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor();
                     symbolTableVistor.visit(prog);
 
 
@@ -69,7 +69,7 @@ public class Main {
                 outFile.flush();
                 outFile.close();
             }
-        //
+
         } catch (FileNotFoundException e) {
             System.out.println("Error reading file: " + e);
             e.printStackTrace();
