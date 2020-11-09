@@ -3,23 +3,23 @@ package ast;
 import java.util.List;
 
 public class AstCreateSymbolTableVisitor implements Visitor{
-    protected SymbolTable programScopeSymbolTable;//to start
-    private String fieldName;
-    private String fieldType;
-    private String MethodName;
-    private String MethodRetType;
-    private SymbolTable fatherScope;
-    private String Scope;
-    private SymbolTable buildSymbolTable()
+    protected SymbolTable programSymbolTable;//to start
+    private SymbolTable fatherSymbolTable;
+    private SymbolTable currSymbolTable;
+
+    private void buildSymbolTable(SymbolTable parent)
     {
-        //create new symboltable with name this.scope and parentSymbolTable is father
-        SymbolTable newScope=new SymbolTable(this.Scope,this.fatherScope);
-        return newScope;
+        this.currSymbolTable = new SymbolTable(parent);
     }
-    private void updateSymbolTable(SymbolTable symbolScope,boolean isMethod)
+
+    private void updateSymbolTable(SymbolTable symbolTable, boolean isMethod)
     {
-        //insert field/method to symboltable scope
+        symbolTable.updateEntries();
     }
+
+    private void updateLookupTable(LookupTable lookupTable){
+    }
+
     private SymbolTable lookup(String scopeName)
     {
         //find the symboltable in the lookup map
@@ -28,6 +28,8 @@ public class AstCreateSymbolTableVisitor implements Visitor{
     @Override
     public void visit(Program program) {
         program.mainClass().accept(this);
+
+        //assuming classDecls list is ordered (meaning classes that don't extend come first)
         for (ClassDecl classdecl : program.classDecls()) {
             classdecl.accept(this);
         }
@@ -35,23 +37,34 @@ public class AstCreateSymbolTableVisitor implements Visitor{
 
     @Override
     public void visit(ClassDecl classDecl) {
-        this.Scope=classDecl.name();
+
+
+
         if (classDecl.superName() != null) {
-            this.fatherScope=lookup(classDecl.superName());
+
+            SymbolTable parentSymbolTable = lookupTable.get(classDecl)
+
             buildSymbolTable();
+
+
+
+        } else {
+
+            buildSymbolTable(programSymbolTable);
+
         }
-        else
-        {
-            this.fatherScope=programScopeSymbolTable;
-            buildSymbolTable();
-        }
+
         for (var fieldDecl : classDecl.fields()) {
+            currSymbolTable.buildSymbolInfo();
             fieldDecl.accept(this);
             updateSymbolTable(lookup(classDecl.name()),false);
+            updateLookupTable();
         }
+
         for (var methodDecl : classDecl.methoddecls()) {
             this.fatherScope=lookup(classDecl.name());
             methodDecl.accept(this);
+            updateLookupTable();
         }
     }
 
@@ -63,7 +76,7 @@ public class AstCreateSymbolTableVisitor implements Visitor{
     @Override
     public void visit(MethodDecl methodDecl) {
         methodDecl.returnType().accept(this); //the rettype sopposed to update
-        this.MethodName=methodDecl.name();
+        this.methodName=methodDecl.name();
         updateSymbolTable(this.fatherScope,true);
         this.Scope=methodDecl.name();
         buildSymbolTable();
@@ -86,8 +99,8 @@ public class AstCreateSymbolTableVisitor implements Visitor{
 
     @Override
     public void visit(VarDecl varDecl) {
+        currSymbolTable.setCurrSymbolName(varDecl.name());
         varDecl.type().accept(this);
-        this.fieldName=varDecl.name();
     }
 
     @Override
@@ -202,21 +215,22 @@ public class AstCreateSymbolTableVisitor implements Visitor{
 
     @Override
     public void visit(IntAstType t) {
-        this.fieldType="IntAstType";
+        currSymbolTable.setSymbolInfoType("IntAstType");
+
     }
 
     @Override
     public void visit(BoolAstType t) {
-        this.fieldType="BoolAstType";
+        currSymbolTable.setSymbolInfoType("BoolAstType");
     }
 
     @Override
     public void visit(IntArrayAstType t) {
-        this.fieldType="IntArrayAstType";
+        currSymbolTable.setSymbolInfoType("IntArrayAstType");
     }
 
     @Override
     public void visit(RefType t) {
-    this.fieldType="RefType";
+        currSymbolTable.setSymbolInfoType("RefType");
     }
 }

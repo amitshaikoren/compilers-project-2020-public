@@ -1,7 +1,14 @@
 package ast;
 
 public class SymbolInfo {
-    protected String type;
-    protected String decl;
+    private String type;
+    private String decl;
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setDecl(String decl) {
+        this.decl = decl;
+    }
 }

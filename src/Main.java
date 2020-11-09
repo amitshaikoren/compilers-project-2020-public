@@ -53,8 +53,8 @@ public class Main {
                         throw new IllegalArgumentException("unknown rename type " + type);
                     }
 
-                    LookupTable varLookupTable; // var -> symboltable
-                    LookupTable methodLookupTable; // method -> symboltable
+                    LookupTable varLookupTable = new LookupTable();
+                    LookupTable methodLookupTable = new LookupTable();
 
                     AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor();
                     symbolTableVistor.visit(prog);
