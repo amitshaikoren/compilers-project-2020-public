@@ -6,25 +6,42 @@ public class AstCreateSymbolTableVisitor implements Visitor{
     protected SymbolTable programSymbolTable;//to start
     private SymbolTable fatherSymbolTable;
     private SymbolTable currSymbolTable;
+    private LookupTable varLookupTable;
+    private LookupTable methodLookupTable;
+
+
+    private void updateInfo(AstNode astNode, boolean isMethod){
+        this.currSymbolTable.buildSymbolInfo();
+        this.currSymbolTable.setSymbolInfoIsMethod(isMethod);
+        astNode.accept(this);
+        updateSymbolTable(isMethod);
+        if(isMethod){updateMethodLookupTable(astNode, this.currSymbolTable);}
+        else{updateVarLookupTable(astNode, this.currSymbolTable);}
+    }
+
+    public AstCreateSymbolTableVisitor(LookupTable varLookupTable, LookupTable methodLookupTable){
+        this.varLookupTable = varLookupTable;
+        this.methodLookupTable = methodLookupTable;
+    }
 
     private void buildSymbolTable(SymbolTable parent)
     {
         this.currSymbolTable = new SymbolTable(parent);
     }
 
-    private void updateSymbolTable(SymbolTable symbolTable, boolean isMethod)
+    private void updateSymbolTable(boolean isMethod)
     {
-        symbolTable.updateEntries();
+        currSymbolTable.updateEntries();
     }
 
-    private void updateLookupTable(LookupTable lookupTable){
+    private void updateVarLookupTable(AstNode astNode, SymbolTable symbolTable){
+        this.varLookupTable.updateLookupTable(astNode, symbolTable);
     }
 
-    private SymbolTable lookup(String scopeName)
-    {
-        //find the symboltable in the lookup map
-        return programScopeSymbolTable;//todo: change!!!
+    private void updateMethodLookupTable(AstNode astNode, SymbolTable symbolTable){
+        this.methodLookupTable.updateLookupTable(astNode, symbolTable);
     }
+
     @Override
     public void visit(Program program) {
         program.mainClass().accept(this);
@@ -38,33 +55,19 @@ public class AstCreateSymbolTableVisitor implements Visitor{
     @Override
     public void visit(ClassDecl classDecl) {
 
-
-
         if (classDecl.superName() != null) {
-
-            SymbolTable parentSymbolTable = lookupTable.get(classDecl)
-
             buildSymbolTable();
 
-
-
         } else {
-
             buildSymbolTable(programSymbolTable);
-
         }
 
         for (var fieldDecl : classDecl.fields()) {
-            currSymbolTable.buildSymbolInfo();
-            fieldDecl.accept(this);
-            updateSymbolTable(lookup(classDecl.name()),false);
-            updateLookupTable();
+            updateInfo(fieldDecl, false);
         }
 
         for (var methodDecl : classDecl.methoddecls()) {
-            this.fatherScope=lookup(classDecl.name());
-            methodDecl.accept(this);
-            updateLookupTable();
+            updateInfo(methodDecl, true);
         }
     }
 
@@ -75,26 +78,32 @@ public class AstCreateSymbolTableVisitor implements Visitor{
 
     @Override
     public void visit(MethodDecl methodDecl) {
-        methodDecl.returnType().accept(this); //the rettype sopposed to update
-        this.methodName=methodDecl.name();
-        updateSymbolTable(this.fatherScope,true);
-        this.Scope=methodDecl.name();
-        buildSymbolTable();
+        methodDecl.returnType().accept(this);
+        this.currSymbolTable.setCurrSymbolName(methodDecl.name());
+        updateSymbolTable(true);
+
+
+        buildSymbolTable(currSymbolTable);
+
         for (var formal : methodDecl.formals()) {
-            formal.accept(this);//in here to update each var in his symbol scope
+            updateInfo(formal, false);
         }
+
         for (var varDecl : methodDecl.vardecls()) {
-            varDecl.accept(this);
+            updateInfo(varDecl, false);
         }
+
         for (var stmt : methodDecl.body()) {
             stmt.accept(this);
         }
+
         methodDecl.ret().accept(this);
     }
 
     @Override
     public void visit(FormalArg formalArg) {
-
+        currSymbolTable.setCurrSymbolName(formalArg.name());
+        formalArg.type().accept(this);
     }
 
     @Override
@@ -105,32 +114,38 @@ public class AstCreateSymbolTableVisitor implements Visitor{
 
     @Override
     public void visit(BlockStatement blockStatement) {
-
+        for(var stmt : blockStatement.statements()){
+            stmt.accept(this);
+        }
     }
 
     @Override
     public void visit(IfStatement ifStatement) {
-
+        ifStatement.cond().accept(this);
+        ifStatement.elsecase().accept(this);
+        ifStatement.thencase().accept(this);
     }
 
     @Override
     public void visit(WhileStatement whileStatement) {
-
+        whileStatement.cond().accept(this);
+        whileStatement.body().accept(this);
     }
 
     @Override
     public void visit(SysoutStatement sysoutStatement) {
-
+        sysoutStatement.arg().accept(this);
     }
 
     @Override
     public void visit(AssignStatement assignStatement) {
-
+        assignStatement.rv().accept(this);
     }
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
-
+        assignArrayStatement.index().accept(this);
+        assignArrayStatement.rv().accept(this);
     }
 
     @Override
@@ -215,22 +230,22 @@ public class AstCreateSymbolTableVisitor implements Visitor{
 
     @Override
     public void visit(IntAstType t) {
-        currSymbolTable.setSymbolInfoType("IntAstType");
+        currSymbolTable.setSymbolInfoDecl("int");
 
     }
 
     @Override
     public void visit(BoolAstType t) {
-        currSymbolTable.setSymbolInfoType("BoolAstType");
+        currSymbolTable.setSymbolInfoDecl("bool");
     }
 
     @Override
     public void visit(IntArrayAstType t) {
-        currSymbolTable.setSymbolInfoType("IntArrayAstType");
+        currSymbolTable.setSymbolInfoDecl("intArr");
     }
 
     @Override
     public void visit(RefType t) {
-        currSymbolTable.setSymbolInfoType("RefType");
+        currSymbolTable.setSymbolInfoDecl("ref");
     }
 }

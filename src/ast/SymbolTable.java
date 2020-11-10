@@ -27,8 +27,8 @@ public class SymbolTable {
 
     //SYMBOL INFO UPDATE METHODS
 
-    public void setSymbolInfoType(String type){
-        this.currSymbolInfo.setType(type);
+    public void setSymbolInfoIsMethod(boolean isMethod){
+        this.currSymbolInfo.setIsMethod(isMethod);
     }
 
     public void setSymbolInfoDecl(String decl){

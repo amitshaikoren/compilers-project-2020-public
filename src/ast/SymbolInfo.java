@@ -1,11 +1,11 @@
 package ast;
 
 public class SymbolInfo {
-    private String type;
+    private boolean isMethod;
     private String decl;
 
-    public void setType(String type) {
-        this.type = type;
+    public void setIsMethod(boolean isMethod) {
+        this.isMethod = isMethod;
     }
 
     public void setDecl(String decl) {

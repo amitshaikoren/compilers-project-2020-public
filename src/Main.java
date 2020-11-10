@@ -56,7 +56,7 @@ public class Main {
                     LookupTable varLookupTable = new LookupTable();
                     LookupTable methodLookupTable = new LookupTable();
 
-                    AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor();
+                    AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(varLookupTable, methodLookupTable);
                     symbolTableVistor.visit(prog);
 
 
