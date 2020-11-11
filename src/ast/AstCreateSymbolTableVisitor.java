@@ -3,11 +3,10 @@ package ast;
 import java.util.List;
 
 public class AstCreateSymbolTableVisitor implements Visitor{
-    protected SymbolTable programSymbolTable;//to start
+    protected SymbolTable programSymbolTable=new SymbolTable(null);//to start
     private SymbolTable fatherSymbolTable;
     private SymbolTable currSymbolTable;
-    private LookupTable varLookupTable;
-    private LookupTable methodLookupTable;
+    private LookupTable lookupTable;
 
 
     private void updateInfo(AstNode astNode, boolean isMethod){
@@ -15,14 +14,17 @@ public class AstCreateSymbolTableVisitor implements Visitor{
         this.currSymbolTable.setSymbolInfoIsMethod(isMethod);
         astNode.accept(this);
         updateSymbolTable(isMethod);
-        if(isMethod){updateMethodLookupTable(astNode, this.currSymbolTable);}
-        else{updateVarLookupTable(astNode, this.currSymbolTable);}
+       updateLookupTable(astNode, this.currSymbolTable);}
+
+    public AstCreateSymbolTableVisitor(LookupTable lookupTable){
+        this.lookupTable = lookupTable;
     }
 
-    public AstCreateSymbolTableVisitor(LookupTable varLookupTable, LookupTable methodLookupTable){
-        this.varLookupTable = varLookupTable;
-        this.methodLookupTable = methodLookupTable;
+    private void visitBinaryExpr(BinaryExpr e) {
+        e.e1().accept(this);
+        e.e2().accept(this);
     }
+
 
     private void buildSymbolTable(SymbolTable parent)
     {
@@ -34,13 +36,17 @@ public class AstCreateSymbolTableVisitor implements Visitor{
         currSymbolTable.updateEntries();
     }
 
-    private void updateVarLookupTable(AstNode astNode, SymbolTable symbolTable){
-        this.varLookupTable.updateLookupTable(astNode, symbolTable);
+
+
+    private void updateLookupTable(AstNode astNode, SymbolTable symbolTable){
+        this.lookupTable.updateLookupTable(astNode, symbolTable);
     }
 
-    private void updateMethodLookupTable(AstNode astNode, SymbolTable symbolTable){
-        this.methodLookupTable.updateLookupTable(astNode, symbolTable);
+    private void updateClassDeclMap(String name,AstNode astnode){
+        this.lookupTable.updateclassDeclMap(name,astnode);
     }
+
+
 
     @Override
     public void visit(Program program) {
@@ -48,6 +54,7 @@ public class AstCreateSymbolTableVisitor implements Visitor{
 
         //assuming classDecls list is ordered (meaning classes that don't extend come first)
         for (ClassDecl classdecl : program.classDecls()) {
+            updateClassDeclMap(classdecl.name(),classdecl);
             classdecl.accept(this);
         }
     }
@@ -56,7 +63,8 @@ public class AstCreateSymbolTableVisitor implements Visitor{
     public void visit(ClassDecl classDecl) {
 
         if (classDecl.superName() != null) {
-            buildSymbolTable();
+            AstNode astNode = lookupTable.getClassDeclName(classDecl.name());
+            buildSymbolTable(lookupTable.getSymbolTable(astNode));
 
         } else {
             buildSymbolTable(programSymbolTable);
@@ -150,81 +158,94 @@ public class AstCreateSymbolTableVisitor implements Visitor{
 
     @Override
     public void visit(AndExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(LtExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(AddExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(SubtractExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(MultExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(ArrayAccessExpr e) {
-
+        e.arrayExpr().accept(this);
+        e.indexExpr().accept(this);
     }
 
     @Override
     public void visit(ArrayLengthExpr e) {
+        e.arrayExpr().accept(this);
 
     }
 
     @Override
     public void visit(MethodCallExpr e) {
+        e.ownerExpr().accept(this);
 
     }
 
     @Override
     public void visit(IntegerLiteralExpr e) {
-
+    //empty function
     }
 
     @Override
     public void visit(TrueExpr e) {
+        //empty function
 
     }
 
     @Override
     public void visit(FalseExpr e) {
+        //empty function
 
     }
 
     @Override
     public void visit(IdentifierExpr e) {
+        //empty function
 
     }
 
     @Override
     public void visit(ThisExpr e) {
+        //empty function
 
     }
 
     @Override
     public void visit(NewIntArrayExpr e) {
-
+        e.lengthExpr().accept(this);
     }
 
     @Override
     public void visit(NewObjectExpr e) {
-
+        //empty function
     }
 
     @Override
     public void visit(NotExpr e) {
+        e.e().accept(this);
 
     }
 
