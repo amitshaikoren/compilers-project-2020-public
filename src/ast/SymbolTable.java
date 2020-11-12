@@ -1,11 +1,12 @@
 package ast;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class SymbolTable {
     private SymbolInfo currSymbolInfo;
     private String currSymbolName;
-    private Map<String, SymbolInfo> entries;
+    private Map<String, SymbolInfo> entries = new HashMap<>();
     private SymbolTable parentSymbolTable;
 
     public SymbolTable(SymbolTable parentSymbolTable)
