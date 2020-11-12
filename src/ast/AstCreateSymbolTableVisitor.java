@@ -9,13 +9,19 @@ public class AstCreateSymbolTableVisitor implements Visitor{
     private LookupTable lookupTable;
 
 
-    private void updateInfo(AstNode astNode, boolean isMethod){
+    private void updateInfo(AstNode astNode, boolean isMethod) {
         this.currSymbolTable.buildSymbolInfo();
         this.currSymbolTable.setSymbolInfoIsMethod(isMethod);
         astNode.accept(this);
         updateSymbolTable(isMethod);
-       updateLookupTable(astNode, this.currSymbolTable);}
+        if (isMethod){
+            updateLookupTable(astNode, this.fatherSymbolTable);
 
+        }
+        else {
+            updateLookupTable(astNode, this.currSymbolTable);
+        }
+    }
     public AstCreateSymbolTableVisitor(LookupTable lookupTable){
         this.lookupTable = lookupTable;
     }
@@ -63,7 +69,7 @@ public class AstCreateSymbolTableVisitor implements Visitor{
     public void visit(ClassDecl classDecl) {
 
         if (classDecl.superName() != null) {
-            AstNode astNode = lookupTable.getClassDeclName(classDecl.name());
+            AstNode astNode = lookupTable.getClassDeclName(classDecl.superName());
             buildSymbolTable(lookupTable.getSymbolTable(astNode));
 
         } else {
@@ -75,8 +81,11 @@ public class AstCreateSymbolTableVisitor implements Visitor{
         }
 
         for (var methodDecl : classDecl.methoddecls()) {
+            this.fatherSymbolTable = this.currSymbolTable;
             updateInfo(methodDecl, true);
+            this.currSymbolTable=this.fatherSymbolTable;
         }
+        this.fatherSymbolTable = this.currSymbolTable.getFatherSymbolTable();
     }
 
     @Override

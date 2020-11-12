@@ -7,15 +7,22 @@ public class SymbolTable {
     private SymbolInfo currSymbolInfo;
     private String currSymbolName;
     private Map<String, SymbolInfo> entries = new HashMap<>();
-    private SymbolTable parentSymbolTable;
 
-    public SymbolTable(SymbolTable parentSymbolTable)
+    public SymbolTable getFatherSymbolTable() {
+        return fatherSymbolTable;
+    }
+
+    private SymbolTable fatherSymbolTable;
+
+    public SymbolTable(SymbolTable fatherSymbolTable)
     {
-        this.parentSymbolTable=parentSymbolTable;
+        this.fatherSymbolTable=fatherSymbolTable;
     }
 
     public void updateEntries(){
-        entries.put(this.currSymbolName, this.currSymbolInfo);
+        if (this.currSymbolName != null && this.currSymbolInfo != null) {
+            entries.put(this.currSymbolName, this.currSymbolInfo);
+        }
     }
 
     public void buildSymbolInfo() {
