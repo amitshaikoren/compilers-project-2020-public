@@ -1,6 +1,7 @@
 import ast.*;
 
 import java.io.*;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -54,8 +55,21 @@ public class Main {
                     }
 
                     LookupTable lookupTable = new LookupTable();
+
                     AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
                     symbolTableVistor.visit(prog);
+
+                    AstNode astNodeOfOriginalLineNumber = null;
+                    //consider building two lookup tables in order to make code more efficient
+                    for(var astNode : lookupTable.getLookupTable().keySet()){
+                        if(astNode.lineNumber.equals(originalLine)){
+                            astNodeOfOriginalLineNumber = astNode;
+                            break;
+                        }
+                    }
+
+                    AstRenamingVisitor renamingVisitor = new AstRenamingVisitor(originalName, newName, lookupTable);
+                    renamingVisitor.visit(astNodeOfOriginalLineNumber);
 
 
 
