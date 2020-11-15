@@ -1,9 +1,22 @@
 import ast.*;
 
 import java.io.*;
-import java.util.List;
+
 
 public class Main {
+
+    public static ClassDecl searchRoot(MethodDecl method,LookupTable lookupTable){
+        SymbolTable symbolTable=lookupTable.getSymbolTable(method) ;
+        SymbolTable fatherSymoblTable = symbolTable.getFatherSymbolTable();
+        while(fatherSymoblTable!=null){
+            if (fatherSymoblTable.getSymbolinfo(method.name())!=null){
+                symbolTable=fatherSymoblTable;
+            }
+            fatherSymoblTable=fatherSymoblTable.getFatherSymbolTable();
+        }
+        return (ClassDecl) lookupTable.getClassDeclName(symbolTable.getNameOfClass());
+    }
+
     public static void main(String[] args) {
         try {
             var inputMethod = args[0];
@@ -58,18 +71,40 @@ public class Main {
 
                     AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
                     symbolTableVistor.visit(prog);
-
-                    AstNode astNodeOfOriginalLineNumber = null;
+                  // AstNode astNodeOfOriginalLineNumber=null;
                     //consider building two lookup tables in order to make code more efficient
+                    AstRenamingVisitor renamingVisitor = new AstRenamingVisitor(originalName, newName, lookupTable,isMethod);
+
                     for(var astNode : lookupTable.getLookupTable().keySet()){
-                        if(astNode.lineNumber.equals(originalLine)){
-                            astNodeOfOriginalLineNumber = astNode;
+                        if(astNode.lineNumber.equals(Integer.valueOf(originalLine))){
+
+                            if (astNode instanceof MethodDecl){
+                                 ClassDecl astNodeOfOriginalLineNumber=searchRoot((MethodDecl)astNode,lookupTable);
+                                renamingVisitor.visit(astNodeOfOriginalLineNumber);
+                                break;
+
+                            }
+                            if (astNode instanceof FormalArg){
+                                FormalArg astNodeOfOriginalLineNumber = (FormalArg)astNode;
+                                renamingVisitor.visit(astNodeOfOriginalLineNumber);
+                                break;
+                            }
+
+                           if  (astNode instanceof  VarDecl){
+                               VarDecl astNodeOfOriginalLineNumber = (VarDecl)astNode;
+                               renamingVisitor.visit(astNodeOfOriginalLineNumber);
+                               break;
+
+                           }
+
                             break;
                         }
+
                     }
 
-                    AstRenamingVisitor renamingVisitor = new AstRenamingVisitor(originalName, newName, lookupTable);
-                    renamingVisitor.visit(astNodeOfOriginalLineNumber);
+
+
+
 
 
 

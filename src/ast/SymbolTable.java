@@ -6,17 +6,28 @@ import java.util.Map;
 public class SymbolTable {
     private SymbolInfo currSymbolInfo;
     private String currSymbolName;
+    private String nameOfClass;
     private Map<String, SymbolInfo> entries = new HashMap<>();
+    private SymbolTable fatherSymbolTable;
+
+
+
+    public String getNameOfClass() {
+        return nameOfClass;
+    }
 
     public SymbolTable getFatherSymbolTable() {
         return fatherSymbolTable;
     }
 
-    private SymbolTable fatherSymbolTable;
+    public  SymbolInfo getSymbolinfo(String Name){
+        return this.entries.get(Name);
+    }
 
-    public SymbolTable(SymbolTable fatherSymbolTable)
+    public SymbolTable(SymbolTable fatherSymbolTable,String nameOfClass)
     {
         this.fatherSymbolTable=fatherSymbolTable;
+        this.nameOfClass=nameOfClass;
     }
 
     public void updateEntries(){
@@ -41,6 +52,9 @@ public class SymbolTable {
 
     public void setSymbolInfoDecl(String decl){
         this.currSymbolInfo.setDecl(decl);
+    }
+    public  void setCurrSymbolInfoRefType(String refType){
+        this.currSymbolInfo.setRefType(refType);
     }
 
 }
