@@ -4,35 +4,37 @@ public class AstRenamingVisitor implements Visitor {
     private String originalName;
     private String newName;
     private LookupTable lookupTable;
+    private SymbolTable symbolTableOfOriginalName;
     private boolean isMethod;
     private boolean changedVarDecl;
 
 
 
-    public AstRenamingVisitor(String originalName, String newName, LookupTable lookupTable, boolean isMethod){
+    public AstRenamingVisitor(String originalName, String newName, LookupTable lookupTable, SymbolTable symbolTableOfOriginalName, boolean isMethod){
         this.originalName = originalName;
         this.newName = newName;
         this.lookupTable = lookupTable;
         this.isMethod=isMethod;
         this.changedVarDecl=false;
+        this.symbolTableOfOriginalName = symbolTableOfOriginalName;
     }
 
 
     @Override
     public void visit(Program program) {
-    //empty function
+
     }
 
     @Override
     public void visit(ClassDecl classDecl) {
-        if (!isMethod){
-            for (var fieldDecl : classDecl.fields()) {
-                fieldDecl.accept(this);
+        if (isMethod){
+            for (var methodDecl : classDecl.methoddecls()) {
+
             }
         }
         else{
-            for (var methodDecl : classDecl.methoddecls()) {
-
+            for (var fieldDecl : classDecl.fields()) {
+                fieldDecl.accept(this);
             }
         }
 

@@ -5,15 +5,17 @@ import java.io.*;
 
 public class Main {
 
-    public static ClassDecl searchRoot(MethodDecl method,LookupTable lookupTable){
-        SymbolTable symbolTable=lookupTable.getSymbolTable(method) ;
+    public static ClassDecl searchRootDeclOfMethod(MethodDecl method, LookupTable lookupTable){
+        SymbolTable symbolTable = lookupTable.getSymbolTable(method) ;
         SymbolTable fatherSymoblTable = symbolTable.getFatherSymbolTable();
-        while(fatherSymoblTable!=null){
-            if (fatherSymoblTable.getSymbolinfo(method.name())!=null){
-                symbolTable=fatherSymoblTable;
+
+        while(fatherSymoblTable != null){
+            if (fatherSymoblTable.getSymbolinfo(method.name(), true) != null){
+                symbolTable = fatherSymoblTable;
             }
-            fatherSymoblTable=fatherSymoblTable.getFatherSymbolTable();
+            fatherSymoblTable = fatherSymoblTable.getFatherSymbolTable();
         }
+
         return (ClassDecl) lookupTable.getClassDeclName(symbolTable.getNameOfClass());
     }
 
@@ -71,15 +73,26 @@ public class Main {
 
                     AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
                     symbolTableVistor.visit(prog);
-                  // AstNode astNodeOfOriginalLineNumber=null;
-                    //consider building two lookup tables in order to make code more efficient
-                    AstRenamingVisitor renamingVisitor = new AstRenamingVisitor(originalName, newName, lookupTable,isMethod);
 
-                    for(var astNode : lookupTable.getLookupTable().keySet()){
-                        if(astNode.lineNumber.equals(Integer.valueOf(originalLine))){
+                    SymbolTable symbolTableOfOriginalName;
 
+                    for(var astNode : lookupTable.getLookupTable().keySet()) {
+                        if (astNode.lineNumber.equals(Integer.valueOf(originalLine))) {
+                            symbolTableOfOriginalName = lookupTable.getSymbolTable(astNode);
+                            break;
+                        }
+                    }
+
+                    AstRenamingVisitor renamingVisitor = new AstRenamingVisitor(originalName, newName, lookupTable, symbolTableOfOriginalName, isMethod);
+
+
+
+                    renamingVisitor.visit(prog);
+
+
+                            /*
                             if (astNode instanceof MethodDecl){
-                                 ClassDecl astNodeOfOriginalLineNumber=searchRoot((MethodDecl)astNode,lookupTable);
+                                ClassDecl astNodeOfOriginalLineNumber = searchRootDeclOfMethod((MethodDecl)astNode,lookupTable);
                                 renamingVisitor.visit(astNodeOfOriginalLineNumber);
                                 break;
 
@@ -96,17 +109,8 @@ public class Main {
                                break;
 
                            }
-
                             break;
-                        }
-
-                    }
-
-
-
-
-
-
+                             */
 
 
                 } else {

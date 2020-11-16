@@ -16,4 +16,8 @@ public class SymbolInfo {
     public void setRefType(String refType){
         this.refType=refType;
     }
+
+    public boolean getIsMethod(){
+        return isMethod;
+    }
 }

@@ -7,9 +7,9 @@ public class SymbolTable {
     private SymbolInfo currSymbolInfo;
     private String currSymbolName;
     private String nameOfClass;
-    private Map<String, SymbolInfo> entries = new HashMap<>();
+    private Map<String, SymbolInfo> methodEntries = new HashMap<>();
+    private Map<String, SymbolInfo> varEntries = new HashMap<>();
     private SymbolTable fatherSymbolTable;
-
 
 
     public String getNameOfClass() {
@@ -20,19 +20,27 @@ public class SymbolTable {
         return fatherSymbolTable;
     }
 
-    public  SymbolInfo getSymbolinfo(String Name){
-        return this.entries.get(Name);
+    public SymbolInfo getSymbolinfo(String Name, boolean isMethod){
+        if(isMethod){
+            return this.methodEntries.get(Name);
+        }
+        return this.varEntries.get(Name);
     }
 
-    public SymbolTable(SymbolTable fatherSymbolTable,String nameOfClass)
+    public SymbolTable(SymbolTable fatherSymbolTable, String nameOfClass)
     {
         this.fatherSymbolTable=fatherSymbolTable;
         this.nameOfClass=nameOfClass;
     }
 
     public void updateEntries(){
-        if (this.currSymbolName != null && this.currSymbolInfo != null) {
-            entries.put(this.currSymbolName, this.currSymbolInfo);
+        if (this.currSymbolName != null && this.currSymbolInfo != null){
+            if(currSymbolInfo.getIsMethod()) {
+                methodEntries.put(this.currSymbolName, this.currSymbolInfo);
+            }
+            else{
+                varEntries.put(this.currSymbolName, this.currSymbolInfo);
+            }
         }
     }
 
