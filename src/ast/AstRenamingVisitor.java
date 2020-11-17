@@ -33,7 +33,10 @@ public class AstRenamingVisitor implements Visitor {
          return true;
      }
      if (isMethod){
-         // fill latter
+         if(symbolTableOfDecl.isInMethodEntries(originalName))
+         {
+             return  false;
+         }
      }
      else
      {
@@ -119,7 +122,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(MainClass mainClass) {
-
+        mainClass.mainStatement().accept(this);
     }
 
     @Override
@@ -335,6 +338,20 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(RefType t) {
-        //no need
+        /*
+        AstNode node = lookupTable.getClassDeclName(t.id());
+        SymbolTable st = lookupTable.getSymbolTable(node);
+
+        if(this.originalName.equals( t.id()) && !isMethod )
+        {
+            if(nameResolution(st))
+            {
+                renameAstNode(e);
+            }
+        }
+  */
     }
+
+
 }
+
