@@ -9,7 +9,7 @@
                     <call>
                         <ownerExpr>
                             <new-object>
-<classId>Example</classId>
+                                <classId>Example</classId>
                             </new-object>
                         </ownerExpr>
                         <methodId>flee</methodId>
@@ -35,9 +35,9 @@
                         <vardecl>
                             <lineNumber>10</lineNumber>
                             <type>
-<ref>
-    <id>Example</id>
-</ref>
+                                <ref>
+                                    <id>Example</id>
+                                </ref>
                             </type>
                             <name>e</name>
                         </vardecl>
@@ -46,18 +46,18 @@
                         <assign>
                             <lv>e</lv>
                             <rv>
-<new-object>
-    <classId>Example</classId>
-</new-object>
+                                <new-object>
+                                    <classId>Example</classId>
+                                </new-object>
                             </rv>
                         </assign>
                     </body>
                     <ret>
                         <call>
                             <ownerExpr>
-<ref-id>
-    <id>e</id>
-</ref-id>
+                                <ref-id>
+                                    <id>e</id>
+                                </ref-id>
                             </ownerExpr>
                             <methodId>flee</methodId>
                             <actuals/>
@@ -82,9 +82,9 @@
                     <ret>
                         <call>
                             <ownerExpr>
-<new-object>
-    <classId>NonExample</classId>
-</new-object>
+                                <new-object>
+                                    <classId>NonExample</classId>
+                                </new-object>
                             </ownerExpr>
                             <methodId>run</methodId>
                             <actuals/>

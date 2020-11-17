@@ -15,7 +15,7 @@ public class Main {
             fatherSymoblTable = fatherSymoblTable.getFatherSymbolTable();
         }
 
-        return fatherSymoblTable;
+        return symbolTable;
     }
 
     private static boolean nameIsEquals(AstNode astNode, String originalName) {
@@ -106,7 +106,8 @@ public class Main {
                     }
                     AstRenamingVisitor renamingVisitor = new AstRenamingVisitor(originalName, newName, lookupTable, symbolTableOfOriginalName, isMethod);
                     renamingVisitor.visit(prog);
-
+                    AstXMLSerializer xmlSerializer = new AstXMLSerializer();
+                    xmlSerializer.serialize(prog, outfilename);
                 } else {
                     throw new IllegalArgumentException("unknown command line action " + action);
                 }

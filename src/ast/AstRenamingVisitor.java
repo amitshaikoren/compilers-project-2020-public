@@ -32,6 +32,16 @@ public class AstRenamingVisitor implements Visitor {
      {
          return true;
      }
+     if (isMethod){
+         // fill latter
+     }
+     else
+     {
+        if( symbolTableOfDecl.isInVarEntries(originalName))
+        {
+            return  false;
+        }
+     }
      SymbolTable fatherSymbolTable=symbolTableOfDecl.getFatherSymbolTable();
       while (fatherSymbolTable!=null)
       {
@@ -114,6 +124,11 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(MethodDecl methodDecl) {
+        if(methodDecl.name().equals(originalName)){
+            if(nameResolution(currSymbolTable)){
+                methodDecl.setName(newName);
+            }
+        }
         for (var formal : methodDecl.formals()) {
             this.currSymbolTable=lookupTable.getSymbolTable(formal);
             formal.accept(this);
