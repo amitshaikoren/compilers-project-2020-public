@@ -66,7 +66,7 @@ public class AstRenamingVisitor implements Visitor {
       return false; //error
     }
 
-    /*renameAstNode*/
+    //RENAMING ASTNODE METHODS
     private void renameAstNode(VarDecl astNode)
     {
         astNode.setName(this.newName);
@@ -124,7 +124,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(MethodDecl methodDecl) {
-        if(methodDecl.name().equals(originalName)){
+        if(methodDecl.name().equals(originalName) && this.isMethod){
             if(nameResolution(currSymbolTable)){
                 methodDecl.setName(newName);
             }
@@ -148,7 +148,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(FormalArg formalArg) {
-        if(this.originalName.equals(formalArg.name()))
+        if(this.originalName.equals(formalArg.name()) && !isMethod)
         {
             if(nameResolution(currSymbolTable))
             {
@@ -159,7 +159,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(VarDecl varDecl) {
-        if(this.originalName.equals(varDecl.name()))
+        if(this.originalName.equals(varDecl.name()) && !isMethod)
         {
             if(nameResolution(currSymbolTable))
             {
@@ -195,7 +195,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(AssignStatement assignStatement) {
-        if(this.originalName.equals(assignStatement.lv()))
+        if(this.originalName.equals(assignStatement.lv()) && !isMethod)
         {
             if(nameResolution(currSymbolTable))
             {
@@ -207,7 +207,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
-        if(this.originalName.equals( assignArrayStatement.lv()))
+        if(this.originalName.equals( assignArrayStatement.lv()) && !isMethod)
         {
             if(nameResolution(currSymbolTable))
             {
@@ -220,7 +220,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(AndExpr e) {
-
+        visitBinaryExpr(e);
     }
 
     @Override
@@ -289,7 +289,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(IdentifierExpr e) {
-        if(this.originalName.equals( e.id()))
+        if(this.originalName.equals( e.id()) && !isMethod )
         {
             if(nameResolution(currSymbolTable))
             {

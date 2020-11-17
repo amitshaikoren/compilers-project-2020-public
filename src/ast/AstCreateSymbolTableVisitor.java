@@ -72,6 +72,9 @@ public class AstCreateSymbolTableVisitor implements Visitor {
         } else {
             buildSymbolTable(programSymbolTable,classDecl.name());
         }
+        updateLookupTable(classDecl, this.currSymbolTable);
+
+
 
         for (var fieldDecl : classDecl.fields()) {
             updateInfo(fieldDecl, false);

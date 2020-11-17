@@ -90,7 +90,7 @@ public class Main {
                     MethodDecl methodDecl=null;
                     for(var astNode : lookupTable.getLookupTable().keySet()) {
                         boolean flag=nameIsEquals(astNode,originalName);
-                        if (astNode.lineNumber.equals(Integer.valueOf(originalLine))&& flag) {
+                        if (astNode.lineNumber!=null && astNode.lineNumber.equals(Integer.valueOf(originalLine))&& flag) {
                             symbolTableOfOriginalName = lookupTable.getSymbolTable(astNode);
                             if((symbolTableOfOriginalName.isInMethodEntries(originalName)&&isMethod)||(symbolTableOfOriginalName.isInVarEntries(originalName)&&!isMethod))
                             {
