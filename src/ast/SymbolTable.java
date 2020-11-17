@@ -26,6 +26,14 @@ public class SymbolTable {
         }
         return this.varEntries.get(Name);
     }
+    public boolean isInMethodEntries(String name)
+    {
+        return (this.methodEntries.get(name)!=null);
+    }
+    public boolean isInVarEntries(String name)
+    {
+        return (this.varEntries.get(name)!=null);
+    }
 
     public SymbolTable(SymbolTable fatherSymbolTable, String nameOfClass)
     {

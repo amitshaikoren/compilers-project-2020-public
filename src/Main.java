@@ -5,8 +5,7 @@ import java.io.*;
 
 public class Main {
 
-    public static ClassDecl searchRootDeclOfMethod(MethodDecl method, LookupTable lookupTable){
-        SymbolTable symbolTable = lookupTable.getSymbolTable(method) ;
+    public static SymbolTable searchRootDeclOfMethod(SymbolTable symbolTable,MethodDecl method){
         SymbolTable fatherSymoblTable = symbolTable.getFatherSymbolTable();
 
         while(fatherSymoblTable != null){
@@ -16,7 +15,20 @@ public class Main {
             fatherSymoblTable = fatherSymoblTable.getFatherSymbolTable();
         }
 
-        return (ClassDecl) lookupTable.getClassDeclName(symbolTable.getNameOfClass());
+        return fatherSymoblTable;
+    }
+
+    private static boolean nameIsEquals(AstNode astNode, String originalName) {
+        if (astNode instanceof MethodDecl) {
+            return ((MethodDecl)astNode).name().equals(originalName);
+        }
+        if (astNode instanceof FormalArg) {
+            return ((FormalArg)astNode).name().equals(originalName);
+        }
+        if (astNode instanceof VarDecl) {
+            return ((VarDecl)astNode).name().equals(originalName);
+        }
+        return false;
     }
 
     public static void main(String[] args) {
@@ -74,44 +86,26 @@ public class Main {
                     AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
                     symbolTableVistor.visit(prog);
 
-                    SymbolTable symbolTableOfOriginalName;
-
+                    SymbolTable symbolTableOfOriginalName=null;
+                    MethodDecl methodDecl=null;
                     for(var astNode : lookupTable.getLookupTable().keySet()) {
-                        if (astNode.lineNumber.equals(Integer.valueOf(originalLine))) {
+                        boolean flag=nameIsEquals(astNode,originalName);
+                        if (astNode.lineNumber.equals(Integer.valueOf(originalLine))&& flag) {
                             symbolTableOfOriginalName = lookupTable.getSymbolTable(astNode);
-                            break;
+                            if((symbolTableOfOriginalName.isInMethodEntries(originalName)&&isMethod)||(symbolTableOfOriginalName.isInVarEntries(originalName)&&!isMethod))
+                            {
+                                if(astNode instanceof MethodDecl)
+                                    methodDecl=(MethodDecl)astNode;
+                                break;
+                            }
                         }
                     }
-
+                    if(isMethod)
+                    {
+                        symbolTableOfOriginalName =searchRootDeclOfMethod(symbolTableOfOriginalName,methodDecl);
+                    }
                     AstRenamingVisitor renamingVisitor = new AstRenamingVisitor(originalName, newName, lookupTable, symbolTableOfOriginalName, isMethod);
-
-
-
                     renamingVisitor.visit(prog);
-
-
-                            /*
-                            if (astNode instanceof MethodDecl){
-                                ClassDecl astNodeOfOriginalLineNumber = searchRootDeclOfMethod((MethodDecl)astNode,lookupTable);
-                                renamingVisitor.visit(astNodeOfOriginalLineNumber);
-                                break;
-
-                            }
-                            if (astNode instanceof FormalArg){
-                                FormalArg astNodeOfOriginalLineNumber = (FormalArg)astNode;
-                                renamingVisitor.visit(astNodeOfOriginalLineNumber);
-                                break;
-                            }
-
-                           if  (astNode instanceof  VarDecl){
-                               VarDecl astNodeOfOriginalLineNumber = (VarDecl)astNode;
-                               renamingVisitor.visit(astNodeOfOriginalLineNumber);
-                               break;
-
-                           }
-                            break;
-                             */
-
 
                 } else {
                     throw new IllegalArgumentException("unknown command line action " + action);
@@ -129,4 +123,6 @@ public class Main {
             e.printStackTrace();
         }
     }
+
+
 }

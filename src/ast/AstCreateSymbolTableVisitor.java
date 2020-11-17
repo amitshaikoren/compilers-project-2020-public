@@ -148,11 +148,13 @@ public class AstCreateSymbolTableVisitor implements Visitor {
 
     @Override
     public void visit(SysoutStatement sysoutStatement) {
+
         sysoutStatement.arg().accept(this);
     }
 
     @Override
     public void visit(AssignStatement assignStatement) {
+
         assignStatement.rv().accept(this);
     }
 
