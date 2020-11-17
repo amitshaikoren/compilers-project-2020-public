@@ -122,7 +122,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(MainClass mainClass) {
-        mainClass.mainStatement().accept(this);
+        //mainClass.mainStatement().accept(this);
     }
 
     @Override
