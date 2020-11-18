@@ -9,6 +9,7 @@ public class AstRenamingVisitor implements Visitor {
     private SymbolTable symbolTableOfOriginalName;
     private SymbolTable currSymbolTable;
     private boolean isMethod;
+    private String currMethodRefType;
 
 
 
@@ -259,14 +260,17 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(MethodCallExpr e) {
-        e.ownerExpr().accept(this);
-        if(this.originalName.equals( e.methodId()))
+        AstNode node = lookupTable.getClassDeclName(this.currMethodRefType);
+        SymbolTable st = lookupTable.getSymbolTable(node);
+
+        if(this.originalName.equals(e.methodId()))
         {
-            if(nameResolution(currSymbolTable))
+            if(nameResolution(st))
             {
                 renameAstNode(e);
             }
         }
+
         String delim = "";
         for(Iterator var3 = e.actuals().iterator(); var3.hasNext(); delim = ", ") {
             Expr arg = (Expr) var3.next();
@@ -338,18 +342,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(RefType t) {
-        /*
-        AstNode node = lookupTable.getClassDeclName(t.id());
-        SymbolTable st = lookupTable.getSymbolTable(node);
-
-        if(this.originalName.equals( t.id()) && !isMethod )
-        {
-            if(nameResolution(st))
-            {
-                renameAstNode(e);
-            }
-        }
-  */
+        this.currMethodRefType = t.id();
     }
 
 
