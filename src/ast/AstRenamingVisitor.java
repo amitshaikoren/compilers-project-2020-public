@@ -34,19 +34,13 @@ public class AstRenamingVisitor implements Visitor {
      {
          return true;
      }
-     if (isMethod){
-         if(symbolTableOfDecl.isInMethodEntries(originalName))
+     if (!isMethod){
+         if( symbolTableOfDecl.isInVarEntries(originalName))
          {
              return  false;
          }
      }
-     else
-     {
-        if( symbolTableOfDecl.isInVarEntries(originalName))
-        {
-            return  false;
-        }
-     }
+
      SymbolTable fatherSymbolTable=symbolTableOfDecl.getFatherSymbolTable();
       while (fatherSymbolTable!=null)
       {
@@ -352,6 +346,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(RefType t) {
+        //no need
     }
 
 
