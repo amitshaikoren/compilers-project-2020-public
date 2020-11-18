@@ -20,4 +20,7 @@ public class SymbolInfo {
     public boolean getIsMethod(){
         return isMethod;
     }
+    public String getRefType() {
+        return refType;
+    }
 }

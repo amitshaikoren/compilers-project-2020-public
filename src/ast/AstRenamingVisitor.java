@@ -27,7 +27,29 @@ public class AstRenamingVisitor implements Visitor {
         e.e1().accept(this);
         e.e2().accept(this);
     }
+    private String findType(IdentifierExpr e)
+    {
+        SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
+        return stOfDecl.getSymbolinfo(e.id(),false).getRefType();
+    }
 
+    private SymbolTable getSTnameResolution(SymbolTable symbolTableOfDecl,String name)
+    {
+        if(symbolTableOfDecl.isInVarEntries(name))
+        {
+            return symbolTableOfDecl;
+        }
+        SymbolTable fatherSymbolTable=symbolTableOfDecl.getFatherSymbolTable();
+        while (fatherSymbolTable!=null)
+        {
+            if(fatherSymbolTable.isInVarEntries(name))
+            {
+                return fatherSymbolTable;
+            }
+            fatherSymbolTable=fatherSymbolTable.getFatherSymbolTable();
+        }
+        return null;//error
+    }
     private boolean nameResolution(SymbolTable symbolTableOfDecl)
     {
      if(symbolTableOfDecl==symbolTableOfOriginalName)
@@ -306,6 +328,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(IdentifierExpr e) {
+        this.currMethodRefType=findType(e);
         renameAstNode(e);
     }
 
