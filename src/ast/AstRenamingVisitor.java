@@ -98,13 +98,15 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(Program program) {
-        program.mainClass().accept(this);
 
         //assuming classDecls list is ordered (meaning classes that don't extend come first)
         for (ClassDecl classdecl : program.classDecls()) {
 
             classdecl.accept(this);
         }
+
+        program.mainClass().accept(this);
+
     }
 
     @Override
@@ -123,7 +125,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(MainClass mainClass) {
-        //mainClass.mainStatement().accept(this);
+        mainClass.mainStatement().accept(this);
     }
 
     @Override
@@ -260,16 +262,23 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(MethodCallExpr e) {
-        AstNode node = lookupTable.getClassDeclName(this.currMethodRefType);
-        SymbolTable st = lookupTable.getSymbolTable(node);
-
-        if(this.originalName.equals(e.methodId()))
+        e.ownerExpr().accept(this);
+        SymbolTable st;
+        if(this.currMethodRefType != null) {
+            AstNode node = lookupTable.getClassDeclName(this.currMethodRefType);
+             st = lookupTable.getSymbolTable(node);
+        }
+        else{
+            st=this.currSymbolTable;
+        }
+        if(this.originalName.equals(e.methodId()) && isMethod)
         {
             if(nameResolution(st))
             {
                 renameAstNode(e);
             }
         }
+        this.currMethodRefType=null;
 
         String delim = "";
         for(Iterator var3 = e.actuals().iterator(); var3.hasNext(); delim = ", ") {
@@ -317,7 +326,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(NewObjectExpr e) {
-        //no need
+        this.currMethodRefType = e.classId();
     }
 
     @Override
