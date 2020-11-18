@@ -21,6 +21,7 @@ public class AstRenamingVisitor implements Visitor {
         this.symbolTableOfOriginalName = symbolTableOfOriginalName;
     }
 
+
     private void visitBinaryExpr(BinaryExpr e)
     {
         e.e1().accept(this);
@@ -73,28 +74,59 @@ public class AstRenamingVisitor implements Visitor {
     //RENAMING ASTNODE METHODS
     private void renameAstNode(VarDecl astNode)
     {
-        astNode.setName(this.newName);
+        if(this.originalName.equals(astNode.name()) && !isMethod) {
+            if(nameResolution(currSymbolTable)) {
+                astNode.setName(this.newName);
+            }
+        }
     }
+
     private void renameAstNode(FormalArg astNode)
     {
-        astNode.setName(this.newName);
+        if(this.originalName.equals(astNode.name()) && !isMethod) {
+            if(nameResolution(currSymbolTable)) {
+                astNode.setName(this.newName);
+            }
+        }
     }
-    private void renameAstNode(AssignStatement astNode)
-    {
-        astNode.setLv(this.newName);
+    private void renameAstNode(AssignStatement astNode) {
+        if (this.originalName.equals(astNode.lv()) && !isMethod) {
+            if (nameResolution(currSymbolTable)) {
+                astNode.setLv(this.newName);
+            }
+        }
     }
+
     private void renameAstNode(AssignArrayStatement astNode)
-    {
-        astNode.setLv(this.newName);
+        {
+            if (this.originalName.equals(astNode.lv()) && !isMethod) {
+                if (nameResolution(currSymbolTable)) {
+                    astNode.setLv(this.newName);
+                }
+            }
+        }
+
+    private void renameAstNodeMethod(MethodCallExpr astNode, SymbolTable st) {
+        if(this.originalName.equals(astNode.methodId()) && isMethod)
+        {
+            if(nameResolution(st))
+            {
+                astNode.setMethodId(this.newName);
+            }
+        }
     }
-    private void renameAstNode(MethodCallExpr astNode)
+
+    private void renameAstNode(IdentifierExpr astNode)
     {
-        astNode.setMethodId(this.newName);
+        if(this.originalName.equals(astNode.id()) && !isMethod )
+        {
+            if(nameResolution(currSymbolTable))
+            {
+                astNode.setId(this.newName);
+            }
+        }
     }
-    private void renameAstNode( IdentifierExpr astNode)
-    {
-        astNode.setId(this.newName);
-    }
+
 
     @Override
     public void visit(Program program) {
@@ -154,24 +186,12 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(FormalArg formalArg) {
-        if(this.originalName.equals(formalArg.name()) && !isMethod)
-        {
-            if(nameResolution(currSymbolTable))
-            {
-                renameAstNode(formalArg);
-            }
-        }
+        renameAstNode(formalArg);
     }
 
     @Override
     public void visit(VarDecl varDecl) {
-        if(this.originalName.equals(varDecl.name()) && !isMethod)
-        {
-            if(nameResolution(currSymbolTable))
-            {
-                renameAstNode(varDecl);
-            }
-        }
+        renameAstNode(varDecl);
     }
 
     @Override
@@ -201,25 +221,13 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(AssignStatement assignStatement) {
-        if(this.originalName.equals(assignStatement.lv()) && !isMethod)
-        {
-            if(nameResolution(currSymbolTable))
-            {
-                renameAstNode(assignStatement);
-            }
-        }
+        renameAstNode(assignStatement);
         assignStatement.rv().accept(this);
     }
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
-        if(this.originalName.equals( assignArrayStatement.lv()) && !isMethod)
-        {
-            if(nameResolution(currSymbolTable))
-            {
-                renameAstNode( assignArrayStatement);
-            }
-        }
+        renameAstNode(assignArrayStatement);
         assignArrayStatement.index().accept(this);
         assignArrayStatement.rv().accept(this);
     }
@@ -264,20 +272,19 @@ public class AstRenamingVisitor implements Visitor {
     public void visit(MethodCallExpr e) {
         e.ownerExpr().accept(this);
         SymbolTable st;
+
+        //if called from new, we get currMethodRefType != null
         if(this.currMethodRefType != null) {
             AstNode node = lookupTable.getClassDeclName(this.currMethodRefType);
-             st = lookupTable.getSymbolTable(node);
+            st = lookupTable.getSymbolTable(node);
         }
         else{
             st=this.currSymbolTable;
         }
-        if(this.originalName.equals(e.methodId()) && isMethod)
-        {
-            if(nameResolution(st))
-            {
-                renameAstNode(e);
-            }
-        }
+
+        renameAstNodeMethod(e, st);
+
+        //to allow next change name to not be affected by previous change name
         this.currMethodRefType=null;
 
         String delim = "";
@@ -289,7 +296,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(IntegerLiteralExpr e) {
-        //no need
+        //no needRenamed and restructured code.
     }
 
     @Override
@@ -305,13 +312,7 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(IdentifierExpr e) {
-        if(this.originalName.equals( e.id()) && !isMethod )
-        {
-            if(nameResolution(currSymbolTable))
-            {
-                renameAstNode(e);
-            }
-        }
+        renameAstNode(e);
     }
 
     @Override
@@ -351,7 +352,6 @@ public class AstRenamingVisitor implements Visitor {
 
     @Override
     public void visit(RefType t) {
-        this.currMethodRefType = t.id();
     }
 
 
