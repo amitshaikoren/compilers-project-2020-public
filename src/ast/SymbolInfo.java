@@ -3,6 +3,11 @@ package ast;
 public class SymbolInfo {
     private boolean isMethod;
     private String decl;
+
+    public String getRefType() {
+        return refType;
+    }
+
     private String refType;
 
     public void setIsMethod(boolean isMethod) {
@@ -20,7 +25,6 @@ public class SymbolInfo {
     public boolean getIsMethod(){
         return isMethod;
     }
-    public String getRefType() {
-        return refType;
-    }
+
+
 }

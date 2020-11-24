@@ -64,7 +64,9 @@ public class Main {
                     throw new UnsupportedOperationException("TODO - Ex. 3");
 
                 } else if (action.equals("compile")) {
-                    throw new UnsupportedOperationException("TODO - Ex. 2");
+                    TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor();
+                    translator.visit(prog);
+                    outFile.write(translator.getString());
 
                 } else if (action.equals("rename")) {
                     var type = args[2];
