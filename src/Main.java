@@ -64,7 +64,10 @@ public class Main {
                     throw new UnsupportedOperationException("TODO - Ex. 3");
 
                 } else if (action.equals("compile")) {
-                    TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor();
+                    LookupTable lookupTable = new LookupTable();
+                    AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
+                    symbolTableVistor.visit(prog);
+                    TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor(lookupTable);
                     translator.visit(prog);
                     outFile.write(translator.getString());
 
