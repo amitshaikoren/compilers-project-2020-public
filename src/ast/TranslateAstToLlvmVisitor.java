@@ -40,17 +40,21 @@ public class TranslateAstToLlvmVisitor implements Visitor{
             "            define i32 @Simple.bar(i8* %this) {";
 
     static int count=-1;
-    private int indent = 0;
-    private StringBuilder builder = new StringBuilder();
+    private int indent ;
+    private StringBuilder builder;
     CurrInstruction currInstruction;
     private SymbolTable currSymbolTable;
     private LookupTable lookupTable;
-    ExprTranslation currExpr=null;
-    ExprTranslation fatherExpr=null;
+    ExprTranslation currExpr;
+    ExprTranslation fatherExpr;
 
     public TranslateAstToLlvmVisitor(LookupTable lookupTable)
     {
         this.lookupTable=lookupTable;
+        this.indent=0;
+        this.builder = new StringBuilder();
+        this.currExpr=null;
+        this.fatherExpr=null;
     }
     public String getString() {
         return this.builder.toString();
@@ -202,7 +206,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         {
             this.builder.append("i32 ");
         }
-        if(type.equals("boolean"))
+        if(type.equals("bool"))
         {
             this.builder.append("i1 ");
         }
@@ -213,7 +217,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         {
             this.builder.append("i32* ");
         }
-        if(type.equals("boolean"))
+        if(type.equals("bool"))
         {
             this.builder.append("i1* ");
         }
@@ -281,12 +285,30 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(TrueExpr e) {
-
+        ExprTranslation exp;
+        if(currExpr==null)
+        {
+            exp=new ExprTranslation(null,null,null,Integer.toString(1));
+        }
+        else
+        {
+            exp=new ExprTranslation(fatherExpr,null,null,Integer.toString(1));
+        }
+        currExpr=exp;
     }
 
     @Override
     public void visit(FalseExpr e) {
-
+        ExprTranslation exp;
+        if(currExpr==null)
+        {
+            exp=new ExprTranslation(null,null,null,Integer.toString(0));
+        }
+        else
+        {
+            exp=new ExprTranslation(fatherExpr,null,null,Integer.toString(0));
+        }
+        currExpr=exp;
     }
 
     @Override
