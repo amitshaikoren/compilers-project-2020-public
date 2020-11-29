@@ -39,7 +39,8 @@ public class TranslateAstToLlvmVisitor implements Visitor{
             "\n" +
             "            define i32 @Simple.bar(i8* %this) {";
 
-    static int count=-1;
+    static int countOfReg=-1;
+    static  int countOfIf=-1;
     private int indent ;
     private StringBuilder builder;
     CurrInstruction currInstruction;
@@ -89,10 +90,16 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     private static String getNextRegister()
     {
-     count++;
+     countOfReg++;
      String reg;
-     reg="%_"+Integer.toString(count);
+     reg="%_"+Integer.toString(countOfReg);
      return reg;
+    }
+    private static String getNextIfStatment()
+    {
+        countOfIf++;
+        String ifStatment="if"+Integer.toString(countOfIf);
+        return ifStatment;
     }
 
     @Override
@@ -169,6 +176,18 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(IfStatement ifStatement) {
+        ifStatement.cond().accept(this);
+        String ifStatment = getNextIfStatment();
+        String elseStatment = getNextIfStatment();
+        String backToCodeStatment = getNextIfStatment();
+        this.builder.append("br i1 "+currExpr.getResult()+", label %"+ifStatment+" , label %"+elseStatment+"\n");
+        this.builder.append(ifStatment+":"+"\n");
+        ifStatement.thencase().accept(this);
+        this.builder.append("br label %"+backToCodeStatment+"\n");
+        this.builder.append(elseStatment+":"+"\n");
+        ifStatement.elsecase().accept(this);
+        this.builder.append("br label %"+backToCodeStatment+"\n");
+        this.builder.append(backToCodeStatment+":"+"\n");
 
     }
 
