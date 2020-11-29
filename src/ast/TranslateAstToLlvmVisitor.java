@@ -52,7 +52,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
     public TranslateAstToLlvmVisitor(LookupTable lookupTable)
     {
         this.lookupTable=lookupTable;
-        this.indent=0;
+        this.indent=1;
         this.builder = new StringBuilder();
         this.currExpr=null;
         this.fatherExpr=null;
@@ -146,7 +146,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
             stmt.accept(this);
         }
         currInstruction=currInstruction.MethodDecl;
-        this.builder.append("ret ");
+        appendWithIndent("ret ");
         methodDecl.returnType().accept(this);
         methodDecl.ret().accept(this);
         this.builder.append(currExpr.getResult()+"\n");
@@ -180,14 +180,21 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         String ifStatment = getNextIfStatment();
         String elseStatment = getNextIfStatment();
         String backToCodeStatment = getNextIfStatment();
-        this.builder.append("br i1 "+currExpr.getResult()+", label %"+ifStatment+" , label %"+elseStatment+"\n");
-        this.builder.append(ifStatment+":"+"\n");
+        appendWithIndent("br i1 "+currExpr.getResult()+", label %"+ifStatment+" , label %"+elseStatment+"\n");
+        this.indent--;
+        appendWithIndent(ifStatment+":"+"\n");
+        this.indent++;
         ifStatement.thencase().accept(this);
-        this.builder.append("br label %"+backToCodeStatment+"\n");
-        this.builder.append(elseStatment+":"+"\n");
+        appendWithIndent("br label %"+backToCodeStatment+"\n");
+        this.indent--;
+        appendWithIndent(elseStatment+":"+"\n");
+        this.indent++;
         ifStatement.elsecase().accept(this);
-        this.builder.append("br label %"+backToCodeStatment+"\n");
-        this.builder.append(backToCodeStatment+":"+"\n");
+        appendWithIndent("br label %"+backToCodeStatment+"\n");
+        this.indent--;
+        appendWithIndent(backToCodeStatment+":"+"\n");
+        this.indent++;
+
 
     }
 
@@ -199,7 +206,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
     @Override
     public void visit(SysoutStatement sysoutStatement) {
         sysoutStatement.arg().accept(this);
-        this.builder.append("call void (i32) @print_int(i32 ");
+        appendWithIndent("call void (i32) @print_int(i32 ");
         this.builder.append(currExpr.getResult());
         currExpr=null;
         this.builder.append(")\n");
@@ -257,7 +264,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         e.e2().accept(this);
         exp.setE2(currExpr);
         String reg=getNextRegister();
-        this.builder.append(reg+" = "+infixSymbol+" ");
+        appendWithIndent(reg+" = "+infixSymbol+" ");
         //todo: check if we can assume that its always int
         printType("int");
         this.builder.append(exp.getE1().getResult()+", ");
@@ -354,7 +361,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
     public void visit(IdentifierExpr e) {
         ExprTranslation exp;
         String reg=getNextRegister();
-        this.builder.append(reg+" = load ");
+        appendWithIndent(reg+" = load ");
         SymbolTable stOfDecl=getSTnameResolution(e.id());
         printType(stOfDecl.getSymbolinfo(e.id(),false).getDecl());
         this.builder.append(", ");
@@ -396,11 +403,11 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         if(this.currInstruction==currInstruction.VarDecl)
         {
             currInstruction=currInstruction.VarDeclInt;
-            this.builder.append("= alloca i32");
+            appendWithIndent("= alloca i32");
         }
         if(this.currInstruction==currInstruction.MethodDecl)
         {
-            this.builder.append("i32 ");
+            appendWithIndent("i32 ");
         }
     }
 
@@ -410,11 +417,11 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         if(this.currInstruction==currInstruction.VarDecl)
         {
             currInstruction=currInstruction.VarDeclBool;
-            this.builder.append("= alloca i1");
+            appendWithIndent("= alloca i1");
         }
         if(this.currInstruction==currInstruction.MethodDecl)
         {
-            this.builder.append("i1 ");
+            appendWithIndent("i1 ");
         }
     }
 
