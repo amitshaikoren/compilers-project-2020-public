@@ -228,7 +228,24 @@ public class TranslateAstToLlvmVisitor implements Visitor{
     public void visit(AssignArrayStatement assignArrayStatement) {
 
     }
-
+    private void visitBinaryExpr(BinaryExpr e, String infixSymbol) {
+        ExprTranslation exp,e1,e2;
+        exp=new ExprTranslation(null,null,null,null);
+        currExpr=exp;
+        e.e1().accept(this);
+        exp.setE1(currExpr);
+        currExpr=exp;
+        e.e2().accept(this);
+        exp.setE2(currExpr);
+        String reg=getNextRegister();
+        this.builder.append(reg+" = "+infixSymbol+" ");
+        //todo: check if we can assume that its always int
+        printType("int");
+        this.builder.append(exp.getE1().getResult()+", ");
+        this.builder.append(exp.getE2().getResult()+"\n");
+        exp.setResult(reg);
+        currExpr=exp;
+    }
     @Override
     public void visit(AndExpr e) {
 
@@ -236,21 +253,24 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(LtExpr e) {
-
+        visitBinaryExpr(e,"icmp slt");
     }
 
     @Override
     public void visit(AddExpr e) {
+        visitBinaryExpr(e,"add");
 
     }
 
     @Override
     public void visit(SubtractExpr e) {
+        visitBinaryExpr(e,"sub");
 
     }
 
     @Override
     public void visit(MultExpr e) {
+        visitBinaryExpr(e,"mul");
 
     }
 
