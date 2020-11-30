@@ -95,10 +95,10 @@ public class TranslateAstToLlvmVisitor implements Visitor{
      reg="%_"+Integer.toString(countOfReg);
      return reg;
     }
-    private static String getNextIfStatment()
+    private static String getNextStatment(String infixSymbol)
     {
         countOfIf++;
-        String ifStatment="if"+Integer.toString(countOfIf);
+        String ifStatment=infixSymbol+Integer.toString(countOfIf);
         return ifStatment;
     }
 
@@ -177,9 +177,9 @@ public class TranslateAstToLlvmVisitor implements Visitor{
     @Override
     public void visit(IfStatement ifStatement) {
         ifStatement.cond().accept(this);
-        String ifStatment = getNextIfStatment();
-        String elseStatment = getNextIfStatment();
-        String backToCodeStatment = getNextIfStatment();
+        String ifStatment = getNextStatment("if");
+        String elseStatment = getNextStatment("if");
+        String backToCodeStatment = getNextStatment("if");
         appendWithIndent("br i1 "+currExpr.getResult()+", label %"+ifStatment+" , label %"+elseStatment+"\n");
         this.indent--;
         appendWithIndent(ifStatment+":"+"\n");
