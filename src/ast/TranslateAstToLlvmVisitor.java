@@ -274,7 +274,39 @@ public class TranslateAstToLlvmVisitor implements Visitor{
     }
     @Override
     public void visit(AndExpr e) {
+        ExprTranslation exp,e1,e2;
+        exp=new ExprTranslation(null,null,null,null);
+        currExpr=exp;
+        e.e1().accept(this);
+        exp.setE1(currExpr);
+        currExpr=exp;
+        String labelf = getNextStatment("andcond");
+        String label1=getNextStatment("andcond");
+        String labelt=getNextStatment("andcond");
+        String backlabel=getNextStatment("andcond");
 
+        appendWithIndent("br label %"+labelf+"\n");
+        this.indent--;
+        appendWithIndent(labelf+":\n");
+        this.indent++;
+        appendWithIndent("br i1 "+exp.getE1().getResult()+", "+"label %"+label1+" ,label %"+backlabel+"\n");
+        this.indent--;
+        appendWithIndent(label1+":\n");
+        this.indent++;
+        e.e2().accept(this);
+        exp.setE2(currExpr);
+        appendWithIndent("br label %"+labelt+"\n");
+        this.indent--;
+        appendWithIndent(labelt+":\n");
+        this.indent++;
+        appendWithIndent("br label %"+backlabel+"\n");
+        this.indent--;
+        appendWithIndent(backlabel+":\n");
+        this.indent++;
+        String reg=getNextRegister();
+        appendWithIndent(reg+" = "+"phi i1 [0,%"+labelf+"], ["+exp.getE2().getResult()+",%"+labelt+"]\n");
+        exp.setResult(reg);
+        currExpr=exp;
     }
 
     @Override
