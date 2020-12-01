@@ -181,25 +181,27 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         String elseStatment = getNextStatment("if");
         String backToCodeStatment = getNextStatment("if");
         appendWithIndent("br i1 "+currExpr.getResult()+", label %"+ifStatment+" , label %"+elseStatment+"\n");
-        this.indent--;
-        appendWithIndent(ifStatment+":"+"\n");
-        this.indent++;
+        this.builder.append(ifStatment+":"+"\n");
         ifStatement.thencase().accept(this);
         appendWithIndent("br label %"+backToCodeStatment+"\n");
-        this.indent--;
-        appendWithIndent(elseStatment+":"+"\n");
-        this.indent++;
+        this.builder.append(elseStatment+":"+"\n");
         ifStatement.elsecase().accept(this);
         appendWithIndent("br label %"+backToCodeStatment+"\n");
-        this.indent--;
-        appendWithIndent(backToCodeStatment+":"+"\n");
-        this.indent++;
+        this.builder.append(backToCodeStatment+":"+"\n");
 
 
     }
 
     @Override
     public void visit(WhileStatement whileStatement) {
+        whileStatement.cond().accept(this);
+        String whileStatment = getNextStatment("loop");
+        String backToCodeStatment = getNextStatment("backtocode");
+        appendWithIndent("br i1 "+currExpr.getResult()+", label %"+whileStatment+" , label %"+backToCodeStatment+"\n");
+        this.builder.append(whileStatment+":"+"\n");
+       whileStatement.body().accept(this);
+        appendWithIndent("br label %"+whileStatement+"\n");
+        this.builder.append(backToCodeStatment+":"+"\n");
 
     }
 
@@ -284,7 +286,6 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         String label1=getNextStatment("andcond");
         String labelt=getNextStatment("andcond");
         String backlabel=getNextStatment("andcond");
-
         appendWithIndent("br label %"+labelf+"\n");
         this.builder.append(labelf+":\n");
         appendWithIndent("br i1 "+exp.getE1().getResult()+", "+"label %"+label1+" ,label %"+backlabel+"\n");
