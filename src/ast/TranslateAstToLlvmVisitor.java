@@ -286,23 +286,15 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         String backlabel=getNextStatment("andcond");
 
         appendWithIndent("br label %"+labelf+"\n");
-        this.indent--;
-        appendWithIndent(labelf+":\n");
-        this.indent++;
+        this.builder.append(labelf+":\n");
         appendWithIndent("br i1 "+exp.getE1().getResult()+", "+"label %"+label1+" ,label %"+backlabel+"\n");
-        this.indent--;
-        appendWithIndent(label1+":\n");
-        this.indent++;
+        this.builder.append(label1+":\n");
         e.e2().accept(this);
         exp.setE2(currExpr);
         appendWithIndent("br label %"+labelt+"\n");
-        this.indent--;
-        appendWithIndent(labelt+":\n");
-        this.indent++;
+        this.builder.append(labelt+":\n");
         appendWithIndent("br label %"+backlabel+"\n");
-        this.indent--;
-        appendWithIndent(backlabel+":\n");
-        this.indent++;
+        this.builder.append(backlabel+":\n");
         String reg=getNextRegister();
         appendWithIndent(reg+" = "+"phi i1 [0,%"+labelf+"], ["+exp.getE2().getResult()+",%"+labelt+"]\n");
         exp.setResult(reg);
