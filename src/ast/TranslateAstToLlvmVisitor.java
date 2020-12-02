@@ -518,6 +518,10 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(NotExpr e) {
+        e.e().accept(this);
+        String notE = getNextRegister();
+        appendWithIndent(notE +" = sub 1 i1"+currExpr.getResult()+"\n");
+        currExpr.setResult(notE);
 
     }
 
