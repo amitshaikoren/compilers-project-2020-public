@@ -238,7 +238,11 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         {
             this.builder.append("i1 ");
         }
-        //todo: add for reftype and intarray
+        if(type.equals("intArr"))
+        {
+            this.builder.append("i32* ");
+        }
+        //todo: add for reftype
     }
     private void printPointerType(String type) {
         if(type.equals("int"))
@@ -249,7 +253,11 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         {
             this.builder.append("i1* ");
         }
-        //todo: add for reftype and intarray
+        if(type.equals("intArr"))
+        {
+            this.builder.append("i32** ");
+        }
+        //todo: add for reftype
     }
 
     @Override
@@ -410,6 +418,24 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(NewIntArrayExpr e) {
+        e.lengthExpr().accept(this);
+        String regValidLength=getNextRegister();
+        appendWithIndent(regValidLength+" = icmp slt i32 "+currExpr.getResult()+", 0 \n");
+        String negativeLength= getNextStatment("arr_alloc");
+        String positiveLength=getNextStatment("arr_alloc");
+        appendWithIndent("br i1 "+regValidLength+", label %"+negativeLength+" ,label %"+positiveLength+"\n");
+        this.builder.append(negativeLength+":\n");
+        appendWithIndent("call void @throw_oob()\n");
+        this.builder.append(positiveLength+":\n");
+        String lengthSize = getNextRegister();
+        appendWithIndent(lengthSize+"= add i32 "+currExpr.getResult()+" ,1\n");
+        String allocateArr = getNextRegister();
+        appendWithIndent(allocateArr+" =call i8* @calloc(i32 4, i32 "+lengthSize+")\n");
+        String castReturnedPointer=getNextRegister();
+        appendWithIndent(castReturnedPointer+" = bitcast i8* "+allocateArr+" to i32*\n");
+        appendWithIndent("store i32  "+currExpr.getResult()+", i32* "+castReturnedPointer+"\n");
+        currExpr.setResult(castReturnedPointer);
+
 
     }
 
@@ -428,7 +454,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         if(this.currInstruction==currInstruction.VarDecl)
         {
             currInstruction=currInstruction.VarDeclInt;
-            appendWithIndent("= alloca i32");
+            this.builder.append("= alloca i32");
         }
         if(this.currInstruction==currInstruction.MethodDecl)
         {
@@ -442,7 +468,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         if(this.currInstruction==currInstruction.VarDecl)
         {
             currInstruction=currInstruction.VarDeclBool;
-            appendWithIndent("= alloca i1");
+            this.builder.append("= alloca i1");
         }
         if(this.currInstruction==currInstruction.MethodDecl)
         {
@@ -452,7 +478,15 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(IntArrayAstType t) {
-
+        if(this.currInstruction==currInstruction.VarDecl)
+        {
+            currInstruction=currInstruction.VarDeclIntArray;
+            this.builder.append("= alloca i32*");
+        }
+        if(this.currInstruction==currInstruction.MethodDecl)
+        {
+            appendWithIndent("i32* ");
+        }
     }
 
     @Override

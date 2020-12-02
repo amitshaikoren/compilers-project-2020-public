@@ -4,7 +4,7 @@ public enum CurrInstruction {
     VarDecl(""),
     VarDeclInt("int"),
     VarDeclBool("boolean"),
-    VarDeclIntArray(""),
+    VarDeclIntArray("intArray"),
     VarDeclRef(""),
     ClassDecl(""),
     MethodDecl("");
