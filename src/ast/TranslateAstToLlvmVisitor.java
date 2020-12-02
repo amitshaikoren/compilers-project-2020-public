@@ -128,11 +128,12 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(MainClass mainClass) {
-
+    //todo: do it
     }
 
     @Override
     public void visit(MethodDecl methodDecl) {
+        //todo : declere func
         for (var formal : methodDecl.formals())
         {
             this.currSymbolTable=lookupTable.getSymbolTable(formal);
@@ -154,7 +155,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(FormalArg formalArg) {
-
+//todo : do it
     }
 
     @Override
@@ -171,7 +172,9 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(BlockStatement blockStatement) {
-
+        for (var stmt : blockStatement.statements()) {
+            stmt.accept(this);
+        }
     }
 
     @Override
@@ -262,6 +265,43 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
+        String loadArray = getNextRegister();
+        appendWithIndent(loadArray+" = load i32* , i32** %"+assignArrayStatement.lv()+"\n");
+        String checkPositive = getNextRegister();
+        assignArrayStatement.index().accept(this);
+        appendWithIndent(checkPositive+" = icmp slt i32 "+currExpr.getResult()+" , 0\n");
+        String negativeIndex=getNextStatment("arr_alloc");
+        String positiveIndex=getNextStatment("arr_alloc");
+        appendWithIndent("br i1 "+checkPositive+" , label %"+negativeIndex+", label %"+positiveIndex+"\n");
+        this.builder.append(negativeIndex+":\n");
+        appendWithIndent("call void @throw_obb()\n");
+        appendWithIndent("br label %"+positiveIndex+"\n");
+        this.builder.append(positiveIndex+":\n");
+        String arrayPointer=getNextRegister();
+        appendWithIndent(arrayPointer+" = getelementptr i32, i32* "+loadArray+", i32 0 \n");
+        String arrayLength=getNextRegister();
+        appendWithIndent(arrayLength+" = load i32, i32* "+arrayPointer+"\n");
+        String checkIndexLessThenLength=getNextRegister();
+        appendWithIndent(checkIndexLessThenLength+" = icmp sle i32 "+arrayLength+","+currExpr.getResult()+"\n");
+        String badIndex=getNextStatment("arr_alloc");
+        String goodIndex=getNextStatment("arr_alloc");
+        appendWithIndent("br i1 "+checkIndexLessThenLength+", label %"+badIndex+", label %"+goodIndex+"\n");
+        this.builder.append(badIndex+":\n");
+        appendWithIndent("call void @throw_obb()\n");
+        appendWithIndent("br label %"+goodIndex+"\n");
+        this.builder.append(goodIndex+":\n");
+        String fixIndex=getNextRegister();
+        appendWithIndent(fixIndex+" = add i32 "+currExpr.getResult()+ ",1 \n");
+        String pointerOfIndex=getNextRegister();
+        appendWithIndent(pointerOfIndex+ " = getelementptr i32,i32* "+loadArray +", i32 "+fixIndex+"\n");
+        currExpr=null;
+        assignArrayStatement.rv().accept(this);
+        appendWithIndent("store i32 "+currExpr.getResult()+" , i32* "+pointerOfIndex+"\n");
+        currExpr=null;
+
+
+
+
 
     }
     private void visitBinaryExpr(BinaryExpr e, String infixSymbol) {
@@ -335,7 +375,38 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(ArrayAccessExpr e) {
-
+        e.arrayExpr().accept(this);
+        String loadArray=currExpr.getResult();
+        String checkPositive = getNextRegister();
+        e.indexExpr().accept(this);
+        appendWithIndent(checkPositive+" = icmp slt i32 "+currExpr.getResult()+" , 0\n");
+        String negativeIndex=getNextStatment("arr_alloc");
+        String positiveIndex=getNextStatment("arr_alloc");
+        appendWithIndent("br i1 "+checkPositive+" , label %"+negativeIndex+", label %"+positiveIndex+"\n");
+        this.builder.append(negativeIndex+":\n");
+        appendWithIndent("call void @throw_obb()\n");
+        appendWithIndent("br label %"+positiveIndex+"\n");
+        this.builder.append(positiveIndex+":\n");
+        String arrayPointer=getNextRegister();
+        appendWithIndent(arrayPointer+" = getelementptr i32, i32* "+loadArray+", i32 0 \n");
+        String arrayLength=getNextRegister();
+        appendWithIndent(arrayLength+" = load i32, i32* "+arrayPointer+"\n");
+        String checkIndexLessThenLength=getNextRegister();
+        appendWithIndent(checkIndexLessThenLength+" = icmp sle i32 "+arrayLength+","+currExpr.getResult()+"\n");
+        String badIndex=getNextStatment("arr_alloc");
+        String goodIndex=getNextStatment("arr_alloc");
+        appendWithIndent("br i1 "+checkIndexLessThenLength+", label %"+badIndex+", label %"+goodIndex+"\n");
+        this.builder.append(badIndex+":\n");
+        appendWithIndent("call void @throw_obb()\n");
+        appendWithIndent("br label %"+goodIndex+"\n");
+        this.builder.append(goodIndex+":\n");
+        String fixIndex=getNextRegister();
+        appendWithIndent(fixIndex+" = add i32 "+currExpr.getResult()+ ",1 \n");
+        String pointerOfIndex=getNextRegister();
+        appendWithIndent(pointerOfIndex+ " = getelementptr i32,i32* "+loadArray +", i32 "+fixIndex+"\n");
+        String value = getNextRegister();
+        appendWithIndent(value+" = load i32 ,i32* "+pointerOfIndex+"\n");
+        currExpr.setResult(value);
     }
 
     @Override
@@ -426,6 +497,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         appendWithIndent("br i1 "+regValidLength+", label %"+negativeLength+" ,label %"+positiveLength+"\n");
         this.builder.append(negativeLength+":\n");
         appendWithIndent("call void @throw_oob()\n");
+        appendWithIndent("br label %"+positiveLength+"\n");
         this.builder.append(positiveLength+":\n");
         String lengthSize = getNextRegister();
         appendWithIndent(lengthSize+"= add i32 "+currExpr.getResult()+" ,1\n");
