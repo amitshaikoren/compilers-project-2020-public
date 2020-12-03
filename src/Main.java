@@ -67,7 +67,7 @@ public class Main {
                     LookupTable lookupTable = new LookupTable();
                     AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
                     symbolTableVistor.visit(prog);
-                    CreateVtableVisitor vtables = new CreateVtableVisitor(lookupTable);
+                    CreateVtableVisitor vtables = new CreateVtableVisitor();
                     vtables.visit(prog);
                     TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor(lookupTable);
                     translator.visit(prog);
