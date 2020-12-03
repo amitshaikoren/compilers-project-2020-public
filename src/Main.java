@@ -67,9 +67,11 @@ public class Main {
                     LookupTable lookupTable = new LookupTable();
                     AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
                     symbolTableVistor.visit(prog);
+                    CreateVtableVisitor vtables = new CreateVtableVisitor(lookupTable);
+                    vtables.visit(prog);
                     TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor(lookupTable);
                     translator.visit(prog);
-                    outFile.write(translator.getString());
+                    outFile.write(vtables.getString()+"\n********************\n"+translator.getString());
 
                 } else if (action.equals("rename")) {
                     var type = args[2];

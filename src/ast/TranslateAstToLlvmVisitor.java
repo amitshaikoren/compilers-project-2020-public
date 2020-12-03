@@ -155,7 +155,18 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(FormalArg formalArg) {
-//todo : do it
+        this.currInstruction=currInstruction.VarDecl;
+        appendWithIndent("%"+formalArg.name());
+        formalArg.type().accept(this);
+        this.builder.append("store ");
+        printType(currSymbolTable.getSymbolinfo(formalArg.name(),false).getDecl());
+        this.builder.append("%."+formalArg.name());
+        currExpr=null;
+        this.builder.append(", ");
+        printPointerType(currSymbolTable.getSymbolinfo(formalArg.name(),false).getDecl());
+        this.builder.append("%"+formalArg.name());
+        this.builder.append("\n");
+        updateVarTypeInSymbolTable(currInstruction.getName(),formalArg.name(),"%"+formalArg.name());
     }
 
     @Override
@@ -165,7 +176,6 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         this.builder.append("%"+varDecl.name());
         varDecl.type().accept(this);
         this.builder.append(" ");
-        //this.builder.append(varDecl.name());
         this.builder.append("\n");
         updateVarTypeInSymbolTable(currInstruction.getName(),varDecl.name(),"%"+varDecl.name());
     }
