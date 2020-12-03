@@ -1,6 +1,7 @@
 import ast.*;
 
 import java.io.*;
+import java.util.Map;
 
 
 public class Main {
@@ -69,6 +70,9 @@ public class Main {
                     symbolTableVistor.visit(prog);
                     CreateVtableVisitor vtables = new CreateVtableVisitor();
                     vtables.visit(prog);
+                    MapVtableVisitor mapVtable=new MapVtableVisitor();
+                    mapVtable.visit(prog);
+                    Map<String,ClassMap> classMaps = mapVtable.getClassMaps();
                     TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor(lookupTable);
                     translator.visit(prog);
                     outFile.write(vtables.getString()+"\n********************\n"+translator.getString());

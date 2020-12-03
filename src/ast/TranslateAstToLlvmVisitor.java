@@ -2,9 +2,7 @@ package ast;
 
 public class TranslateAstToLlvmVisitor implements Visitor{
 
-    String code="\n" +
-            "@.Simple_vtable = global [1 x i8*] [i8* bitcast (i32 (i8*)* @Simple.bar to i8*)]\n" +
-            "\n" +
+    String code= "\n" +
             "        declare i8* @calloc(i32, i32)\n" +
             "declare i32 @printf(i8*, ...)\n" +
             "declare void @exit(i32)\n" +
@@ -577,6 +575,14 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(RefType t) {
-
+        if(this.currInstruction==currInstruction.VarDecl)
+        {
+            currInstruction=currInstruction.VarDeclIntArray;
+            this.builder.append("= alloca i8*");
+        }
+        if(this.currInstruction==currInstruction.MethodDecl)
+        {
+            appendWithIndent("i8* ");
+        }
     }
 }
