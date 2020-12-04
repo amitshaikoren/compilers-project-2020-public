@@ -103,8 +103,8 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(ClassDecl classDecl) {
-        this.countOfIf=0;
-        this.countOfReg=0;
+        this.countOfIf=-1;
+        this.countOfReg=-1;
         for (var fieldDecl : classDecl.fields()) {
             this.currSymbolTable=lookupTable.getSymbolTable(fieldDecl);
             fieldDecl.accept(this);
@@ -264,7 +264,9 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         {
             this.builder.append("i32* ");
         }
-        //todo: add for reftype
+        if(type.equals("ref")){
+            this.builder.append("i8* ");
+        }
     }
     private void printPointerType(String type) {
         if(type.equals("int"))
@@ -279,7 +281,10 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         {
             this.builder.append("i32** ");
         }
-        //todo: add for reftype
+        if(type.equals("ref")){
+            this.builder.append("i8** ");
+        }
+
     }
 
     @Override
@@ -532,6 +537,26 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(NewObjectExpr e) {
+
+      String allocate = getNextRegister();
+        ExprTranslation exp;
+        if(currExpr==null)
+        {
+            exp=new ExprTranslation(null,null,null,allocate);
+        }
+        else
+        {
+            exp=new ExprTranslation(fatherExpr,null,null,allocate);
+        }
+        currExpr=exp;
+      int numOfFileds =this.classOfMaps.get(e.classId()).getVarMap().size()*4+8;
+      appendWithIndent(allocate+" = call i8* @calloc(i32 1, i32 "+numOfFileds+")\n");
+       String castPointer = getNextRegister();
+       appendWithIndent(castPointer+" = bitcast i8* "+ allocate+" to i8**\n");
+       int numOfMethods=this.classOfMaps.get(e.classId()).getMethodMap().size();
+       String pointerToVtable=getNextRegister();
+       appendWithIndent(pointerToVtable+ " = getelementptr ["+numOfMethods + " x i8*], ["+numOfMethods + " x i8*]* @."+e.classId()+"_vtable, i32 0, i32 0\n");
+       appendWithIndent("store i8** "+ pointerToVtable +", i8*** "+castPointer+"\n");
 
     }
 
