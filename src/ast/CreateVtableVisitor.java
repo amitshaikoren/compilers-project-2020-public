@@ -11,12 +11,13 @@ public class CreateVtableVisitor implements Visitor {
     private String currClassName;
     private Map<String, ArrayList<MethodOfClass>> funcOfClass;
     private MethodOfClass currMethod;
+    private boolean formals;
 
-    public  CreateVtableVisitor()
-    {
-        this.indent=1;
+    public CreateVtableVisitor() {
+        this.indent = 1;
         this.builder = new StringBuilder();
-        funcOfClass=new HashMap<>();
+        funcOfClass = new HashMap<>();
+        this.formals = false;
     }
 
     public String getString() {
@@ -37,46 +38,37 @@ public class CreateVtableVisitor implements Visitor {
 
     @Override
     public void visit(ClassDecl classDecl) {
-        currClassName=classDecl.name();
-        ArrayList<MethodOfClass> methods=new ArrayList<>();
-        funcOfClass.put(classDecl.name(),methods);
-        if(classDecl.superName()!=null)
-        {
+        currClassName = classDecl.name();
+        ArrayList<MethodOfClass> methods = new ArrayList<>();
+        funcOfClass.put(classDecl.name(), methods);
+        if (classDecl.superName() != null) {
             funcOfClass.get(currClassName).addAll(funcOfClass.get(classDecl.superName()));
         }
         for (var methodDecl : classDecl.methoddecls()) {
-            int index=-1;
-            int loopCount=0;
-            for(var p : funcOfClass.get(currClassName))
-            {
-                if(p.getMethodName().equals(methodDecl.name()))
-                {
-                    index=loopCount;
+            int index = -1;
+            int loopCount = 0;
+            for (var p : funcOfClass.get(currClassName)) {
+                if (p.getMethodName().equals(methodDecl.name())) {
+                    index = loopCount;
                     break;
                 }
                 loopCount++;
             }
-            if(index!=-1)
+            if (index != -1) {
+                funcOfClass.get(currClassName).set(index, new MethodOfClass(methodDecl.name(), classDecl.name() + "." + methodDecl.name()));
+            } else//new method
             {
-                funcOfClass.get(currClassName).set(index,new MethodOfClass(methodDecl.name(),classDecl.name()+"."+methodDecl.name()));
-            }
-            else//new method
-            {
-                funcOfClass.get(currClassName).add(new MethodOfClass(methodDecl.name(),classDecl.name()+"."+methodDecl.name()));
+                funcOfClass.get(currClassName).add(new MethodOfClass(methodDecl.name(), classDecl.name() + "." + methodDecl.name()));
             }
             methodDecl.accept(this);
         }
-        this.builder.append("@."+classDecl.name()+"_vtable = global ["+funcOfClass.get(currClassName).size()+" x i8*][\n");
-        int count=0;
-        for (var method : funcOfClass.get(currClassName))
-        {
+        this.builder.append("@." + classDecl.name() + "_vtable = global [" + funcOfClass.get(currClassName).size() + " x i8*][\n");
+        int count = 0;
+        for (var method : funcOfClass.get(currClassName)) {
             appendWithIndent(method.getDecl());
-            if(count<funcOfClass.get(currClassName).size()-1)
-            {
+            if (count < funcOfClass.get(currClassName).size() - 1) {
                 this.builder.append(",\n");
-            }
-            else
-            {
+            } else {
                 this.builder.append("\n");
             }
             count++;
@@ -91,28 +83,28 @@ public class CreateVtableVisitor implements Visitor {
 
     @Override
     public void visit(MethodDecl methodDecl) {
-        currMethod=null;
-        for( var method : funcOfClass.get(currClassName)){
-            if(method.getMethodName().equals(methodDecl.name()))
-            {
-                currMethod=method;
+        currMethod = null;
+        for (var method : funcOfClass.get(currClassName)) {
+            if (method.getMethodName().equals(methodDecl.name())) {
+                currMethod = method;
                 break;
             }
         }
         currMethod.setDecl("i8* bitcast(");
         methodDecl.returnType().accept(this);
-        currMethod.setDecl(currMethod.getDecl()+"(i8* ");
-        for (var formal : methodDecl.formals())
-        {
+        currMethod.setDecl(currMethod.getDecl() + "(i8* ");
+        this.formals = true;
+        for (var formal : methodDecl.formals()) {
             formal.accept(this);
         }
-        currMethod.setDecl(currMethod.getDecl()+")* @"+currMethod.getClassAndMethod()+" to i8*)");
+        this.formals = false;
+        currMethod.setDecl(currMethod.getDecl() + ")* @" + currMethod.getClassAndMethod() + " to i8*)");
 
     }
 
     @Override
     public void visit(FormalArg formalArg) {
-        currMethod.setDecl(currMethod.getDecl()+", ");
+        currMethod.setDecl(currMethod.getDecl() + ", ");
         formalArg.type().accept(this);
     }
 
@@ -233,22 +225,38 @@ public class CreateVtableVisitor implements Visitor {
 
     @Override
     public void visit(IntAstType t) {
-        currMethod.setDecl(currMethod.getDecl()+"i32 ");
+        currMethod.setDecl(currMethod.getDecl() + "i32 ");
+        if (formals) {
+            currMethod.setFormals("i32 ");
+        }
     }
 
 
     @Override
     public void visit(BoolAstType t) {
-        currMethod.setDecl(currMethod.getDecl()+"i1 ");
+        currMethod.setDecl(currMethod.getDecl() + "i1 ");
+        if (formals) {
+            currMethod.setFormals("i1 ");
+        }
     }
 
     @Override
     public void visit(IntArrayAstType t) {
-        currMethod.setDecl(currMethod.getDecl()+"i32* ");
+        currMethod.setDecl(currMethod.getDecl() + "i32* ");
+        if (formals) {
+            currMethod.setFormals("i32* ");
+        }
     }
 
     @Override
     public void visit(RefType t) {
-//todo
+        currMethod.setDecl(currMethod.getDecl() + "i8* ");
+        if (formals) {
+            currMethod.setFormals("i8* ");
+        }
+    }
+
+    public Map<String, ArrayList<MethodOfClass>> getFuncOfClass() {
+        return funcOfClass;
     }
 }

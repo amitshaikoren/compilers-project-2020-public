@@ -1,6 +1,7 @@
 import ast.*;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -70,12 +71,13 @@ public class Main {
                     symbolTableVistor.visit(prog);
                     CreateVtableVisitor vtables = new CreateVtableVisitor();
                     vtables.visit(prog);
+                    Map<String, ArrayList<MethodOfClass>> funcOfClass = vtables.getFuncOfClass();
                     MapVtableVisitor mapVtable=new MapVtableVisitor();
                     mapVtable.visit(prog);
                     Map<String,ClassMap> classMaps = mapVtable.getClassMaps();
-                    TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor(lookupTable,classMaps);
+                    TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor(lookupTable,classMaps,funcOfClass);
                     translator.visit(prog);
-                    outFile.write(vtables.getString()+"\n********************\n"+translator.getString());
+                    outFile.write(vtables.getString()+translator.getString());
 
                 } else if (action.equals("rename")) {
                     var type = args[2];

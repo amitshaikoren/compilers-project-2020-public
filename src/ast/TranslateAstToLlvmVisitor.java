@@ -1,5 +1,7 @@
 package ast;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 public class TranslateAstToLlvmVisitor implements Visitor{
@@ -23,8 +25,8 @@ public class TranslateAstToLlvmVisitor implements Visitor{
             "\tret void\n" +
             "            }\n";
 
-    static int countOfReg=-1;
-    static  int countOfIf=-1;
+    private static int countOfReg=-1;
+    private static int countOfIf=-1;
     private int indent ;
     private StringBuilder builder;
     private CurrInstruction currInstruction;
@@ -34,8 +36,10 @@ public class TranslateAstToLlvmVisitor implements Visitor{
     private ExprTranslation fatherExpr;
     private Map<String,ClassMap> classOfMaps;
     private boolean defineFunc;
+    private String currentClass;
+    private  Map<String, ArrayList<MethodOfClass>> funcOfClass;
 
-    public TranslateAstToLlvmVisitor(LookupTable lookupTable,Map<String,ClassMap> classOfMaps)
+    public TranslateAstToLlvmVisitor(LookupTable lookupTable,Map<String,ClassMap> classOfMaps,Map<String, ArrayList<MethodOfClass>> funcOfClass)
     {
         this.lookupTable=lookupTable;
         this.indent=1;
@@ -44,6 +48,8 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         this.fatherExpr=null;
         this.classOfMaps=classOfMaps;
         this.defineFunc=false;
+        this.funcOfClass=funcOfClass;
+
     }
     public String getString() {
         return this.builder.toString();
@@ -66,7 +72,23 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         }
         return null;//error
     }
-
+    private SymbolTable getmethodnameResolution(String name,SymbolTable other)
+    {
+        if(other.isInMethodEntries(name))
+        {
+            return other;
+        }
+        SymbolTable fatherSymbolTable=other.getFatherSymbolTable();
+        while (fatherSymbolTable!=null)
+        {
+            if(fatherSymbolTable.isInMethodEntries(name))
+            {
+                return fatherSymbolTable;
+            }
+            fatherSymbolTable=fatherSymbolTable.getFatherSymbolTable();
+        }
+        return null;//error
+    }
     private void appendWithIndent(String str) {
         this.builder.append("\t".repeat(this.indent));
         this.builder.append(str);
@@ -98,7 +120,6 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         for (ClassDecl classdecl : program.classDecls()) {
             classdecl.accept(this);
         }
-        this.builder.append("}");
     }
 
     @Override
@@ -113,14 +134,16 @@ public class TranslateAstToLlvmVisitor implements Visitor{
             this.currSymbolTable=lookupTable.getSymbolTable(methodDecl);
             methodDecl.accept(this);
         }
+        this.builder.append("}\n");
 
     }
 
     @Override
     public void visit(MainClass mainClass) {
     this.builder.append("define i32 @main(){\n");
-    //mainClass.mainStatement().accept(this);
-    this.builder.append("}\n");
+    mainClass.mainStatement().accept(this);
+    appendWithIndent("ret i32 0\n ");
+        this.builder.append("}\n");
     }
 
     @Override
@@ -135,7 +158,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
             this.currSymbolTable=lookupTable.getSymbolTable(formal);
             formal.accept(this);
         }
-        this.builder.append(")\n");
+        this.builder.append("){\n");
         this.defineFunc=false;
         for (var formal : methodDecl.formals())
         {
@@ -167,7 +190,8 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         this.currInstruction=currInstruction.VarDecl;
         appendWithIndent("%"+formalArg.name());
         formalArg.type().accept(this);
-        this.builder.append("store ");
+        this.builder.append("\n");
+        appendWithIndent("store ");
         printType(currSymbolTable.getSymbolinfo(formalArg.name(),false).getDecl());
         this.builder.append("%."+formalArg.name());
         currExpr=null;
@@ -440,6 +464,46 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(MethodCallExpr e) {
+    e.ownerExpr().accept(this);
+    String bitCast= getNextRegister();
+    appendWithIndent(bitCast+ " = bitcast i8* "+currExpr.getResult()+" to i8***\n");
+    String loadVtable=getNextRegister();
+    appendWithIndent(loadVtable+" = load i8**, i8*** "+bitCast+"\n");
+    String offset= this.classOfMaps.get(currentClass).getMethodMap().get(e.methodId());
+    String pointerToOffset=getNextRegister();
+    appendWithIndent(pointerToOffset+" = getelementptr i8*,i8** "+loadVtable+" ,i32 "+offset+"\n");
+    String readFromArray=getNextRegister();
+    appendWithIndent(readFromArray+" = load i8*, i8** "+pointerToOffset+"\n");
+    String castPointer=getNextRegister();
+    appendWithIndent(castPointer+" = bitcast i8* " + readFromArray + " to ");
+    SymbolTable ofObject=lookupTable.getSymbolTable(lookupTable.getClassDeclName(currentClass));
+    SymbolTable stOfDecl=getmethodnameResolution(e.methodId(),ofObject);
+    String retType =stOfDecl.getSymbolinfo(e.methodId(),true).getDecl();
+    printType(retType);
+    this.builder.append("(i8* ");
+    ArrayList<String> formalArgs=null;
+    for (var p : funcOfClass.get(currentClass)) {
+       if (p.getMethodName().equals(e.methodId())){
+           formalArgs=p.getFormals();
+           for ( var formal : p.getFormals()){
+               this.builder.append(","+formal);
+
+           }
+           break;
+       }
+    }
+    this.builder.append(")*\n");
+    String calltoFunc=getNextRegister();
+    appendWithIndent(calltoFunc+" = call ");
+    printType(retType);
+    this.builder.append(castPointer+"(i8* "+currExpr.getResult());
+    for ( int i = 0; i<e.actuals().size();i++){
+        this.builder.append(", " +formalArgs.get(i)+" ");
+        e.actuals().get(i).accept(this);
+        this.builder.append(currExpr.getResult());
+    }
+        this.builder.append(")\n");
+    currExpr.setResult(calltoFunc);
 
     }
 
@@ -455,6 +519,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
             exp=new ExprTranslation(fatherExpr,null,null,Integer.toString(e.num()));
         }
         currExpr=exp;
+
     }
 
     @Override
@@ -491,6 +556,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         String reg=getNextRegister();
         appendWithIndent(reg+" = load ");
         SymbolTable stOfDecl=getSTnameResolution(e.id());
+        currentClass=stOfDecl.getSymbolinfo(e.id(),false).getRefType();
         printType(stOfDecl.getSymbolinfo(e.id(),false).getDecl());
         this.builder.append(", ");
         printPointerType(stOfDecl.getSymbolinfo(e.id(),false).getDecl());
@@ -537,7 +603,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(NewObjectExpr e) {
-
+        currentClass=e.classId();
       String allocate = getNextRegister();
         ExprTranslation exp;
         if(currExpr==null)
@@ -552,7 +618,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
       int numOfFileds =this.classOfMaps.get(e.classId()).getVarMap().size()*4+8;
       appendWithIndent(allocate+" = call i8* @calloc(i32 1, i32 "+numOfFileds+")\n");
        String castPointer = getNextRegister();
-       appendWithIndent(castPointer+" = bitcast i8* "+ allocate+" to i8**\n");
+       appendWithIndent(castPointer+" = bitcast i8* "+ allocate+" to i8***\n");
        int numOfMethods=this.classOfMaps.get(e.classId()).getMethodMap().size();
        String pointerToVtable=getNextRegister();
        appendWithIndent(pointerToVtable+ " = getelementptr ["+numOfMethods + " x i8*], ["+numOfMethods + " x i8*]* @."+e.classId()+"_vtable, i32 0, i32 0\n");
