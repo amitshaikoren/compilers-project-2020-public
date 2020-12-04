@@ -73,7 +73,7 @@ public class Main {
                     MapVtableVisitor mapVtable=new MapVtableVisitor();
                     mapVtable.visit(prog);
                     Map<String,ClassMap> classMaps = mapVtable.getClassMaps();
-                    TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor(lookupTable);
+                    TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor(lookupTable,classMaps);
                     translator.visit(prog);
                     outFile.write(vtables.getString()+"\n********************\n"+translator.getString());
 

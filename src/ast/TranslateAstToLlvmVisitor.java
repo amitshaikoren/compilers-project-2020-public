@@ -1,9 +1,11 @@
 package ast;
 
+import java.util.Map;
+
 public class TranslateAstToLlvmVisitor implements Visitor{
 
-    String code= "\n" +
-            "        declare i8* @calloc(i32, i32)\n" +
+    String code=
+            "declare i8* @calloc(i32, i32)\n" +
             "declare i32 @printf(i8*, ...)\n" +
             "declare void @exit(i32)\n" +
             "\n" +
@@ -19,41 +21,29 @@ public class TranslateAstToLlvmVisitor implements Visitor{
             "        call i32 (i8*, ...) @printf(i8* %_str)\n" +
             "\tcall void @exit(i32 1)\n" +
             "\tret void\n" +
-            "            }\n" +
-            "            define i32 @main() {\n" +
-            "        %_0 = call i8* @calloc(i32 8, i32 8)\n" +
-            "\t%_1 = bitcast i8* %_0 to i8***\n" +
-            "            %_2 = getelementptr [1 x i8*], [1 x i8*]* @.Simple_vtable, i32 0, i32 0\n" +
-            "        store i8** %_2, i8*** %_1\n" +
-            "        %_3 = bitcast i8* %_0 to i8***\n" +
-            "        %_4 = load i8**, i8*** %_3\n" +
-            "        %_5 = getelementptr i8*, i8** %_4, i32 0\n" +
-            "        %_6 = load i8*, i8** %_5\n" +
-            "        %_7 = bitcast i8* %_6 to i32 (i8*)*\n" +
-            "        %_8 = call i32 %_7(i8* %_0)\n" +
-            "        call void (i32) @print_int(i32 %_8)\n" +
-            "\tret i32 0\n" +
-            "            }\n" +
-            "\n" +
-            "            define i32 @Simple.bar(i8* %this) {";
+            "            }\n";
 
     static int countOfReg=-1;
     static  int countOfIf=-1;
     private int indent ;
     private StringBuilder builder;
-    CurrInstruction currInstruction;
+    private CurrInstruction currInstruction;
     private SymbolTable currSymbolTable;
     private LookupTable lookupTable;
-    ExprTranslation currExpr;
-    ExprTranslation fatherExpr;
+    private ExprTranslation currExpr;
+    private ExprTranslation fatherExpr;
+    private Map<String,ClassMap> classOfMaps;
+    private boolean defineFunc;
 
-    public TranslateAstToLlvmVisitor(LookupTable lookupTable)
+    public TranslateAstToLlvmVisitor(LookupTable lookupTable,Map<String,ClassMap> classOfMaps)
     {
         this.lookupTable=lookupTable;
         this.indent=1;
         this.builder = new StringBuilder();
         this.currExpr=null;
         this.fatherExpr=null;
+        this.classOfMaps=classOfMaps;
+        this.defineFunc=false;
     }
     public String getString() {
         return this.builder.toString();
@@ -113,6 +103,8 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(ClassDecl classDecl) {
+        this.countOfIf=0;
+        this.countOfReg=0;
         for (var fieldDecl : classDecl.fields()) {
             this.currSymbolTable=lookupTable.getSymbolTable(fieldDecl);
             fieldDecl.accept(this);
@@ -126,12 +118,25 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(MainClass mainClass) {
-    //todo: do it
+    this.builder.append("define i32 @main(){\n");
+    //mainClass.mainStatement().accept(this);
+    this.builder.append("}\n");
     }
 
     @Override
     public void visit(MethodDecl methodDecl) {
-        //todo : declere func
+        this.defineFunc=true;
+        this.currSymbolTable=lookupTable.getSymbolTable(methodDecl);
+        this.builder.append("define ");
+        printType(this.currSymbolTable.getSymbolinfo(methodDecl.name(),true).getDecl());
+        this.builder.append("@"+this.currSymbolTable.getNameOfClass()+"."+methodDecl.name()+"(i8* this");
+        for (var formal : methodDecl.formals())
+        {
+            this.currSymbolTable=lookupTable.getSymbolTable(formal);
+            formal.accept(this);
+        }
+        this.builder.append(")\n");
+        this.defineFunc=false;
         for (var formal : methodDecl.formals())
         {
             this.currSymbolTable=lookupTable.getSymbolTable(formal);
@@ -153,6 +158,12 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(FormalArg formalArg) {
+        if (defineFunc){
+            this.builder.append(",");
+            printType(currSymbolTable.getSymbolinfo(formalArg.name(),false).getDecl());
+            this.builder.append(formalArg.name());
+            return;
+        }
         this.currInstruction=currInstruction.VarDecl;
         appendWithIndent("%"+formalArg.name());
         formalArg.type().accept(this);
