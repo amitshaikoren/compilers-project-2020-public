@@ -7,11 +7,16 @@ public class SymbolTable {
     private SymbolInfo currSymbolInfo;
     private String currSymbolName;
     private String nameOfClass;
+
+
     private Map<String, SymbolInfo> methodEntries = new HashMap<>();
     private Map<String, SymbolInfo> varEntries = new HashMap<>();
     private SymbolTable fatherSymbolTable;
 
 
+    public Map<String, SymbolInfo> getMethodEntries() {
+        return methodEntries;
+    }
     public String getNameOfClass() {
         return nameOfClass;
     }
