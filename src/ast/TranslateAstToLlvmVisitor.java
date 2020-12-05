@@ -284,8 +284,8 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         }
         else{
             String pointerToVtable =getNextRegister();
-            this.builder.append(pointerToVtable+" = getelementptr i8,i8* %this, ");
-            printType(stOfDecl.getSymbolinfo(assignStatement.lv(), false).getDecl());
+            appendWithIndent(pointerToVtable + " = getelementptr i8,i8* %this, i32 ");
+
             this.builder.append(this.classOfMaps.get(stOfDecl.getNameOfClass()).getVarMap().get(assignStatement.lv())+"\n");
             String bitCast=getNextRegister();
             appendWithIndent(bitCast+" = bitcast i8* "+pointerToVtable+" to ");
@@ -338,8 +338,30 @@ public class TranslateAstToLlvmVisitor implements Visitor{
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
-        String loadArray = getNextRegister();
-        appendWithIndent(loadArray+" = load i32* , i32** %"+assignArrayStatement.lv()+"\n");
+        SymbolTable stOfDecl = getSTnameResolution(assignArrayStatement.lv());
+        String loadArray;
+        if (currSymbolTable== stOfDecl ) {
+             loadArray = getNextRegister();
+            appendWithIndent(loadArray + " = load i32* , i32** %" + assignArrayStatement.lv() + "\n");
+        }
+        else{
+            String pointerToVtable = getNextRegister();
+            appendWithIndent(pointerToVtable + " = getelementptr i8,i8* %this, i32 ");
+
+            this.builder.append(" " + this.classOfMaps.get(stOfDecl.getNameOfClass()).getVarMap().get(assignArrayStatement.lv()) + "\n");
+            String bitCast = getNextRegister();
+            appendWithIndent(bitCast + " = bitcast i8* " + pointerToVtable + " to ");
+            printPointerType(stOfDecl.getSymbolinfo(assignArrayStatement.lv(), false).getDecl());
+            this.builder.append("\n");
+            String result = getNextRegister();
+            appendWithIndent(result + " = load ");
+            printType(stOfDecl.getSymbolinfo(assignArrayStatement.lv(), false).getDecl());
+            this.builder.append(", ");
+            printPointerType(stOfDecl.getSymbolinfo(assignArrayStatement.lv(), false).getDecl());
+            this.builder.append(bitCast + "\n");
+            loadArray=result;
+
+        }
         String checkPositive = getNextRegister();
         assignArrayStatement.index().accept(this);
         appendWithIndent(checkPositive+" = icmp slt i32 "+currExpr.getResult()+" , 0\n");
@@ -487,6 +509,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         e.arrayExpr().accept(this);
             String result=getNextRegister();
             appendWithIndent(result+" = load i32 , i32* "+ currExpr.getResult()+"\n");
+            currExpr.setResult(result);
 
 
     }
@@ -605,8 +628,8 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         } else {
             if (currInstruction == currInstruction.Return) {
                 String pointerToVtable = getNextRegister();
-                appendWithIndent(pointerToVtable + " = getelementptr i8,i8* %this, ");
-                printType(stOfDecl.getSymbolinfo(e.id(), false).getDecl());
+                appendWithIndent(pointerToVtable + " = getelementptr i8,i8* %this, i32 ");
+
                 this.builder.append(" " + this.classOfMaps.get(stOfDecl.getNameOfClass()).getVarMap().get(e.id()) + "\n");
                 String bitCast = getNextRegister();
                 appendWithIndent(bitCast + " = bitcast i8* " + pointerToVtable + " to ");
@@ -641,22 +664,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
                 }
                 currExpr = exp;
             }
-        /*
-        printType(stOfDecl.getSymbolinfo(e.id(),false).getDecl());
-        this.builder.append(", ");
-        printPointerType(stOfDecl.getSymbolinfo(e.id(),false).getDecl());
-        this.builder.append(" %"+e.id()+"\n");
-        if(currExpr==null)
-        {
-            exp=new ExprTranslation(null,null,null,reg);
-        }
-        else
-        {
-            exp=new ExprTranslation(fatherExpr,null,null,reg);
-        }
-        currExpr=exp;
 
-         */
         }
     }
 
@@ -729,7 +737,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
     public void visit(NotExpr e) {
         e.e().accept(this);
         String notE = getNextRegister();
-        appendWithIndent(notE +" = sub 1 i1"+currExpr.getResult()+"\n");
+        appendWithIndent(notE +" = sub i1 1, "+currExpr.getResult()+"\n");
         currExpr.setResult(notE);
 
     }

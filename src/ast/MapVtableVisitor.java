@@ -49,7 +49,8 @@ public class MapVtableVisitor implements Visitor{
             Map<String,String> varMap=classMaps.get(classDecl.name()).getVarMap();
             if(!varMap.containsKey(fieldDecl.name()))
             {
-                int location=classMaps.get(classDecl.name()).getVarMap().size()*4+8;
+                //todo : instead of 8 , make size for each type
+                int location=classMaps.get(classDecl.name()).getVarMap().size()*8+8;
                 classMaps.get(classDecl.name()).getVarMap().put(fieldDecl.name(),Integer.toString(location));
             }
         }
