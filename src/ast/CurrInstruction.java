@@ -7,7 +7,8 @@ public enum CurrInstruction {
     VarDeclIntArray("intArray"),
     VarDeclRef(""),
     ClassDecl(""),
-    MethodDecl("");
+    MethodDecl(""),
+    Return("");
     private final String name;
     private CurrInstruction(String name)
     {
