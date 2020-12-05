@@ -272,7 +272,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         assignStatement.rv().accept(this);
         this.appendWithIndent("");
         SymbolTable stOfDecl=getSTnameResolution(assignStatement.lv());
-        if(this.currSymbolTable==stOfDecl) {
+        if(this.currSymbolTable==stOfDecl&&currSymbolTable.getMethodEntries().size()==0) {
             this.builder.append("store ");
             printType(stOfDecl.getSymbolinfo(assignStatement.lv(), false).getDecl());
             this.builder.append(currExpr.getResult());
@@ -340,7 +340,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
     public void visit(AssignArrayStatement assignArrayStatement) {
         SymbolTable stOfDecl = getSTnameResolution(assignArrayStatement.lv());
         String loadArray;
-        if (currSymbolTable== stOfDecl ) {
+        if (currSymbolTable== stOfDecl  && currSymbolTable.getMethodEntries().size()==0) {
              loadArray = getNextRegister();
             appendWithIndent(loadArray + " = load i32* , i32** %" + assignArrayStatement.lv() + "\n");
         }
@@ -612,6 +612,9 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         ExprTranslation exp;
 
         SymbolTable stOfDecl = getSTnameResolution(e.id());
+        if (stOfDecl.getSymbolinfo(e.id(),false).getRefType()!=null){
+            this.currentClass=stOfDecl.getSymbolinfo(e.id(),false).getRefType();
+        }
         if (stOfDecl == currSymbolTable&&currSymbolTable.getMethodEntries().size()==0) {
             String reg = getNextRegister();
             appendWithIndent(reg + " = load ");
