@@ -38,8 +38,9 @@ public class TranslateAstToLlvmVisitor implements Visitor{
     private boolean defineFunc;
     private String currentClass;
     private  Map<String, ArrayList<MethodOfClass>> funcOfClass;
+    private Map<String,String> mapOfAllocation;
 
-    public TranslateAstToLlvmVisitor(LookupTable lookupTable,Map<String,ClassMap> classOfMaps,Map<String, ArrayList<MethodOfClass>> funcOfClass)
+    public TranslateAstToLlvmVisitor(LookupTable lookupTable,Map<String,ClassMap> classOfMaps,Map<String, ArrayList<MethodOfClass>> funcOfClass,Map<String,String> mapOfAllocation)
     {
         this.lookupTable=lookupTable;
         this.indent=1;
@@ -49,6 +50,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         this.classOfMaps=classOfMaps;
         this.defineFunc=false;
         this.funcOfClass=funcOfClass;
+        this.mapOfAllocation=mapOfAllocation;
 
     }
     public String getString() {
@@ -724,7 +726,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
             exp=new ExprTranslation(fatherExpr,null,null,allocate);
         }
         currExpr=exp;
-      int numOfFileds =this.classOfMaps.get(e.classId()).getVarMap().size()*4+8;//todo change
+      int numOfFileds =Integer.parseInt(this.mapOfAllocation.get(e.classId()));
       appendWithIndent(allocate+" = call i8* @calloc(i32 1, i32 "+numOfFileds+")\n");
        String castPointer = getNextRegister();
        appendWithIndent(castPointer+" = bitcast i8* "+ allocate+" to i8***\n");

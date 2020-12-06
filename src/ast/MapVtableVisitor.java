@@ -12,8 +12,14 @@ public class MapVtableVisitor implements Visitor{
     private int currVarSpace=0;
     private Map<String,String> lastLocation;
 
+    public Map<String, String> getLastLocation() {
+        return lastLocation;
+    }
+
+
     public MapVtableVisitor() {
         this.classMaps = new HashMap<>();
+        this.lastLocation=new HashMap<>();
     }
 
     public Map<String, ClassMap> getClassMaps() {
@@ -54,13 +60,14 @@ public class MapVtableVisitor implements Visitor{
             Map<String,String> varMap=classMaps.get(classDecl.name()).getVarMap();
             if(!varMap.containsKey(fieldDecl.name()))
             {
-                //todo: check
                 int location=currVarSpace;
                 fieldDecl.accept(this);
                 classMaps.get(classDecl.name()).getVarMap().put(fieldDecl.name(),Integer.toString(location));
             }
             lastLocation.put(classDecl.name(),Integer.toString(currVarSpace));
         }
+        lastLocation.put(classDecl.name(),Integer.toString(currVarSpace));
+
 
     }
 
