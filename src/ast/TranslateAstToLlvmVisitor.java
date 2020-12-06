@@ -410,7 +410,6 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         exp.setE2(currExpr);
         String reg=getNextRegister();
         appendWithIndent(reg+" = "+infixSymbol+" ");
-        //todo: check if we can assume that its always int
         printType("int");
         this.builder.append(exp.getE1().getResult()+", ");
         this.builder.append(exp.getE2().getResult()+"\n");
@@ -725,7 +724,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
             exp=new ExprTranslation(fatherExpr,null,null,allocate);
         }
         currExpr=exp;
-      int numOfFileds =this.classOfMaps.get(e.classId()).getVarMap().size()*4+8;
+      int numOfFileds =this.classOfMaps.get(e.classId()).getVarMap().size()*4+8;//todo change
       appendWithIndent(allocate+" = call i8* @calloc(i32 1, i32 "+numOfFileds+")\n");
        String castPointer = getNextRegister();
        appendWithIndent(castPointer+" = bitcast i8* "+ allocate+" to i8***\n");

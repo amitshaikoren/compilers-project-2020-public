@@ -9,6 +9,8 @@ public class MapVtableVisitor implements Visitor{
     Map<String,ClassMap> classMaps;
     private String currClassName;
     private ClassMap currClassMap;
+    private int currVarSpace=0;
+    private Map<String,String> lastLocation;
 
     public MapVtableVisitor() {
         this.classMaps = new HashMap<>();
@@ -30,10 +32,12 @@ public class MapVtableVisitor implements Visitor{
         currClassName=classDecl.name();
         if(classDecl.superName()!=null)
         {
+            currVarSpace=Integer.parseInt(lastLocation.get(classDecl.superName()));
             currClassMap=new ClassMap(classMaps.get(classDecl.superName()).getMethodMap(),classMaps.get(classDecl.superName()).getVarMap());
         }
         else
         {
+            currVarSpace=8;
             currClassMap=new ClassMap();
         }
         classMaps.put(classDecl.name(),currClassMap);
@@ -45,14 +49,17 @@ public class MapVtableVisitor implements Visitor{
                 classMaps.get(classDecl.name()).getMethodMap().put(methodDecl.name(),Integer.toString(location));
             }
         }
+
         for (var fieldDecl : classDecl.fields()) {
             Map<String,String> varMap=classMaps.get(classDecl.name()).getVarMap();
             if(!varMap.containsKey(fieldDecl.name()))
             {
-                //todo : instead of 8 , make size for each type
-                int location=classMaps.get(classDecl.name()).getVarMap().size()*8+8;
+                //todo: check
+                int location=currVarSpace;
+                fieldDecl.accept(this);
                 classMaps.get(classDecl.name()).getVarMap().put(fieldDecl.name(),Integer.toString(location));
             }
+            lastLocation.put(classDecl.name(),Integer.toString(currVarSpace));
         }
 
     }
@@ -74,7 +81,7 @@ public class MapVtableVisitor implements Visitor{
 
     @Override
     public void visit(VarDecl varDecl) {
-
+    varDecl.type().accept(this);
     }
 
     @Override
@@ -189,21 +196,24 @@ public class MapVtableVisitor implements Visitor{
 
     @Override
     public void visit(IntAstType t) {
-
+currVarSpace=currVarSpace+4;
     }
 
     @Override
     public void visit(BoolAstType t) {
+        currVarSpace=currVarSpace+1;
 
     }
 
     @Override
     public void visit(IntArrayAstType t) {
+        currVarSpace=currVarSpace+8;
 
     }
 
     @Override
     public void visit(RefType t) {
+        currVarSpace=currVarSpace+8;
 
     }
 }
