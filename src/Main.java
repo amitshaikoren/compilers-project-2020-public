@@ -63,7 +63,9 @@ public class Main {
                     outFile.write(astPrinter.getString());
 
                 } else if (action.equals("semantic")) {
-                    throw new UnsupportedOperationException("TODO - Ex. 3");
+                    LookupTable lookupTable = new LookupTable();
+                    AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
+                    symbolTableVistor.visit(prog);
 
                 } else if (action.equals("compile")) {
                     LookupTable lookupTable = new LookupTable();
