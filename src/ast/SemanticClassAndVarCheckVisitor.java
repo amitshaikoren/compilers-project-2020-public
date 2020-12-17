@@ -17,7 +17,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     private String currClassCheck;
 
-    public void RaiseError(){};
+    public static void RaiseError(){};
 
     @Override
     public void visit(Program program) {
