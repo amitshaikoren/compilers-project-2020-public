@@ -10,6 +10,8 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     //STATE VARIABLES
     private String mainClassName;
     private Set<String> classes = new HashSet<>();
+    private Set<String> allClasses = new HashSet<>();
+    private boolean setClasses=false;
     private Map<String, Set<String>> classFields = new HashMap<>();
 
     private boolean updatingClassFields;
@@ -24,17 +26,26 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
         //Get main class name
         program.mainClass().accept(this);
+        setClasses=true;
+        for (ClassDecl classdecl : program.classDecls()) {
+            classdecl.accept(this);
+        }
+        setClasses=false;
 
         for (ClassDecl classdecl : program.classDecls()) {
-
             classdecl.accept(this);
         }
     }
 
     @Override
     public void visit(ClassDecl classDecl) {
-        currClassCheck = classDecl.name();
+        if(setClasses)
+        {
+            allClasses.add(classDecl.name());
+            return;
+        }
 
+        currClassCheck = classDecl.name();
         String superClassName = classDecl.superName();
 
 
@@ -67,6 +78,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             fieldDecl.accept(this);
         }
 
+        for (var methodDecl : classDecl.methoddecls()) {
+            methodDecl.accept(this);
+        }
+
     }
 
     @Override
@@ -76,11 +91,25 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(MethodDecl methodDecl) {
+
+        methodDecl.returnType().accept(this);
+
+        for (var formal : methodDecl.formals()) {
+            formal.accept(this);
+        }
+
+        for (var varDecl : methodDecl.vardecls()) {
+            varDecl.accept(this);
+        }
+
+        for (var stmt : methodDecl.body()) {
+            stmt.accept(this);
+        }
     }
 
     @Override
     public void visit(FormalArg formalArg) {
-
+        formalArg.type().accept(this);//(8)
     }
 
     @Override
@@ -96,7 +125,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             classFieldSet.add(varDecl.name());
 
         }
-
+        varDecl.type().accept(this);//(8)
     }
 
     @Override
@@ -121,7 +150,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(AssignStatement assignStatement) {
-
+        assignStatement.rv().accept(this);//(9)
     }
 
     @Override
@@ -201,7 +230,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(NewObjectExpr e) {
-
+        if(!allClasses.contains(e.classId()))
+        {
+            //new A() is invoked for a class A that is defined somewhere in the file
+            //(either before or after the same class, or to the same class itself) (9)
+            RaiseError();
+        }
     }
 
     @Override
@@ -226,6 +260,11 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(RefType t) {
-
+        if(!allClasses.contains(t.id()))
+        {
+            //A type declaration of a reference type of A refers to classes that are defined somewhere in the file
+            // (either before or after the same class, or to the same class itself).(8)
+            RaiseError();
+        }
     }
 }
