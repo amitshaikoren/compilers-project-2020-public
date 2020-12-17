@@ -1,13 +1,11 @@
 package ast;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MapVtableVisitor implements Visitor{
 
     Map<String,ClassMap> classMaps;
-    private String currClassName;
     private ClassMap currClassMap;
     private int currVarSpace=0;
     private Map<String,String> lastLocation;
@@ -35,7 +33,6 @@ public class MapVtableVisitor implements Visitor{
 
     @Override
     public void visit(ClassDecl classDecl) {
-        currClassName=classDecl.name();
         if(classDecl.superName()!=null)
         {
             currVarSpace=Integer.parseInt(lastLocation.get(classDecl.superName()));
