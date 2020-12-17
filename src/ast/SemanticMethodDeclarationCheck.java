@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class SemanticMethodDeclerationCheck implements Visitor{
+public class SemanticMethodDeclarationCheck implements Visitor{
 
     //STATE VARIABLES
 
-    private Map<String, Set<String>> classMethods = new HashMap<>();
+    private Map<String, Set<MethodSemanticCheckInfo>> classMethods = new HashMap<>();
     private String currClassCheck;
 
 
