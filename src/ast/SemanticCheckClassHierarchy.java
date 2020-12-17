@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Set;
 
 public class SemanticCheckClassHierarchy {
-    private Set<SemanticCheckClass> roots;
+    private static Set<SemanticCheckClass> roots;
 
-    public SemanticCheckClass getClass(String classA) {
+    public static SemanticCheckClass getClass(String classA) {
         for (var root : roots) {
             SemanticCheckClass potentialClass = root.getClass(classA);
             if(potentialClass != null){
@@ -17,7 +17,7 @@ public class SemanticCheckClassHierarchy {
         return null;
     }
 
-    public List<String> findFathers(String classA) {
+    public static List<String> findFathers(String classA) {
         List<String> fatherList = new ArrayList<>();
         SemanticCheckClass classNode = getClass(classA);
         while(classNode.getSuperClass() != null){
