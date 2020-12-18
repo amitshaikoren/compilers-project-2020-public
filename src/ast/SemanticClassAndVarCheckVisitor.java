@@ -21,6 +21,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private boolean updatingClassFields;
     private boolean updatingMethodFields;
     private boolean methodCallExpr;
+    private boolean arraylengthexp;
 
     private String currClassCheck;
 
@@ -50,10 +51,15 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         return null;//error
     }
-    private String findType(IdentifierExpr e)
+    private String findRType(IdentifierExpr e)
     {
         SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
         return stOfDecl.getSymbolinfo(e.id(),false).getRefType();
+    }
+    private String findType(IdentifierExpr e)
+    {
+        SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
+        return stOfDecl.getSymbolinfo(e.id(),false).getDecl();
     }
     @Override
     public void visit(Program program) {
@@ -228,7 +234,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(ArrayLengthExpr e) {
-
+        //The static type of the object on which length invoked is int[] (13)
+        arraylengthexp=true;
+        e.arrayExpr().accept(this);
+        arraylengthexp=false;
     }
 
     @Override
@@ -264,13 +273,20 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     @Override
     public void visit(IdentifierExpr e) {
         if (methodCallExpr){ //(10)
-            String type =findType(e);
+            String type =findRType(e);
             if (!allClasses.contains(type)){ // check if the type is int , int [] , boolean
                 RaiseError();
             }
             else{
                 callMethod=type; //is legal type
             }
+        }
+        if (arraylengthexp){ //(13)
+            String type =findType(e);
+            if (!type.equals("intArr")){
+                RaiseError();
+            }
+
         }
     }
 
