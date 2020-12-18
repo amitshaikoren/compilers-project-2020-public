@@ -9,18 +9,52 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     //STATE VARIABLES
     private String mainClassName;
-    private Set<String> classes = new HashSet<>();
-    private Set<String> allClasses = new HashSet<>();
-    private boolean setClasses=false;
-    private Map<String, Set<String>> classFields = new HashMap<>();
+    private Set<String> classes ;
+    private Set<String> allClasses ;
+    private boolean setClasses;
+    private Map<String, Set<String>> classFields ;
+    private SymbolTable currSymbolTable;
+    private LookupTable lookupTable;
+
+    private String callMethod;
 
     private boolean updatingClassFields;
     private boolean updatingMethodFields;
+    private boolean methodCallExpr;
 
     private String currClassCheck;
 
+    public SemanticClassAndVarCheckVisitor(LookupTable lookupTable){
+        this.classes = new HashSet<>();
+        this.allClasses = new HashSet<>();
+        this.classFields = new HashMap<>();
+        this.setClasses=false;
+        this.lookupTable=lookupTable;
+        this.callMethod=null;
+    }
     public static void RaiseError(){};
-
+    private SymbolTable getSTnameResolution(SymbolTable symbolTableOfDecl,String name)
+    {
+        if(symbolTableOfDecl.isInVarEntries(name))
+        {
+            return symbolTableOfDecl;
+        }
+        SymbolTable fatherSymbolTable=symbolTableOfDecl.getFatherSymbolTable();
+        while (fatherSymbolTable!=null)
+        {
+            if(fatherSymbolTable.isInVarEntries(name))
+            {
+                return fatherSymbolTable;
+            }
+            fatherSymbolTable=fatherSymbolTable.getFatherSymbolTable();
+        }
+        return null;//error
+    }
+    private String findType(IdentifierExpr e)
+    {
+        SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
+        return stOfDecl.getSymbolinfo(e.id(),false).getRefType();
+    }
     @Override
     public void visit(Program program) {
 
@@ -75,10 +109,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         updatingMethodFields = false;
 
         for(var fieldDecl : classDecl.fields()){
+            this.currSymbolTable=lookupTable.getSymbolTable(fieldDecl);
             fieldDecl.accept(this);
         }
 
         for (var methodDecl : classDecl.methoddecls()) {
+            this.currSymbolTable=lookupTable.getSymbolTable(methodDecl);
             methodDecl.accept(this);
         }
 
@@ -95,10 +131,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         methodDecl.returnType().accept(this);
 
         for (var formal : methodDecl.formals()) {
+            this.currSymbolTable=lookupTable.getSymbolTable(formal);
             formal.accept(this);
         }
 
         for (var varDecl : methodDecl.vardecls()) {
+            this.currSymbolTable=lookupTable.getSymbolTable(varDecl);
             varDecl.accept(this);
         }
 
@@ -195,6 +233,16 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(MethodCallExpr e) {
+        //In method invocation, the static type of the object is a reference type (not int, bool, or int[]) (10)
+        //method call is invoked on expression e which is either this, a new expression, or a reference to a local variable,
+        // formal parameter or a field. (12)
+        methodCallExpr=true;
+        e.ownerExpr().accept(this);
+        methodCallExpr=false;
+        if (callMethod==null) // (if its int , int[] or bool we raise error earlier .
+        {
+            RaiseError();
+        }
 
     }
 
@@ -215,12 +263,22 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(IdentifierExpr e) {
-
+        if (methodCallExpr){ //(10)
+            String type =findType(e);
+            if (!allClasses.contains(type)){ // check if the type is int , int [] , boolean
+                RaiseError();
+            }
+            else{
+                callMethod=type; //is legal type
+            }
+        }
     }
 
     @Override
     public void visit(ThisExpr e) {
-
+        if (methodCallExpr){ //(12)
+            callMethod = "this"; //this is legal type for call method
+        }
     }
 
     @Override
@@ -235,6 +293,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             //new A() is invoked for a class A that is defined somewhere in the file
             //(either before or after the same class, or to the same class itself) (9)
             RaiseError();
+        }
+        if (methodCallExpr){ // new object is legal for call method (12)
+            callMethod = e.classId();
         }
     }
 
@@ -266,5 +327,6 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             // (either before or after the same class, or to the same class itself).(8)
             RaiseError();
         }
+
     }
 }
