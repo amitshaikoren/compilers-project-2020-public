@@ -54,11 +54,17 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private String findRType(IdentifierExpr e)
     {
         SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
+        if (stOfDecl==null){ //(14)
+            RaiseError();
+        }
         return stOfDecl.getSymbolinfo(e.id(),false).getRefType();
     }
     private String findType(IdentifierExpr e)
     {
         SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
+        if (stOfDecl==null){ //(14)
+            RaiseError();
+        }
         return stOfDecl.getSymbolinfo(e.id(),false).getDecl();
     }
     @Override
@@ -149,6 +155,8 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         for (var stmt : methodDecl.body()) {
             stmt.accept(this);
         }
+        methodDecl.ret().accept(this);
+
     }
 
     @Override
@@ -174,62 +182,88 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(BlockStatement blockStatement) {
-
+        for (var stmt : blockStatement.statements()) {
+            stmt.accept(this);
+        }
     }
 
     @Override
     public void visit(IfStatement ifStatement) {
-
+        ifStatement.cond().accept(this);
+        ifStatement.elsecase().accept(this);
+        ifStatement.thencase().accept(this);
     }
 
     @Override
     public void visit(WhileStatement whileStatement) {
-
+        whileStatement.cond().accept(this);
+        whileStatement.body().accept(this);
     }
 
     @Override
     public void visit(SysoutStatement sysoutStatement) {
+        sysoutStatement.arg().accept(this);
 
     }
 
     @Override
     public void visit(AssignStatement assignStatement) {
         assignStatement.rv().accept(this);//(9)
+        if ( getSTnameResolution(currSymbolTable,assignStatement.lv())==null){
+            //A reference in an expression to a variable  is to a local variable or formal parameter defined in the current method,
+            // or to a field defined in the current class or its superclasses. //(14)
+            RaiseError();
+        }
+
     }
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
-
+        if ( getSTnameResolution(currSymbolTable,assignArrayStatement.lv())==null){ //(14)
+            RaiseError();
+        }
+        assignArrayStatement.index().accept(this);
+        assignArrayStatement.rv().accept(this);
     }
 
+    private void visitBinaryExpr(BinaryExpr e) {
+        e.e1().accept(this);
+        e.e2().accept(this);
+    }
     @Override
     public void visit(AndExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(LtExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(AddExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(SubtractExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(MultExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(ArrayAccessExpr e) {
-
+        e.arrayExpr().accept(this);
+        e.indexExpr().accept(this);
     }
 
     @Override
@@ -299,7 +333,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(NewIntArrayExpr e) {
-
+        e.lengthExpr().accept(this);
     }
 
     @Override
