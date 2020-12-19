@@ -16,12 +16,15 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private SymbolTable currSymbolTable;
     private LookupTable lookupTable;
 
+
     private String callMethod;
 
     private boolean updatingClassFields;
     private boolean updatingMethodFields;
     private boolean methodCallExpr;
     private boolean arraylengthexp;
+
+
 
     private String currClassCheck;
 
@@ -139,7 +142,6 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(MethodDecl methodDecl) {
-
         methodDecl.returnType().accept(this);
 
         for (var formal : methodDecl.formals()) {
@@ -155,7 +157,6 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         for (var stmt : methodDecl.body()) {
             stmt.accept(this);
         }
-        methodDecl.ret().accept(this);
 
     }
 
@@ -302,6 +303,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     @Override
     public void visit(FalseExpr e) {
 
+
     }
 
     @Override
@@ -322,6 +324,8 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             }
 
         }
+
+
     }
 
     @Override
@@ -377,6 +381,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             // (either before or after the same class, or to the same class itself).(8)
             RaiseError();
         }
+
 
     }
 }

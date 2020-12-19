@@ -11,14 +11,62 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     private Map<String, Set<MethodSemanticCheckInfo>> classMethods = new HashMap<>();
     private String currClassCheck;
-    private boolean updatingMethodFields=false;
+    private boolean updatingMethodFields;
     private String currRetType;
     private String oldArgType;
     private String newArgType;
-    private boolean updatingOldArgType=false;
-    private boolean updatingNewArgType=false;
+    private String retType;
+    private String returnType;
+    private boolean updatingOldArgType;
+    private boolean updatingNewArgType;
+    private boolean checkRetType;
+    private boolean checkReturnType;
+    private SymbolTable currSymbolTable;
+    private LookupTable lookupTable;
+
+    public SemanticMethodDeclarationCheck(LookupTable lookupTable){
+        this.updatingMethodFields=false;
+        this.updatingOldArgType=false;
+        this.updatingNewArgType=false;
+        this.lookupTable=lookupTable;
+
+    }
 
 
+    private SymbolTable getSTnameResolution(SymbolTable symbolTableOfDecl,String name)
+    {
+        if(symbolTableOfDecl.isInVarEntries(name))
+        {
+            return symbolTableOfDecl;
+        }
+        SymbolTable fatherSymbolTable=symbolTableOfDecl.getFatherSymbolTable();
+        while (fatherSymbolTable!=null)
+        {
+            if(fatherSymbolTable.isInVarEntries(name))
+            {
+                return fatherSymbolTable;
+            }
+            fatherSymbolTable=fatherSymbolTable.getFatherSymbolTable();
+        }
+        return null;//error
+    }
+
+    private String findRType(IdentifierExpr e)
+    {
+        SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
+        if (stOfDecl==null){ //(14)
+            SemanticClassAndVarCheckVisitor.RaiseError();
+        }
+        return stOfDecl.getSymbolinfo(e.id(),false).getRefType();
+    }
+    private String findType(IdentifierExpr e)
+    {
+        SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
+        if (stOfDecl==null){ //(14)
+            SemanticClassAndVarCheckVisitor.RaiseError();
+        }
+        return stOfDecl.getSymbolinfo(e.id(),false).getDecl();
+    }
 
     @Override
     public void visit(Program program) {
@@ -42,6 +90,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         }
 
         for(var methodDecl : classDecl.methoddecls()){
+            this.currSymbolTable=lookupTable.getSymbolTable(classDecl);
             updatingMethodFields = true;
             methodDecl.accept(this);
         }
@@ -55,7 +104,10 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(MethodDecl methodDecl) {
+        checkReturnType=true;
         methodDecl.returnType().accept(this);
+        checkReturnType=false;
+
         for(var method : classMethods.get(currClassCheck))
         {
             if(method.getName().equals(methodDecl.name()))
@@ -82,6 +134,17 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         //new method
         MethodSemanticCheckInfo newMethod=new MethodSemanticCheckInfo(methodDecl.name(),currRetType,methodDecl.formals(),currClassCheck);
         classMethods.get(currClassCheck).add(newMethod);
+        checkRetType=true;
+        methodDecl.ret().accept(this);
+        checkRetType=false;
+        if (!retType.equals(retType)){
+            //The static type of e in return e is valid according to the definition of the current method. Note subtyping!(18)
+            if(!SemanticCheckClassHierarchy.findFathers(retType).contains(returnType)) {
+
+                SemanticClassAndVarCheckVisitor.RaiseError();
+            }
+
+        }
 
     }
 
@@ -200,22 +263,42 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(IntegerLiteralExpr e) {
-
+        if(checkRetType){ //(18)
+            retType="int";
+        }
+        if (checkReturnType){ //(18)
+            returnType="int";
+        }
     }
 
     @Override
     public void visit(TrueExpr e) {
 
+        if(checkRetType){//(18)
+            retType="boolean";
+        }
     }
 
     @Override
     public void visit(FalseExpr e) {
-
+        if(checkRetType){ //(18)
+            retType="boolean";
+        }
     }
 
     @Override
     public void visit(IdentifierExpr e) {
+        if(checkRetType){//(18)
+            String type =findRType(e);
+            if(type!=null) {
+                retType = type;
+            }
+            else{
+                type =findRType(e);
+                retType = type;
 
+            }
+        }
     }
 
     @Override
@@ -252,6 +335,12 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         {
             oldArgType="int";
         }
+        if(checkRetType){//(18)
+            retType="int";
+        }
+        if (checkReturnType){//(18)
+            returnType="int";
+        }
     }
 
     @Override
@@ -267,6 +356,12 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         if(updatingOldArgType)
         {
             oldArgType="bool";
+        }
+        if(checkRetType){//(18)
+            retType="boolean";
+        }
+        if (checkReturnType){//(18)
+            returnType="boolean";
         }
     }
 
@@ -284,6 +379,12 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         {
             oldArgType="intArray";
         }
+        if(checkRetType){//(18)
+            retType="intArr";
+        }
+        if (checkReturnType){//(18)
+            returnType="intArr";
+        }
     }
 
     @Override
@@ -299,6 +400,12 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         if(updatingOldArgType)
         {
             oldArgType=t.id();
+        }
+        if(checkRetType){ //(18)
+            retType=t.id();
+        }
+        if (checkReturnType){//(18)
+            returnType=t.id();
         }
     }
 }
