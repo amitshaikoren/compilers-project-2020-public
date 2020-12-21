@@ -23,6 +23,8 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     private boolean checkReturnType;
     private SymbolTable currSymbolTable;
     private LookupTable lookupTable;
+    private String currExprOwnerType;
+    private boolean checkExprOwner;
 
     public SemanticMethodDeclarationCheck(LookupTable lookupTable){
         this.updatingMethodFields=false;
@@ -32,6 +34,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     }
 
+    public void RaiseError(){}
 
     private SymbolTable getSTnameResolution(SymbolTable symbolTableOfDecl,String name)
     {
@@ -51,22 +54,60 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         return null;//error
     }
 
-    private String findRType(IdentifierExpr e)
-    {
-        SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
-        if (stOfDecl==null){ //(14)
-            SemanticClassAndVarCheckVisitor.RaiseError();
-        }
-        return stOfDecl.getSymbolinfo(e.id(),false).getRefType();
-    }
+    //Returns type of reference identifier
     private String findType(IdentifierExpr e)
     {
         SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
         if (stOfDecl==null){ //(14)
-            SemanticClassAndVarCheckVisitor.RaiseError();
+            RaiseError();
         }
-        return stOfDecl.getSymbolinfo(e.id(),false).getDecl();
+        return stOfDecl.getSymbolinfo(e.id(), false).getRefType();
     }
+
+    //Returns type of reference method
+    private String findType(MethodCallExpr e)
+    {
+        SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.methodId());
+        if (stOfDecl==null){ //(14)
+            RaiseError();
+        }
+        return stOfDecl.getSymbolinfo(e.methodId(), true).getRefType();
+    }
+
+    private boolean isItLegalMethod(MethodSemanticCheckInfo oldMethod,MethodSemanticCheckInfo newMethod) {
+        //check retType
+        if(!oldMethod.getReturnType().equals(newMethod.getReturnType()))
+        {
+            if(!SemanticCheckClassHierarchy.findFathers(oldMethod.getReturnType()).contains(newMethod.getReturnType()))
+            {
+                return false;
+            }
+        }
+
+        //checkFormals
+        if(oldMethod.getFormalArgs().size()!=newMethod.getFormalArgs().size())
+        {
+            return false;
+        }
+        for (int i=0;i<oldMethod.getFormalArgs().size();i++)
+        {
+            FormalArg oldArg= oldMethod.getFormalArgs().get(i);
+            FormalArg newArg= newMethod.getFormalArgs().get(i);
+            updatingOldArgType=true;
+            oldArg.type().accept(this);
+            updatingOldArgType=true;
+            updatingNewArgType=true;
+            newArg.type().accept(this);
+            updatingNewArgType=false;
+            if (!oldArgType.equals(newArgType))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
 
     @Override
     public void visit(Program program) {
@@ -116,7 +157,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
                 if(method.getClassDecl().equals(newMethod.getClassDecl()))
                 {
                     //The same name cannot be used for the same method in one class - overloading is not supported. (5)
-                    SemanticClassAndVarCheckVisitor.RaiseError();
+                    RaiseError();
                 }
                 if(isItLegalMethod(method,newMethod))
                 {
@@ -127,7 +168,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
                 else
                 {
                     //An overriding method matches the ancestor's method signature(6)
-                    SemanticClassAndVarCheckVisitor.RaiseError();
+                    RaiseError();
                 }
             }
         }
@@ -141,45 +182,14 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             //The static type of e in return e is valid according to the definition of the current method. Note subtyping!(18)
             if(!SemanticCheckClassHierarchy.findFathers(retType).contains(returnType)) {
 
-                SemanticClassAndVarCheckVisitor.RaiseError();
+                RaiseError();
             }
 
         }
 
     }
 
-    private boolean isItLegalMethod(MethodSemanticCheckInfo oldMethod,MethodSemanticCheckInfo newMethod) {
-        //check retType
-        if(!oldMethod.getReturnType().equals(newMethod.getReturnType()))
-        {
-             if(!SemanticCheckClassHierarchy.findFathers(oldMethod.getReturnType()).contains(newMethod.getReturnType()))
-             {
-                 return false;
-             }
-        }
 
-        //checkFormals
-        if(oldMethod.getFormalArgs().size()!=newMethod.getFormalArgs().size())
-        {
-            return false;
-        }
-        for (int i=0;i<oldMethod.getFormalArgs().size();i++)
-        {
-            FormalArg oldArg= oldMethod.getFormalArgs().get(i);
-            FormalArg newArg= newMethod.getFormalArgs().get(i);
-            updatingOldArgType=true;
-            oldArg.type().accept(this);
-            updatingOldArgType=true;
-            updatingNewArgType=true;
-            newArg.type().accept(this);
-            updatingNewArgType=false;
-            if (!oldArgType.equals(newArgType))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
 
     @Override
     public void visit(FormalArg formalArg) {
@@ -257,7 +267,38 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     }
 
     @Override
-    public void visit(MethodCallExpr e) {
+    public void visit(MethodCallExpr e) { //(11)
+
+        //Checking that the owner expression is valid (it is refrence, and f is defined in its class)
+        checkExprOwner = true;
+        e.ownerExpr().accept(this);
+        checkExprOwner = false;
+
+        if( currExprOwnerType.equals("int")||
+            currExprOwnerType.equals("intArr")||
+            currExprOwnerType.equals("bool")){
+
+                RaiseError();
+
+        }
+
+        if(currExprOwnerType.equals("this")){
+            if(!classMethods.get(currClassCheck).contains(e.methodId())){
+                RaiseError();
+            }
+        }
+
+        // ExprOwner is a refrence variable
+        else{
+            if(!classMethods.get(currExprOwnerType).contains(e.methodId())){
+                RaiseError();
+            }
+        }
+
+        //Checking that method formal arguments are valid
+        if(){
+
+        }
 
     }
 
@@ -289,21 +330,19 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     @Override
     public void visit(IdentifierExpr e) {
         if(checkRetType){//(18)
-            String type =findRType(e);
-            if(type!=null) {
-                retType = type;
-            }
-            else{
-                type =findRType(e);
-                retType = type;
-
-            }
+            retType =findType(e);
+        }
+        if(checkExprOwner){//(11)
+            currExprOwnerType = findType(e);
         }
     }
 
+
     @Override
     public void visit(ThisExpr e) {
-
+        if(checkExprOwner){ //(11)
+            currExprOwnerType = "this";
+        }
     }
 
     @Override
@@ -313,7 +352,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(NewObjectExpr e) {
-
+        if(checkExprOwner) { //(11)
+            currExprOwnerType = e.classId();
+        }
     }
 
     @Override

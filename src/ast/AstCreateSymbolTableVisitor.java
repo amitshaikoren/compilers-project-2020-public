@@ -263,17 +263,19 @@ public class AstCreateSymbolTableVisitor implements Visitor {
     @Override
     public void visit(IntAstType t) {
         currSymbolTable.setSymbolInfoDecl("int");
-
+        currSymbolTable.setCurrSymbolInfoRefType("int");
     }
 
     @Override
     public void visit(BoolAstType t) {
         currSymbolTable.setSymbolInfoDecl("bool");
+        currSymbolTable.setCurrSymbolInfoRefType("bool");
     }
 
     @Override
     public void visit(IntArrayAstType t) {
         currSymbolTable.setSymbolInfoDecl("intArr");
+        currSymbolTable.setCurrSymbolInfoRefType("intArr");
     }
 
     @Override

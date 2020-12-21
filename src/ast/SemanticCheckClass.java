@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class SemanticCheckClass {
@@ -9,6 +10,10 @@ public class SemanticCheckClass {
 
     public SemanticCheckClass getSuperClass(){
         return superClass;
+    }
+
+    public Set<SemanticCheckClass> getChildren() {
+        return children;
     }
 
     public String getName() {
@@ -35,4 +40,16 @@ public class SemanticCheckClass {
         }
         return null;
     }
+
+    public Set<SemanticCheckClass> findChildrenRec(){
+        Set<SemanticCheckClass> childrenSet = new HashSet<>();
+        childrenSet.add(this);
+        if(!this.getChildren().isEmpty()) {
+            for (var child : this.getChildren()) {
+                childrenSet.addAll(child.findChildrenRec());
+            }
+        }
+        return childrenSet;
+    }
+
 }

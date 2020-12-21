@@ -36,7 +36,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         this.lookupTable=lookupTable;
         this.callMethod=null;
     }
-    public static void RaiseError(){};
+    public void RaiseError(){};
     private SymbolTable getSTnameResolution(SymbolTable symbolTableOfDecl,String name)
     {
         if(symbolTableOfDecl.isInVarEntries(name))
@@ -210,7 +210,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     @Override
     public void visit(AssignStatement assignStatement) {
         assignStatement.rv().accept(this);//(9)
-        if ( getSTnameResolution(currSymbolTable,assignStatement.lv())==null){
+        if ( getSTnameResolution(currSymbolTable, assignStatement.lv())==null){
             //A reference in an expression to a variable  is to a local variable or formal parameter defined in the current method,
             // or to a field defined in the current class or its superclasses. //(14)
             RaiseError();
@@ -220,7 +220,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
-        if ( getSTnameResolution(currSymbolTable,assignArrayStatement.lv())==null){ //(14)
+        if (getSTnameResolution(currSymbolTable,assignArrayStatement.lv())==null){ //(14)
             RaiseError();
         }
         assignArrayStatement.index().accept(this);
