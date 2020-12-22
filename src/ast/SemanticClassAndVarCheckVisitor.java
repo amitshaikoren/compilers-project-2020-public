@@ -1,14 +1,12 @@
 package ast;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     Map<String,Set<String>> childrenHierarchyMap;
     Map<String,Set<String>> fathersHierarchyMap;
+    Map<String, ArrayList<MethodOfClass>> methodOfClasses;
 
     //STATE VARIABLES
     private String mainClassName;
@@ -36,7 +34,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     private String currClassCheck;
 
-    public SemanticClassAndVarCheckVisitor(LookupTable lookupTable, Map<String,Set<String>> childrenHierarchyMap, Map<String,Set<String>> fathersHierarchyMap){
+    public SemanticClassAndVarCheckVisitor(LookupTable lookupTable, Map<String,Set<String>> childrenHierarchyMap, Map<String,Set<String>> fathersHierarchyMap,  Map<String, ArrayList<MethodOfClass>> methodOfClasses){
         this.classes = new HashSet<>();
         this.allClasses = new HashSet<>();
         this.classFields = new HashMap<>();
@@ -45,6 +43,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         this.callMethod=null;
         this.childrenHierarchyMap = childrenHierarchyMap;
         this.fathersHierarchyMap = fathersHierarchyMap;
+        this.methodOfClasses= methodOfClasses;
     }
     public void RaiseError(){};
 
@@ -363,6 +362,14 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if (callMethod==null) // (if its int , int[] or bool we raise error earlier .
         {
             RaiseError();
+        }
+
+        if(rvTypeCheck){ //(16)
+            for ( var check : methodOfClasses.get(callMethod)){
+                if (check.equals(e.methodId())){
+                    rvType=check.getDecl();
+                }
+            }
         }
 
     }

@@ -1,19 +1,20 @@
 package ast;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SemanticMethodDeclarationCheck implements Visitor{
 
     Map<String,Set<String>> childrenHierarchyMap;
     Map<String,Set<String>> fathersHierarchyMap;
+    Map<String, ArrayList<MethodOfClass>> methodOfClasses;
 
 
-    public SemanticMethodDeclarationCheck(Map<String,Set<String>> childrenHierarchyMap, Map<String,Set<String>> fathersHierarchyMap){
+
+    public SemanticMethodDeclarationCheck(Map<String,Set<String>> childrenHierarchyMap, Map<String,Set<String>> fathersHierarchyMap, Map<String, ArrayList<MethodOfClass>> methodOfClasses){
         this.childrenHierarchyMap = childrenHierarchyMap;
         this.fathersHierarchyMap = fathersHierarchyMap;
+        this.methodOfClasses= methodOfClasses;
+
     }
 
     //STATE VARIABLES
@@ -323,12 +324,29 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             }
         }
 
+        MethodOfClass currmethod=null;
         //Checking that method actual parameters are valid
+        for ( var check : methodOfClasses.get(currExprOwnerType)){
+            if (check.equals(e.methodId())){
+                currmethod=check;
+                break;
+            }
+        }
+        int index=0;
         for(var actual : e.actuals()){
             methodActualCheck = true;
             actual.accept(this);
             methodActualCheck = false;
-            //TODO yahav
+            if(     currMethodActual.equals("int") && !currmethod.getFormals().get(index).equals("int")||
+                    currMethodActual.equals("intArr") && !currmethod.getFormals().get(index).equals("intArr")||
+                    currMethodActual.equals("bool") && !currmethod.getFormals().get(index).equals("bool")){
+
+                RaiseError();
+            }
+            if (!getFathers(currMethodActual).contains(currmethod.getFormals().get(index))){
+                RaiseError();
+
+            }
 
 
         }
@@ -415,6 +433,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         if (checkReturnType){//(18)
             returnType="int";
         }
+        if(methodActualCheck){ //(11)
+            currMethodActual="int";
+        }
     }
 
     @Override
@@ -436,6 +457,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         }
         if (checkReturnType){//(18)
             returnType="boolean";
+        }
+        if(methodActualCheck){ //(11)
+            currMethodActual="boolean";
         }
     }
 
@@ -459,6 +483,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         if (checkReturnType){//(18)
             returnType="intArr";
         }
+        if(methodActualCheck){ //(11)
+            currMethodActual="intArr";
+        }
     }
 
     @Override
@@ -480,6 +507,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         }
         if (checkReturnType){//(18)
             returnType=t.id();
+        }
+        if(methodActualCheck){ //(11)
+            currMethodActual=t.id();
         }
     }
 }
