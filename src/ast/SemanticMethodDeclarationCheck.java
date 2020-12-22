@@ -7,6 +7,15 @@ import java.util.Set;
 
 public class SemanticMethodDeclarationCheck implements Visitor{
 
+    Map<String,Set<String>> childrenHierarchyMap;
+    Map<String,Set<String>> fathersHierarchyMap;
+
+
+    public SemanticMethodDeclarationCheck(Map<String,Set<String>> childrenHierarchyMap, Map<String,Set<String>> fathersHierarchyMap){
+        this.childrenHierarchyMap = childrenHierarchyMap;
+        this.fathersHierarchyMap = fathersHierarchyMap;
+    }
+
     //STATE VARIABLES
 
     private Map<String, Set<MethodSemanticCheckInfo>> classMethods = new HashMap<>();
@@ -25,6 +34,8 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     private LookupTable lookupTable;
     private String currExprOwnerType;
     private boolean checkExprOwner;
+    private boolean methodActualCheck;
+    private String currMethodActual;
 
     public SemanticMethodDeclarationCheck(LookupTable lookupTable){
         this.updatingMethodFields=false;
@@ -32,6 +43,14 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         this.updatingNewArgType=false;
         this.lookupTable=lookupTable;
 
+    }
+
+    public Set<String> getFathers(String className){
+        return fathersHierarchyMap.get(className);
+    }
+
+    public Set<String> getChildren(String className){
+        return childrenHierarchyMap.get(className);
     }
 
     public void RaiseError(){}
@@ -74,11 +93,20 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         return stOfDecl.getSymbolinfo(e.methodId(), true).getRefType();
     }
 
+    private String findType(String id)
+    {
+        SymbolTable stOfDecl=getSTnameResolution(currSymbolTable, id);
+        if (stOfDecl==null){ //(14)
+            RaiseError();
+        }
+        return stOfDecl.getSymbolinfo(id, false).getRefType();
+    }
+
     private boolean isItLegalMethod(MethodSemanticCheckInfo oldMethod,MethodSemanticCheckInfo newMethod) {
         //check retType
         if(!oldMethod.getReturnType().equals(newMethod.getReturnType()))
         {
-            if(!SemanticCheckClassHierarchy.findFathers(oldMethod.getReturnType()).contains(newMethod.getReturnType()))
+            if(!getFathers(oldMethod.getReturnType()).contains(newMethod.getReturnType()))
             {
                 return false;
             }
@@ -180,7 +208,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         checkRetType=false;
         if (!retType.equals(retType)){
             //The static type of e in return e is valid according to the definition of the current method. Note subtyping!(18)
-            if(!SemanticCheckClassHierarchy.findFathers(retType).contains(returnType)) {
+            if(!getFathers(retType).contains(returnType)) {
 
                 RaiseError();
             }
@@ -295,8 +323,13 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             }
         }
 
-        //Checking that method formal arguments are valid
-        if(){
+        //Checking that method actual parameters are valid
+        for(var actual : e.actuals()){
+            methodActualCheck = true;
+            actual.accept(this);
+            methodActualCheck = false;
+            //TODO yahav
+
 
         }
 

@@ -7,6 +7,9 @@ import java.util.Set;
 
 public class SemanticClassAndVarCheckVisitor implements Visitor{
 
+    Map<String,Set<String>> childrenHierarchyMap;
+    Map<String,Set<String>> fathersHierarchyMap;
+
     //STATE VARIABLES
     private String mainClassName;
     private Set<String> classes ;
@@ -24,19 +27,35 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private boolean methodCallExpr;
     private boolean arraylengthexp;
 
+    private boolean rvTypeCheck;
+    private String rvType;
+    private boolean ifStatementCheck;
+    private boolean ifStatementIsBool;
+
 
 
     private String currClassCheck;
 
-    public SemanticClassAndVarCheckVisitor(LookupTable lookupTable){
+    public SemanticClassAndVarCheckVisitor(LookupTable lookupTable, Map<String,Set<String>> childrenHierarchyMap, Map<String,Set<String>> fathersHierarchyMap){
         this.classes = new HashSet<>();
         this.allClasses = new HashSet<>();
         this.classFields = new HashMap<>();
         this.setClasses=false;
         this.lookupTable=lookupTable;
         this.callMethod=null;
+        this.childrenHierarchyMap = childrenHierarchyMap;
+        this.fathersHierarchyMap = fathersHierarchyMap;
     }
     public void RaiseError(){};
+
+    public Set<String> getFathers(String className){
+        return fathersHierarchyMap.get(className);
+    }
+
+    public Set<String> getChildren(String className){
+        return childrenHierarchyMap.get(className);
+    }
+
     private SymbolTable getSTnameResolution(SymbolTable symbolTableOfDecl,String name)
     {
         if(symbolTableOfDecl.isInVarEntries(name))
@@ -54,22 +73,38 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         return null;//error
     }
-    private String findRType(IdentifierExpr e)
-    {
-        SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
-        if (stOfDecl==null){ //(14)
-            RaiseError();
-        }
-        return stOfDecl.getSymbolinfo(e.id(),false).getRefType();
-    }
+
+    //Returns type of reference identifier
     private String findType(IdentifierExpr e)
     {
         SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
         if (stOfDecl==null){ //(14)
             RaiseError();
         }
-        return stOfDecl.getSymbolinfo(e.id(),false).getDecl();
+        return stOfDecl.getSymbolinfo(e.id(), false).getRefType();
     }
+
+    private String findType(String id)
+    {
+        SymbolTable stOfDecl=getSTnameResolution(currSymbolTable, id);
+        if (stOfDecl==null){ //(14)
+            RaiseError();
+        }
+        return stOfDecl.getSymbolinfo(id, false).getRefType();
+    }
+
+    //Returns type of reference method
+    private String findType(MethodCallExpr e)
+    {
+        SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.methodId());
+        if (stOfDecl==null){ //(14)
+            RaiseError();
+        }
+        return stOfDecl.getSymbolinfo(e.methodId(), true).getRefType();
+    }
+
+
+
     @Override
     public void visit(Program program) {
 
@@ -190,7 +225,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(IfStatement ifStatement) {
+        ifStatementCheck = true;
         ifStatement.cond().accept(this);
+        ifStatementCheck = false;
+
         ifStatement.elsecase().accept(this);
         ifStatement.thencase().accept(this);
     }
@@ -208,12 +246,30 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     }
 
     @Override
-    public void visit(AssignStatement assignStatement) {
+    public void visit(AssignStatement assignStatement) { //(16)
+        rvTypeCheck = true;
         assignStatement.rv().accept(this);//(9)
+        rvTypeCheck = false;
+
         if ( getSTnameResolution(currSymbolTable, assignStatement.lv())==null){
             //A reference in an expression to a variable  is to a local variable or formal parameter defined in the current method,
             // or to a field defined in the current class or its superclasses. //(14)
             RaiseError();
+        }
+
+        String lvType = findType(assignStatement.lv());
+
+        if(     lvType.equals("int") && !rvType.equals("int")||
+                lvType.equals("intArr") && !rvType.equals("intArr")||
+                lvType.equals("bool") && !rvType.equals("bool")){
+
+                RaiseError();
+        }
+
+        if(!lvType.equals(rvType)){
+            if(!getFathers(rvType).contains(lvType)){
+                RaiseError();
+            }
         }
 
     }
@@ -231,40 +287,56 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         e.e1().accept(this);
         e.e2().accept(this);
     }
+
     @Override
     public void visit(AndExpr e) {
         visitBinaryExpr(e);
-
+        if(rvTypeCheck){
+            rvType = "bool";
+        }
     }
 
     @Override
     public void visit(LtExpr e) {
         visitBinaryExpr(e);
-
+        if(rvTypeCheck){
+            rvType = "bool";
+        }
     }
 
     @Override
     public void visit(AddExpr e) {
         visitBinaryExpr(e);
+        if(rvTypeCheck){
+            rvType = "int";
+        }
+
 
     }
 
     @Override
     public void visit(SubtractExpr e) {
         visitBinaryExpr(e);
-
+        if(rvTypeCheck){
+            rvType = "int";
+        }
     }
 
     @Override
     public void visit(MultExpr e) {
         visitBinaryExpr(e);
-
+        if(rvTypeCheck){
+            rvType = "int";
+        }
     }
 
     @Override
     public void visit(ArrayAccessExpr e) {
         e.arrayExpr().accept(this);
         e.indexExpr().accept(this);
+        if(rvTypeCheck){
+            rvType = "int";
+        }
     }
 
     @Override
@@ -273,6 +345,11 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         arraylengthexp=true;
         e.arrayExpr().accept(this);
         arraylengthexp=false;
+
+        if(rvTypeCheck){
+            rvType = "int";
+        }
+
     }
 
     @Override
@@ -292,24 +369,29 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(IntegerLiteralExpr e) {
-
+        if(rvTypeCheck){
+            rvType = "int";
+        }
     }
 
     @Override
     public void visit(TrueExpr e) {
-
+        if(rvTypeCheck){
+            rvType = "bool";
+        }
     }
 
     @Override
     public void visit(FalseExpr e) {
-
-
+        if(rvTypeCheck){
+            rvType = "bool";
+        }
     }
 
     @Override
     public void visit(IdentifierExpr e) {
         if (methodCallExpr){ //(10)
-            String type =findRType(e);
+            String type =findType(e);
             if (!allClasses.contains(type)){ // check if the type is int , int [] , boolean
                 RaiseError();
             }
