@@ -24,6 +24,8 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private boolean updatingMethodFields;
     private boolean methodCallExpr;
     private boolean arraylengthexp;
+    private  boolean systemOutCheck;
+    private String systemOutType;
 
     private boolean rvTypeCheck;
     private String rvType;
@@ -253,8 +255,14 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(SysoutStatement sysoutStatement) {
+        systemOutCheck=true;
+        systemOutType=null;
         sysoutStatement.arg().accept(this);
-
+        systemOutCheck=false;
+        if (!systemOutType.equals("int")){
+            //The argument to System.out.println is of type int (20)
+        RaiseError();
+        }
     }
 
     @Override
@@ -351,6 +359,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             else {
                 currExpr.setResult("int"); //(17)
             }
+        if(systemOutCheck) //(20)
+        {
+            systemOutType="int";
+        }
 
 
 
@@ -370,6 +382,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             else {
                 currExpr.setResult("int"); //(17)
             }
+            if(systemOutCheck) //(20)
+            {
+                systemOutType="int";
+            }
 
     }
 
@@ -386,6 +402,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             else {
                 currExpr.setResult("int"); //(17)
             }
+        if(systemOutCheck) //(20)
+        {
+            systemOutType="int";
+        }
 
     }
 
@@ -405,6 +425,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
                 exp = new ExprTranslation(currExpr, null, null, "int");
             }
             currExpr = exp;
+        if(systemOutCheck) //(20)
+        {
+            systemOutType="int";
+        }
 
     }
 
@@ -428,7 +452,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
                 exp = new ExprTranslation(currExpr, null, null, "int");
             }
             currExpr = exp;
-
+        if(systemOutCheck) //(20)
+        {
+            systemOutType="int";
+        }
 
 
     }
@@ -445,7 +472,13 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         {
             RaiseError();
         }
-
+        if (systemOutCheck){ //(20)
+            for ( var check : methodOfClasses.get(callMethod)){
+                if (check.equals(e.methodId())){
+                    systemOutType=check.getDecl();
+                }
+            }
+        }
         if(rvTypeCheck){ //(16)
             for ( var check : methodOfClasses.get(callMethod)){
                 if (check.equals(e.methodId())){
@@ -489,6 +522,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
                 exp = new ExprTranslation(currExpr, null, null, "int");
             }
             currExpr = exp;
+
+            if(systemOutCheck){ //(20)
+                systemOutType="int";
+            }
 
     }
 
@@ -555,6 +592,14 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
                 exp = new ExprTranslation(currExpr, null, null, type);
             }
             currExpr = exp;
+
+        if(systemOutCheck) //(20)
+        {
+            if (type.equals("int")){
+                systemOutType="int";
+
+            }
+        }
         }
 
 
