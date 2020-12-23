@@ -29,6 +29,8 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private boolean arrayIndexCheck;
     private  boolean arrayAssignmentindexCheck;
     private boolean arrayAssignmentrvCheck;
+    private boolean arrayLengthCheck;
+    private String arrayLengthType;
     private  String arrayAssignmentindex;
     private String arrayAssignmentrv;
 
@@ -366,6 +368,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex="bool";
         }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType="bool";
+        }
     }
 
     @Override
@@ -392,6 +397,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex="bool";
+        }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType="bool";
         }
 
     }
@@ -424,6 +432,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex="int";
+        }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType="int";
         }
 
 
@@ -459,6 +470,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex="int";
         }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType="int";
+        }
 
 
     }
@@ -491,6 +505,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex="int";
+        }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType="int";
         }
 
 
@@ -534,6 +551,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex="int";
         }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType="int";
+        }
 
 
     }
@@ -573,6 +593,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex="int";
+        }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType="int";
         }
 
 
@@ -633,6 +656,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex=type;
         }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType=type;
+        }
 
 
 
@@ -670,6 +696,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex="int";
         }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType="int";
+        }
     }
 
     @Override
@@ -697,6 +726,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex="bool";
+        }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType="bool";
         }
 
     }
@@ -727,6 +759,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex="bool";
+        }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType="bool";
         }
 
     }
@@ -779,6 +814,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(arrayAssignmentindexCheck){ //(23)
             arrayAssignmentindex=type;
         }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType=type;
+        }
         }
 
 
@@ -793,7 +831,15 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(NewIntArrayExpr e) {
+        //updated In an array allocation new int[e], e is an int. (25)
+        arrayLengthCheck=true;
         e.lengthExpr().accept(this);
+        arrayLengthCheck=false;
+        if(!arrayLengthType.equals("int")){
+            RaiseError();
+        }
+
+
     }
 
     @Override
