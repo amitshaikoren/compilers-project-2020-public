@@ -81,6 +81,9 @@ public class Main {
                     TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor(lookupTable,classMaps,funcOfClass,allocation);
                     translator.visit(prog);
                     outFile.write(vtables.getString()+translator.getString());
+                    CreateMethodIdentifier methodIdentifier = new CreateMethodIdentifier();
+
+
 
                 } else if (action.equals("rename")) {
                     var type = args[2];

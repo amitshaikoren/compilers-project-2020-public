@@ -55,6 +55,9 @@ public class CreateMethodIdentifier implements Visitor {
             }
 
         }
+        for (var methodDecl : classDecl.methoddecls()) {
+            methodDecl.accept(this);
+        }
     }
     @Override
     public void visit(MainClass mainClass) {
