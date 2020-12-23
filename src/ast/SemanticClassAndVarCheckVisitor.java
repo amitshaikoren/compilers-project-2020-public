@@ -28,7 +28,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private boolean rvTypeCheck;
     private String rvType;
     private boolean ifStatementCheck;
-    private boolean ifStatementIsBool;
+    private boolean whileStatementCheck;
+
+    private ExprTranslation currExpr;
+
 
 
 
@@ -224,17 +227,33 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(IfStatement ifStatement) {
+        currExpr=null;
         ifStatementCheck = true;
+        //In if and while, the condition is boolean.(17)
+
         ifStatement.cond().accept(this);
         ifStatementCheck = false;
-
+        if (!currExpr.getResult().equals("bool"))
+        {
+            RaiseError();
+        }
+        currExpr=null;
         ifStatement.elsecase().accept(this);
         ifStatement.thencase().accept(this);
     }
 
     @Override
     public void visit(WhileStatement whileStatement) {
+        currExpr=null;
+        whileStatementCheck=true;
+        //In if and while, the condition is boolean.(17)
         whileStatement.cond().accept(this);
+        whileStatementCheck=false;
+        if (!currExpr.getResult().equals("bool"))
+        {
+            RaiseError();
+        }
+        currExpr=null;
         whileStatement.body().accept(this);
     }
 
@@ -283,8 +302,14 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     }
 
     private void visitBinaryExpr(BinaryExpr e) {
+        ExprTranslation exp,e1,e2;
+        exp=new ExprTranslation(null,null,null,null);
+        currExpr=exp;
         e.e1().accept(this);
+        exp.setE1(currExpr);
+        currExpr=exp;
         e.e2().accept(this);
+        exp.setE2(currExpr);
     }
 
     @Override
@@ -292,6 +317,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         visitBinaryExpr(e);
         if(rvTypeCheck){
             rvType = "bool";
+        }
+        if (ifStatementCheck || whileStatementCheck){ //(17)
+            if (!currExpr.getE1().getResult().equals("bool")||
+                    !currExpr.getE2().getResult().equals("bool")){
+                RaiseError();
+            }
         }
     }
 
@@ -301,6 +332,15 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(rvTypeCheck){
             rvType = "bool";
         }
+        if (ifStatementCheck || whileStatementCheck){ //(17)
+            if (!currExpr.getE1().getResult().equals("int")||
+                    !currExpr.getE2().getResult().equals("int")){
+                RaiseError();
+            }
+            else{
+                currExpr.setResult("bool");
+            }
+        }
     }
 
     @Override
@@ -308,6 +348,15 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         visitBinaryExpr(e);
         if(rvTypeCheck){
             rvType = "int";
+        }
+        if (ifStatementCheck || whileStatementCheck){ //(17)
+            if (!currExpr.getE1().getResult().equals("int")||
+                    !currExpr.getE2().getResult().equals("int")){
+                RaiseError();
+            }
+            else {
+                currExpr.setResult("int");
+            }
         }
 
 
@@ -319,6 +368,15 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(rvTypeCheck){
             rvType = "int";
         }
+        if (ifStatementCheck || whileStatementCheck){  //(17)
+            if (!currExpr.getE1().getResult().equals("int")||
+                    !currExpr.getE2().getResult().equals("int")){
+                RaiseError();
+            }
+            else {
+                currExpr.setResult("int");
+            }
+        }
     }
 
     @Override
@@ -326,6 +384,15 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         visitBinaryExpr(e);
         if(rvTypeCheck){
             rvType = "int";
+        }
+        if (ifStatementCheck || whileStatementCheck){ //(17)
+            if (!currExpr.getE1().getResult().equals("int")||
+                    !currExpr.getE2().getResult().equals("int")){
+                RaiseError();
+            }
+            else {
+                currExpr.setResult("int");
+            }
         }
     }
 
@@ -335,6 +402,16 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         e.indexExpr().accept(this);
         if(rvTypeCheck){
             rvType = "int";
+        }
+        if(ifStatementCheck || whileStatementCheck){ //(17)
+            ExprTranslation exp;
+
+            if (currExpr == null) {
+                exp = new ExprTranslation(null, null, null, "int");
+            } else {
+                exp = new ExprTranslation(currExpr, null, null, "int");
+            }
+            currExpr = exp;
         }
     }
 
@@ -348,6 +425,17 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(rvTypeCheck){
             rvType = "int";
         }
+        if(ifStatementCheck || whileStatementCheck ){ //(17)
+            ExprTranslation exp;
+
+            if (currExpr == null) {
+                exp = new ExprTranslation(null, null, null, "int");
+            } else {
+                exp = new ExprTranslation(currExpr, null, null, "int");
+            }
+            currExpr = exp;
+        }
+
 
     }
 
@@ -371,6 +459,22 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
                 }
             }
         }
+        if(ifStatementCheck || whileStatementCheck){ //(17)
+            ExprTranslation exp;
+            String type=null;
+            for ( var check : methodOfClasses.get(callMethod)){
+                if (check.equals(e.methodId())){
+                     type=check.getDecl();
+                }
+            }
+
+            if (currExpr == null) {
+                exp = new ExprTranslation(null, null, null, type);
+            } else {
+                exp = new ExprTranslation(currExpr, null, null, type);
+            }
+            currExpr = exp;
+        }
 
     }
 
@@ -379,12 +483,32 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(rvTypeCheck){
             rvType = "int";
         }
+        if(ifStatementCheck || whileStatementCheck){ //(17)
+            ExprTranslation exp;
+
+            if (currExpr == null) {
+                exp = new ExprTranslation(null, null, null, "int");
+            } else {
+                exp = new ExprTranslation(currExpr, null, null, "int");
+            }
+            currExpr = exp;
+        }
     }
 
     @Override
     public void visit(TrueExpr e) {
         if(rvTypeCheck){
             rvType = "bool";
+        }
+        if(ifStatementCheck || whileStatementCheck ){  //(17)
+            ExprTranslation exp;
+
+            if (currExpr == null) {
+                exp = new ExprTranslation(null, null, null, "bool");
+            } else {
+                exp = new ExprTranslation(currExpr, null, null, "bool");
+            }
+            currExpr = exp;
         }
     }
 
@@ -393,12 +517,23 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(rvTypeCheck){
             rvType = "bool";
         }
+        if(ifStatementCheck || whileStatementCheck){ //(17)
+            ExprTranslation exp;
+
+            if (currExpr == null) {
+                exp = new ExprTranslation(null, null, null, "bool");
+            } else {
+                exp = new ExprTranslation(currExpr, null, null, "bool");
+            }
+            currExpr = exp;
+        }
     }
 
     @Override
     public void visit(IdentifierExpr e) {
+        String type =findType(e);
+
         if (methodCallExpr){ //(10)
-            String type =findType(e);
             if (!allClasses.contains(type)){ // check if the type is int , int [] , boolean
                 RaiseError();
             }
@@ -407,11 +542,20 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             }
         }
         if (arraylengthexp){ //(13)
-            String type =findType(e);
             if (!type.equals("intArr")){
                 RaiseError();
             }
 
+        }
+        if(ifStatementCheck || whileStatementCheck){ //(17)
+            ExprTranslation exp;
+
+            if (currExpr == null) {
+                exp = new ExprTranslation(null, null, null, type);
+            } else {
+                exp = new ExprTranslation(currExpr, null, null, type);
+            }
+            currExpr = exp;
         }
 
 
@@ -443,7 +587,14 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     }
 
     @Override
-    public void visit(NotExpr e) {
+    public void visit(NotExpr e) { //(17)
+        ExprTranslation exp;
+        exp=new ExprTranslation(null,null,null,null);
+        e.accept(this);
+        exp.setResult(currExpr.getResult());
+        if (!currExpr.getResult().equals("bool")){
+            RaiseError();
+        }
 
     }
 

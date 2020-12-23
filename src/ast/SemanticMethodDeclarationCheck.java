@@ -347,6 +347,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
                 RaiseError();
 
             }
+            index++;
 
 
         }
