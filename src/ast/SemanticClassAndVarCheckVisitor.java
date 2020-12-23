@@ -27,6 +27,11 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private  boolean systemOutCheck;
     private boolean arrayAccessCheck;
     private boolean arrayIndexCheck;
+    private  boolean arrayAssignmentindexCheck;
+    private boolean arrayAssignmentrvCheck;
+    private  String arrayAssignmentindex;
+    private String arrayAssignmentrv;
+
     private  String arrayAccessType;
     private  String arrayIndexType;
 
@@ -301,11 +306,27 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
+        //In an assignment to an array x[e1] = e2, x is int[], e1 is an int and also e2 is an int.(23)
         if (getSTnameResolution(currSymbolTable,assignArrayStatement.lv())==null){ //(14)
             RaiseError();
         }
+        String type = findType(assignArrayStatement.lv());
+        if(!type.equals("intArr")){//(23)
+            RaiseError();
+        }
+        arrayAssignmentindexCheck=true;
         assignArrayStatement.index().accept(this);
+        arrayAssignmentindexCheck=false;
+        arrayAssignmentrvCheck=true;
         assignArrayStatement.rv().accept(this);
+        arrayAssignmentrvCheck=false;
+        if(arrayAssignmentindex.equals("int")){
+            RaiseError();
+        }
+        if (arrayAssignmentrv.equals("int")){
+            RaiseError();
+        }
+
     }
 
     private void visitBinaryExpr(BinaryExpr e) {
@@ -339,6 +360,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if (arrayAccessCheck){ //(22)
             arrayAccessType="bool";
         }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv="bool";
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex="bool";
+        }
     }
 
     @Override
@@ -355,10 +382,16 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
                 currExpr.setResult("bool"); //(17)
             }
         if(arrayIndexCheck){ //(22)
-            arrayIndexType="int";
+            arrayIndexType="bool";
         }
         if (arrayAccessCheck){ //(22)
-            arrayAccessType="int";
+            arrayAccessType="bool";
+        }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv="bool";
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex="bool";
         }
 
     }
@@ -385,6 +418,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if (arrayAccessCheck){ //(22)
             arrayAccessType="int";
+        }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv="int";
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex="int";
         }
 
 
@@ -414,6 +453,13 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if (arrayAccessCheck){ //(22)
             arrayAccessType="int";
         }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv="int";
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex="int";
+        }
+
 
     }
 
@@ -440,6 +486,13 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if (arrayAccessCheck){ //(22)
             arrayAccessType="int";
         }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv="int";
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex="int";
+        }
+
 
     }
 
@@ -475,6 +528,13 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         {
             systemOutType="int";
         }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv="int";
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex="int";
+        }
+
 
     }
 
@@ -508,6 +568,13 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if (arrayAccessCheck){ //(22)
             arrayAccessType="int";
         }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv="int";
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex="int";
+        }
+
 
     }
 
@@ -560,6 +627,13 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if (arrayAccessCheck){ //(22)
             arrayAccessType=type;
         }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv=type;
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex=type;
+        }
+
 
 
     }
@@ -590,7 +664,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if (arrayAccessCheck){ //(22)
             arrayAccessType="int";
         }
-
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv="int";
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex="int";
+        }
     }
 
     @Override
@@ -612,6 +691,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if (arrayAccessCheck){ //(22)
             arrayAccessType="bool";
+        }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv="bool";
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex="bool";
         }
 
     }
@@ -636,6 +721,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if (arrayAccessCheck){ //(22)
             arrayAccessType="bool";
+        }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv="bool";
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex="bool";
         }
 
     }
@@ -681,6 +772,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if (arrayAccessCheck){ //(22)
             arrayAccessType=type;
+        }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv=type;
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex=type;
         }
         }
 
