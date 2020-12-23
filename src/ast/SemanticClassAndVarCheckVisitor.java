@@ -25,6 +25,11 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private boolean methodCallExpr;
     private boolean arraylengthexp;
     private  boolean systemOutCheck;
+    private boolean arrayAccessCheck;
+    private boolean arrayIndexCheck;
+    private  String arrayAccessType;
+    private  String arrayIndexType;
+
     private String systemOutType;
 
     private boolean rvTypeCheck;
@@ -328,6 +333,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         else{
             currExpr.setResult("bool"); //(17)
         }
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType="bool";
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType="bool";
+        }
     }
 
     @Override
@@ -343,6 +354,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             else{
                 currExpr.setResult("bool"); //(17)
             }
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType="int";
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType="int";
+        }
 
     }
 
@@ -363,7 +380,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         {
             systemOutType="int";
         }
-
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType="int";
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType="int";
+        }
 
 
     }
@@ -386,6 +408,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             {
                 systemOutType="int";
             }
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType="int";
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType="int";
+        }
 
     }
 
@@ -406,13 +434,31 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         {
             systemOutType="int";
         }
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType="int";
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType="int";
+        }
 
     }
 
     @Override
     public void visit(ArrayAccessExpr e) {
+        //In an array access x[e], x is int[] and e is an int.(22)
+        arrayAccessCheck=true;
         e.arrayExpr().accept(this);
+        arrayAccessCheck=false;
+        if (!arrayAccessType.equals("intArr")) //(22)
+        {
+            RaiseError();
+        }
+        arrayIndexCheck=true;
         e.indexExpr().accept(this);
+        arrayIndexCheck=false;
+        if (!arrayIndexType.equals("int")){ //(22)
+            RaiseError();
+        }
         if(rvTypeCheck){
             rvType = "int";
         }
@@ -456,7 +502,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         {
             systemOutType="int";
         }
-
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType="int";
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType="int";
+        }
 
     }
 
@@ -503,6 +554,13 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             }
             currExpr = exp;
 
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType=type;
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType=type;
+        }
+
 
     }
 
@@ -526,6 +584,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             if(systemOutCheck){ //(20)
                 systemOutType="int";
             }
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType="int";
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType="int";
+        }
 
     }
 
@@ -543,6 +607,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
                 exp = new ExprTranslation(currExpr, null, null, "bool");
             }
             currExpr = exp;
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType="bool";
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType="bool";
+        }
 
     }
 
@@ -561,6 +631,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
                 exp = new ExprTranslation(currExpr, null, null, "bool");
             }
             currExpr = exp;
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType="bool";
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType="bool";
+        }
 
     }
 
@@ -599,6 +675,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
                 systemOutType="int";
 
             }
+        }
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType=type;
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType=type;
         }
         }
 
