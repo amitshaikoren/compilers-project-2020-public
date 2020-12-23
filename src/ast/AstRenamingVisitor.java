@@ -162,7 +162,7 @@ public class AstRenamingVisitor implements Visitor {
 
         for (var fieldDecl : classDecl.fields()) {
             this.currSymbolTable=lookupTable.getSymbolTable(fieldDecl);
-            fieldDecl .accept(this);
+            fieldDecl.accept(this);
         }
 
         for (var methodDecl : classDecl.methoddecls()) {

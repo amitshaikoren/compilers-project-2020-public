@@ -3,6 +3,7 @@ import ast.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 
 public class Main {
@@ -66,6 +67,34 @@ public class Main {
                     LookupTable lookupTable = new LookupTable();
                     AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
                     symbolTableVistor.visit(prog);
+
+                    SemanticCheckClassHierarchyVisitor classHierarchyVisitor = new SemanticCheckClassHierarchyVisitor();
+                    classHierarchyVisitor.visit(prog);
+                    Map<String, Set<String>> childrenHierarchyMap = classHierarchyVisitor.getChildrenMap();
+                    Map<String, Set<String>> fathersHierarchyMap = classHierarchyVisitor.getFathersMap();
+
+                    CreateMethodIdentifier methodIdentifier = new CreateMethodIdentifier();
+                    methodIdentifier.visit(prog);
+                    Map<String, ArrayList<MethodOfClass>> methodsOfClasses = methodIdentifier.getMethodOfClasses();
+
+                    SemanticClassAndVarCheckVisitor classAndVarCheckVisitor = new SemanticClassAndVarCheckVisitor(lookupTable, childrenHierarchyMap, fathersHierarchyMap, methodsOfClasses);
+                    classAndVarCheckVisitor.visit(prog);
+
+                    SemanticMethodDeclarationCheck methodDeclarationCheck = new SemanticMethodDeclarationCheck(childrenHierarchyMap, fathersHierarchyMap, methodsOfClasses);
+                    methodDeclarationCheck.visit(prog);
+
+                    boolean SemanticError = methodDeclarationCheck.getERROR() && classAndVarCheckVisitor.getERROR();
+
+                    if(SemanticError){
+                        outFile.write("ERROR\n");
+                    }
+                    else{
+                        outFile.write("OK\n");
+                    }
+
+
+
+
 
                 } else if (action.equals("compile")) {
                     LookupTable lookupTable = new LookupTable();

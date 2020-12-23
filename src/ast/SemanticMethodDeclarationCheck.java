@@ -38,6 +38,17 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     private boolean methodActualCheck;
     private String currMethodActual;
 
+    private boolean ERROR = false;
+
+    public boolean getERROR(){
+        return ERROR;
+    }
+
+    public void RaiseError(){
+        ERROR = true;
+    };
+
+
     public SemanticMethodDeclarationCheck(LookupTable lookupTable){
         this.updatingMethodFields=false;
         this.updatingOldArgType=false;
@@ -53,8 +64,6 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     public Set<String> getChildren(String className){
         return childrenHierarchyMap.get(className);
     }
-
-    public void RaiseError(){}
 
     private SymbolTable getSTnameResolution(SymbolTable symbolTableOfDecl,String name)
     {

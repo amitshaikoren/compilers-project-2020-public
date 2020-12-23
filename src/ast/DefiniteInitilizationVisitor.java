@@ -1,47 +1,22 @@
 package ast;
 
-import java.util.*;
+public class DefiniteInitilizationVisitor implements Visitor{
 
-public class SemanticCheckClassHierarchyVisitor implements Visitor{
-
-    Map<String, Set<String>> childrenMap = new HashMap<>();
-    Map<String, Set<String>> fathersMap = new HashMap<>();
-
-
-    private void PutClass(String className, String superClass){
-        childrenMap.put(className, new HashSet<>());
-        fathersMap.put(className, new HashSet<>());
-        if(superClass != null){
-            childrenMap.get(superClass).add(className);
-            for(var classVar : fathersMap.get(superClass)){
-                childrenMap.get(classVar).add(className);
-            }
-            fathersMap.get(className).add(superClass);
-            for(var classVar : fathersMap.get(superClass)){
-                fathersMap.get(className).add(classVar);
-            }
-        }
-    }
-
-    public Map<String, Set<String>> getFathersMap(){
-        return fathersMap;
-    }
-
-    public Map<String, Set<String>> getChildrenMap(){
-        return childrenMap;
-    }
+    private DefiniteInitializationDict currInitilizationDict = new DefiniteInitializationDict();
+    private boolean ifCase;
 
     @Override
     public void visit(Program program) {
-
         for (ClassDecl classdecl : program.classDecls()) {
-            PutClass(classdecl.name(),classdecl.superName());
+            classdecl.accept(this);
         }
     }
 
     @Override
     public void visit(ClassDecl classDecl) {
-
+        for(var methodDecl : classDecl.methoddecls()){
+            methodDecl.accept(this);
+        }
     }
 
     @Override
@@ -51,6 +26,14 @@ public class SemanticCheckClassHierarchyVisitor implements Visitor{
 
     @Override
     public void visit(MethodDecl methodDecl) {
+        for (var varDecl : methodDecl.vardecls()) {
+            currInitilizationDict.AddVar(varDecl.name(), false);
+            varDecl.accept(this);
+        }
+
+        for (var stmt : methodDecl.body()) {
+            stmt.accept(this);
+        }
 
     }
 
@@ -66,12 +49,24 @@ public class SemanticCheckClassHierarchyVisitor implements Visitor{
 
     @Override
     public void visit(BlockStatement blockStatement) {
-
+        for (var stmt : blockStatement.statements()) {
+            stmt.accept(this);
+        }
     }
 
     @Override
     public void visit(IfStatement ifStatement) {
+        currInitilizationDict.IfSplit();
 
+        currInitilizationDict = currInitilizationDict.getIfBlock();
+        ifStatement.thencase().accept(this);
+        currInitilizationDict = currInitilizationDict.getOuterBlock();
+
+        currInitilizationDict = currInitilizationDict.getElseBlock();
+        ifStatement.elsecase().accept(this);
+        currInitilizationDict = currInitilizationDict.getOuterBlock();
+
+        currInitilizationDict.IfElseUnion();
     }
 
     @Override

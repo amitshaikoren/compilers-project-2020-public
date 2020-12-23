@@ -44,8 +44,17 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     private ExprTranslation currExpr;
 
+    private boolean formalsRedeclarationCheck;
+    private Set<String> currFormals = new HashSet<>();
+    private boolean localsRedeclarationCheck;
+    private Set<String> currLocals = new HashSet<>();
 
 
+    private boolean ERROR = false;
+
+    public boolean getERROR(){
+        return ERROR;
+    }
 
     private String currClassCheck;
 
@@ -60,7 +69,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         this.fathersHierarchyMap = fathersHierarchyMap;
         this.methodOfClasses= methodOfClasses;
     }
-    public void RaiseError(){};
+    public void RaiseError(){
+        ERROR = true;
+    };
 
     public Set<String> getFathers(String className){
         return fathersHierarchyMap.get(className);
@@ -180,6 +191,8 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         for (var methodDecl : classDecl.methoddecls()) {
             this.currSymbolTable=lookupTable.getSymbolTable(methodDecl);
             methodDecl.accept(this);
+            currLocals.clear();
+            currFormals.clear();
         }
 
     }
@@ -195,12 +208,16 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
         for (var formal : methodDecl.formals()) {
             this.currSymbolTable=lookupTable.getSymbolTable(formal);
+            formalsRedeclarationCheck = true;
             formal.accept(this);
+            formalsRedeclarationCheck = false;
         }
 
         for (var varDecl : methodDecl.vardecls()) {
             this.currSymbolTable=lookupTable.getSymbolTable(varDecl);
+            localsRedeclarationCheck = true;
             varDecl.accept(this);
+            localsRedeclarationCheck = false;
         }
 
         for (var stmt : methodDecl.body()) {
@@ -212,6 +229,15 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     @Override
     public void visit(FormalArg formalArg) {
         formalArg.type().accept(this);//(8)
+
+        if(formalsRedeclarationCheck) {//(24)
+            if (!currFormals.contains(formalArg.name())) {
+                currFormals.add(formalArg.name());
+            }
+            else{
+                RaiseError();
+            }
+        }
     }
 
     @Override
@@ -226,6 +252,14 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
             classFieldSet.add(varDecl.name());
 
+        }
+        if(localsRedeclarationCheck) {//(24)
+            if (!currLocals.contains(varDecl.name())) {
+                currLocals.add(varDecl.name());
+            }
+            else{
+                RaiseError();
+            }
         }
         varDecl.type().accept(this);//(8)
     }
