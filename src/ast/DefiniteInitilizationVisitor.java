@@ -13,7 +13,10 @@ public class DefiniteInitilizationVisitor implements Visitor{
         this.outfile=outfile;
     }
     public void RaiseError(){
-        throw new RuntimeException();
+        outfile.write("ERROR\n");
+        outfile.flush();
+        outfile.close();
+        System.exit(0);
 
     };
 
