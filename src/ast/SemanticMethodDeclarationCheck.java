@@ -46,10 +46,8 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
 
     public void RaiseError(){
-        outfile.write("ERROR\n");
-        outfile.flush();
-        outfile.close();
-        System.exit(0);
+        throw new RuntimeException();
+
 
     };
 
@@ -317,6 +315,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     public void visit(MethodCallExpr e) { //(11)
 
         //Checking that the owner expression is valid (it is refrence, and f is defined in its class)
+        if(checkExprOwner){ //(12)
+            RaiseError();
+        }
         checkExprOwner = true;
         e.ownerExpr().accept(this);
         checkExprOwner = false;
