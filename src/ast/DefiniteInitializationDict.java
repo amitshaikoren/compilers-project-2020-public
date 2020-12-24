@@ -18,8 +18,20 @@ public class DefiniteInitializationDict {
         this.outerBlock = outerBlock;
     }
 
-    public DefiniteInitializationDict(){
+    public DefiniteInitializationDict copy(){
+        DefiniteInitializationDict newdict = new DefiniteInitializationDict();
+        newdict.definiteInitializationMap.putAll(this.definiteInitializationMap);
 
+        return newdict;
+
+
+    }
+
+    public DefiniteInitializationDict(){
+        this.ifSplitDict=null;
+        this.elseSplitDict=null;
+        this.outerBlock=null;
+        this.whileSplitDict=null;
     }
 
     public void AddVar(String varName, Boolean isInitialized){

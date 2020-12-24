@@ -203,6 +203,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     @Override
     public void visit(MainClass mainClass) {
         this.mainClassName = mainClass.name();
+        mainClass.mainStatement().accept(this);
     }
 
     @Override
@@ -777,6 +778,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(arrayLengthCheck){ //(25)
             arrayLengthType="bool";
         }
+        if(systemOutCheck){ //(20)
+            systemOutType="bool";
+        }
 
     }
 
@@ -809,6 +813,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if(arrayLengthCheck){ //(25)
             arrayLengthType="bool";
+        }
+        if(systemOutCheck){ //(20)
+            systemOutType="bool";
         }
 
     }
