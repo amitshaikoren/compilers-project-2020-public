@@ -1,28 +1,24 @@
 package ast;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.PrintWriter;
 
-public class MapVtableVisitor implements Visitor{
+public class DefiniteInitilizationVisitor implements Visitor{
 
-    Map<String,ClassMap> classMaps;
-    private ClassMap currClassMap;
-    private int currVarSpace=0;
-    private Map<String,String> lastLocation;
+    private DefiniteInitializationDict currInitilizationDict;
+    private boolean ifCase;
+    private PrintWriter outfile;
 
-    public Map<String, String> getLastLocation() {
-        return lastLocation;
+    public DefiniteInitilizationVisitor(PrintWriter outfile){
+        this.currInitilizationDict = new DefiniteInitializationDict();
+        this.outfile=outfile;
     }
+    public void RaiseError(){
+        outfile.write("ERROR\n");
+        outfile.flush();
+        outfile.close();
+        System.exit(0);
 
-
-    public MapVtableVisitor() {
-        this.classMaps = new HashMap<>();
-        this.lastLocation=new HashMap<>();
-    }
-
-    public Map<String, ClassMap> getClassMaps() {
-        return classMaps;
-    }
+    };
 
     @Override
     public void visit(Program program) {
@@ -33,39 +29,9 @@ public class MapVtableVisitor implements Visitor{
 
     @Override
     public void visit(ClassDecl classDecl) {
-        if(classDecl.superName()!=null)
-        {
-            currVarSpace=Integer.parseInt(lastLocation.get(classDecl.superName()));
-            currClassMap=new ClassMap(classMaps.get(classDecl.superName()).getMethodMap(),classMaps.get(classDecl.superName()).getVarMap());
+        for(var methodDecl : classDecl.methoddecls()){
+            methodDecl.accept(this);
         }
-        else
-        {
-            currVarSpace=8;
-            currClassMap=new ClassMap();
-        }
-        classMaps.put(classDecl.name(),currClassMap);
-        for (var methodDecl : classDecl.methoddecls()) {
-            Map<String,String> methodMap=classMaps.get(classDecl.name()).getMethodMap();
-            if(!methodMap.containsKey(methodDecl.name()))
-            {
-                int location=classMaps.get(classDecl.name()).getMethodMap().size();
-                classMaps.get(classDecl.name()).getMethodMap().put(methodDecl.name(),Integer.toString(location));
-            }
-        }
-
-        for (var fieldDecl : classDecl.fields()) {
-            Map<String,String> varMap=classMaps.get(classDecl.name()).getVarMap();
-            if(!varMap.containsKey(fieldDecl.name()))
-            {
-                int location=currVarSpace;
-                fieldDecl.accept(this);
-                classMaps.get(classDecl.name()).getVarMap().put(fieldDecl.name(),Integer.toString(location));
-            }
-            lastLocation.put(classDecl.name(),Integer.toString(currVarSpace));
-        }
-        lastLocation.put(classDecl.name(),Integer.toString(currVarSpace));
-
-
     }
 
     @Override
@@ -75,6 +41,14 @@ public class MapVtableVisitor implements Visitor{
 
     @Override
     public void visit(MethodDecl methodDecl) {
+        for (var varDecl : methodDecl.vardecls()) {
+            currInitilizationDict.AddVar(varDecl.name(), false);
+            varDecl.accept(this);
+        }
+
+        for (var stmt : methodDecl.body()) {
+            stmt.accept(this);
+        }
 
     }
 
@@ -85,17 +59,29 @@ public class MapVtableVisitor implements Visitor{
 
     @Override
     public void visit(VarDecl varDecl) {
-    varDecl.type().accept(this);
+
     }
 
     @Override
     public void visit(BlockStatement blockStatement) {
-
+        for (var stmt : blockStatement.statements()) {
+            stmt.accept(this);
+        }
     }
 
     @Override
     public void visit(IfStatement ifStatement) {
+        currInitilizationDict.IfSplit();
 
+        currInitilizationDict = currInitilizationDict.getIfBlock();
+        ifStatement.thencase().accept(this);
+        currInitilizationDict = currInitilizationDict.getOuterBlock();
+
+        currInitilizationDict = currInitilizationDict.getElseBlock();
+        ifStatement.elsecase().accept(this);
+        currInitilizationDict = currInitilizationDict.getOuterBlock();
+
+        currInitilizationDict.IfElseUnion();
     }
 
     @Override
@@ -110,11 +96,15 @@ public class MapVtableVisitor implements Visitor{
 
     @Override
     public void visit(AssignStatement assignStatement) {
+        currInitilizationDict.ChangeVarState(assignStatement.lv(),true);
+        assignStatement.rv().accept(this);
 
     }
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
+        currInitilizationDict.ChangeVarState(assignArrayStatement.lv(),true);
+        assignArrayStatement.rv().accept(this);
 
     }
 
@@ -175,7 +165,9 @@ public class MapVtableVisitor implements Visitor{
 
     @Override
     public void visit(IdentifierExpr e) {
-
+    if (!currInitilizationDict.get(e.id())){
+        RaiseError();
+    }
     }
 
     @Override
@@ -200,24 +192,21 @@ public class MapVtableVisitor implements Visitor{
 
     @Override
     public void visit(IntAstType t) {
-currVarSpace=currVarSpace+4;
+
     }
 
     @Override
     public void visit(BoolAstType t) {
-        currVarSpace=currVarSpace+1;
 
     }
 
     @Override
     public void visit(IntArrayAstType t) {
-        currVarSpace=currVarSpace+8;
 
     }
 
     @Override
     public void visit(RefType t) {
-        currVarSpace=currVarSpace+8;
 
     }
 }

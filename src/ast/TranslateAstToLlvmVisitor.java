@@ -562,6 +562,7 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         this.builder.append(")\n");
     currExpr.setResult(calltoFunc);
 
+
     }
 
     @Override
@@ -613,7 +614,9 @@ public class TranslateAstToLlvmVisitor implements Visitor{
         ExprTranslation exp;
 
         SymbolTable stOfDecl = getSTnameResolution(e.id());
-        if (stOfDecl.getSymbolinfo(e.id(),false).getRefType()!=null){
+        if (!stOfDecl.getSymbolinfo(e.id(),false).getRefType().equals("int")&&
+                !stOfDecl.getSymbolinfo(e.id(),false).getRefType().equals("intArr")&&
+                !stOfDecl.getSymbolinfo(e.id(),false).getRefType().equals("bool")){
             this.currentClass=stOfDecl.getSymbolinfo(e.id(),false).getRefType();
         }
         if (stOfDecl == currSymbolTable&&currSymbolTable.getMethodEntries().size()==0) {

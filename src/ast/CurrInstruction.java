@@ -10,7 +10,7 @@ public enum CurrInstruction {
     MethodDecl(""),
     Return("");
     private final String name;
-    private CurrInstruction(String name)
+    CurrInstruction(String name)
     {
         this.name=name;
     }

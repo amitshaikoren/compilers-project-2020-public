@@ -3,6 +3,7 @@ import ast.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 
 public class Main {
@@ -63,9 +64,37 @@ public class Main {
                     outFile.write(astPrinter.getString());
 
                 } else if (action.equals("semantic")) {
-                    LookupTable lookupTable = new LookupTable();
-                    AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
-                    symbolTableVistor.visit(prog);
+                    try {
+
+                        LookupTable lookupTable = new LookupTable();
+                        AstCreateSymbolTableVisitor symbolTableVistor = new AstCreateSymbolTableVisitor(lookupTable);
+                        symbolTableVistor.visit(prog);
+
+                        SemanticCheckClassHierarchyVisitor classHierarchyVisitor = new SemanticCheckClassHierarchyVisitor();
+                        classHierarchyVisitor.visit(prog);
+                        Map<String, Set<String>> childrenHierarchyMap = classHierarchyVisitor.getChildrenMap();
+                        Map<String, Set<String>> fathersHierarchyMap = classHierarchyVisitor.getFathersMap();
+
+                        CreateMethodIdentifier methodIdentifier = new CreateMethodIdentifier();
+                        methodIdentifier.visit(prog);
+                        Map<String, ArrayList<MethodOfClass>> methodsOfClasses = methodIdentifier.getMethodOfClasses();
+
+                        SemanticClassAndVarCheckVisitor classAndVarCheckVisitor = new SemanticClassAndVarCheckVisitor(lookupTable, childrenHierarchyMap, fathersHierarchyMap, methodsOfClasses, outFile);
+                        classAndVarCheckVisitor.visit(prog);
+
+                        SemanticMethodDeclarationCheck methodDeclarationCheck = new SemanticMethodDeclarationCheck(lookupTable, childrenHierarchyMap, fathersHierarchyMap, methodsOfClasses, outFile);
+                        methodDeclarationCheck.visit(prog);
+                        DefiniteInitilizationVisitor definiteInitilizationVisitor = new DefiniteInitilizationVisitor(outFile);
+                        definiteInitilizationVisitor.visit(prog);
+                        outFile.write("OK\n");
+                    }
+                    catch (RuntimeException e){
+                        outFile.write("ERROR\n");
+
+                    }
+
+
+
 
                 } else if (action.equals("compile")) {
                     LookupTable lookupTable = new LookupTable();
@@ -81,6 +110,9 @@ public class Main {
                     TranslateAstToLlvmVisitor translator = new TranslateAstToLlvmVisitor(lookupTable,classMaps,funcOfClass,allocation);
                     translator.visit(prog);
                     outFile.write(vtables.getString()+translator.getString());
+                    CreateMethodIdentifier methodIdentifier = new CreateMethodIdentifier();
+
+
 
                 } else if (action.equals("rename")) {
                     var type = args[2];
