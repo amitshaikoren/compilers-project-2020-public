@@ -9,6 +9,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     Map<String,Set<String>> fathersHierarchyMap;
     Map<String, ArrayList<MethodOfClass>> methodOfClasses;
     private PrintWriter outfile;
+    private ExprTranslation currExpr;
 
 
 
@@ -36,6 +37,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     private boolean updatingNewArgType;
     private boolean checkRetType;
     private boolean checkReturnType;
+    private boolean arraylength;
     private SymbolTable currSymbolTable;
     private LookupTable lookupTable;
     private String currExprOwnerType;
@@ -122,6 +124,18 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         //check retType
         if(!oldMethod.getReturnType().equals(newMethod.getReturnType()))
         {
+            if(     oldMethod.getReturnType().equals("int") && !newMethod.getReturnType().equals("int")||
+                    oldMethod.getReturnType().equals("intArr") && !newMethod.getReturnType().equals("intArr")||
+                    oldMethod.getReturnType().equals("bool") && !newMethod.getReturnType().equals("bool")){
+
+                RaiseError();
+            }
+            if(     !oldMethod.getReturnType().equals("int") && newMethod.getReturnType().equals("int")||
+                    !oldMethod.getReturnType().equals("intArr") && newMethod.getReturnType().equals("intArr")||
+                    !oldMethod.getReturnType().equals("bool") && newMethod.getReturnType().equals("bool")){
+
+                RaiseError();
+            }
             if(!getFathers(oldMethod.getReturnType()).contains(newMethod.getReturnType()))
             {
                 return false;
@@ -139,7 +153,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             FormalArg newArg= newMethod.getFormalArgs().get(i);
             updatingOldArgType=true;
             oldArg.type().accept(this);
-            updatingOldArgType=true;
+            updatingOldArgType=false;
             updatingNewArgType=true;
             newArg.type().accept(this);
             updatingNewArgType=false;
@@ -228,6 +242,18 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         checkRetType=true;
         methodDecl.ret().accept(this);
         checkRetType=false;
+        if(     retType.equals("int") && !returnType.equals("int")||
+                retType.equals("intArr") && !returnType.equals("intArr")||
+                retType.equals("bool") && !returnType.equals("bool")){
+
+            RaiseError();
+        }
+        if(     !retType.equals("int") && returnType.equals("int")||
+                !retType.equals("intArr") && returnType.equals("intArr")||
+                !retType.equals("bool") && returnType.equals("bool")){
+
+            RaiseError();
+        }
         if (!retType.equals(returnType)){
             //The static type of e in return e is valid according to the definition of the current method. Note subtyping!(18)
             if(!getFathers(retType).contains(returnType)) {
@@ -235,6 +261,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
                 RaiseError();
             }
 
+        }
+        for (var stmt : methodDecl.body()) {
+            stmt.accept(this);
         }
 
     }
@@ -253,7 +282,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(BlockStatement blockStatement) {
-
+        for (var stmt : blockStatement.statements()) {
+            stmt.accept(this);
+        }
     }
 
     @Override
@@ -273,37 +304,119 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(AssignStatement assignStatement) {
-
+    assignStatement.rv().accept(this);
     }
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
+        assignArrayStatement.rv().accept(this);
 
     }
+    private void visitBinaryExpr(BinaryExpr e) {
+        ExprTranslation exp,e1,e2;
+        exp=new ExprTranslation(null,null,null,null);
+        currExpr=exp;
+        e.e1().accept(this);
+        exp.setE1(currExpr);
+        currExpr=exp;
+        e.e2().accept(this);
+        exp.setE2(currExpr);
+        currExpr=exp;
 
+    }
     @Override
     public void visit(AndExpr e) {
+        visitBinaryExpr(e);
+        if(checkRetType){
+            retType="bool";
+        }
+        if (checkReturnType){
+            retType="bool";
+        }
+        if(checkExprOwner){
+            currExprOwnerType="bool";
+        }
 
     }
 
     @Override
     public void visit(LtExpr e) {
-
+        visitBinaryExpr(e);
+        if(checkRetType){
+            retType="bool";
+        }
+        if (checkReturnType){
+            retType="bool";
+        }
+        if(checkExprOwner){
+            currExprOwnerType="bool";
+        }
     }
 
     @Override
     public void visit(AddExpr e) {
+        visitBinaryExpr(e);
 
+        if (!currExpr.getE1().getResult().equals("int")||
+                !currExpr.getE2().getResult().equals("int")){ //(21)
+            RaiseError();
+        }
+        else {
+            currExpr.setResult("int"); //(17)
+        }
+        if(checkRetType){
+            retType="int";
+        }
+        if (checkReturnType){
+            retType="int";
+        }
+        if(checkExprOwner){
+            currExprOwnerType="int";
+        }
     }
 
     @Override
     public void visit(SubtractExpr e) {
+        visitBinaryExpr(e);
 
+        if (!currExpr.getE1().getResult().equals("int")||
+                !currExpr.getE2().getResult().equals("int")){ //(21)
+            RaiseError();
+        }
+        else {
+            currExpr.setResult("int"); //(17)
+        }
+        if(checkRetType){
+            retType="int";
+        }
+        if (checkReturnType){
+            retType="int";
+        }
+        if(checkExprOwner){
+            currExprOwnerType="int";
+        }
     }
 
     @Override
     public void visit(MultExpr e) {
+        visitBinaryExpr(e);
 
+        if (!currExpr.getE1().getResult().equals("int")||
+                !currExpr.getE2().getResult().equals("int")){ //(21)
+            RaiseError();
+        }
+        else {
+            currExpr.setResult("int"); //(17)
+        }
+        if(checkRetType){
+            retType="int";
+        }
+        if (checkReturnType){
+            retType="int";
+        }
+        if(checkExprOwner){
+            currExprOwnerType="int";
+        }
     }
 
     @Override
@@ -313,7 +426,18 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(ArrayLengthExpr e) {
-
+         arraylength = true;
+        e.arrayExpr().accept(this);
+        arraylength = false;
+        if(checkRetType){ //(18)
+            retType="int";
+        }
+        if (checkReturnType){ //(18)
+            returnType="int";
+        }
+        if (checkExprOwner){
+            currExprOwnerType="int";
+        }
     }
 
     @Override
@@ -344,9 +468,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         // ExprOwner is a refrence variable
         else{
             boolean error=true;
-            for (var something : classMethods.get(currExprOwnerType))
+            for (var something : methodOfClasses.get(currExprOwnerType))
             {
-                if (something.getName().equals(e.methodId())){
+                if (something.getMethodName().equals(e.methodId())){
                     error=false;
                     break;
                 }
@@ -397,13 +521,16 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         if (checkReturnType){ //(18)
             returnType="int";
         }
+        if (checkExprOwner){
+            currExprOwnerType="int";
+        }
     }
 
     @Override
     public void visit(TrueExpr e) {
 
         if(checkRetType){//(18)
-            retType="boolean";
+            retType="bool";
         }
     }
 
@@ -416,11 +543,18 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(IdentifierExpr e) {
+        String type=findType(e);
         if(checkRetType){//(18)
-            retType =findType(e);
+            retType =type;
         }
         if(checkExprOwner){//(11)
-            currExprOwnerType = findType(e);
+            currExprOwnerType = type;
+        }
+        if (arraylength){
+            if (!type.equals("intArr"))
+            {
+                RaiseError();
+            }
         }
     }
 
@@ -441,6 +575,12 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     public void visit(NewObjectExpr e) {
         if(checkExprOwner) { //(11)
             currExprOwnerType = e.classId();
+        }
+        if(checkRetType){
+            retType=e.classId();
+        }
+        if (checkReturnType){
+            retType=e.classId();
         }
     }
 
@@ -489,13 +629,13 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             oldArgType="bool";
         }
         if(checkRetType){//(18)
-            retType="boolean";
+            retType="bool";
         }
         if (checkReturnType){//(18)
-            returnType="boolean";
+            returnType="bool";
         }
         if(methodActualCheck){ //(11)
-            currMethodActual="boolean";
+            currMethodActual="bool";
         }
     }
 

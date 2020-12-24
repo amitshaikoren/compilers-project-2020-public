@@ -135,9 +135,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(Program program)  {
+        this.mainClassName = program.mainClass().name();
 
         //Get main class name
-        program.mainClass().accept(this);
         setClasses=true;
         for (ClassDecl classdecl : program.classDecls()) {
             classdecl.accept(this);
@@ -147,6 +147,8 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         for (ClassDecl classdecl : program.classDecls()) {
             classdecl.accept(this);
         }
+        program.mainClass().accept(this);
+
     }
 
     @Override
@@ -168,7 +170,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
 
         // Making sure no two classes are named the same. (3)
-        if(classes.contains(currClassCheck) && !(mainClassName.equals(currClassCheck))){
+        if(classes.contains(currClassCheck) || (mainClassName.equals(currClassCheck))){
             RaiseError();
         }
 
@@ -202,7 +204,6 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(MainClass mainClass) {
-        this.mainClassName = mainClass.name();
         mainClass.mainStatement().accept(this);
     }
 
@@ -330,13 +331,18 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         String lvType = findType(assignStatement.lv());
 
         if(     lvType.equals("int") && !rvType.equals("int")||
-                lvType.equals("intArr") && !rvType.equals("intArr")||
+
                 lvType.equals("bool") && !rvType.equals("bool")){
 
                 RaiseError();
         }
+        if(     (!lvType.equals("int")&&!lvType.equals("intArr")) && rvType.equals("int")||
+                !lvType.equals("intArr") && rvType.equals("intArr")||
+                !lvType.equals("bool") && rvType.equals("bool")){
 
-        if(!lvType.equals(rvType)){
+            RaiseError();
+        }
+    if(!lvType.equals(rvType) && !(lvType.equals("intArr") && rvType.equals("int"))){
             if(!getFathers(rvType).contains(lvType)){
                 RaiseError();
             }
@@ -360,10 +366,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         arrayAssignmentrvCheck=true;
         assignArrayStatement.rv().accept(this);
         arrayAssignmentrvCheck=false;
-        if(arrayAssignmentindex.equals("int")){
+        if(!arrayAssignmentindex.equals("int")){
             RaiseError();
         }
-        if (arrayAssignmentrv.equals("int")){
+        if (!arrayAssignmentrv.equals("int")){
             RaiseError();
         }
 
@@ -892,6 +898,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         arrayLengthCheck=true;
         e.lengthExpr().accept(this);
         arrayLengthCheck=false;
+        if(arrayLengthType==null){
+            RaiseError();
+        }
         if(!arrayLengthType.equals("int")){
             RaiseError();
         }
@@ -919,7 +928,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     public void visit(NotExpr e) { //(17)
         ExprTranslation exp;
         exp=new ExprTranslation(null,null,null,null);
-        e.accept(this);
+        e.e().accept(this);
         exp.setResult(currExpr.getResult());
         if (!currExpr.getResult().equals("bool")){
             RaiseError();
