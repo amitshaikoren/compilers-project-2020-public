@@ -377,6 +377,8 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         currExpr=exp;
         e.e2().accept(this);
         exp.setE2(currExpr);
+        currExpr=exp;
+
     }
 
     @Override
@@ -650,6 +652,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         {
             RaiseError();
         }
+        if (callMethod.equals("this")){
+            callMethod=currClassCheck;
+        }
         if (systemOutCheck){ //(20)
             for ( var check : methodOfClasses.get(callMethod)){
                 if (check.getMethodName().equals(e.methodId())){
@@ -673,7 +678,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
                      type=check.getDecl();
                 }
             }
-
+            if(type == null){
+                RaiseError();
+            }
             if (currExpr == null) {
                 exp = new ExprTranslation(null, null, null, type);
             } else {
@@ -895,6 +902,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if (methodCallExpr){ // new object is legal for call method (12)
             callMethod = e.classId();
+        }
+        if (rvTypeCheck){
+            rvType=e.classId();
         }
     }
 
