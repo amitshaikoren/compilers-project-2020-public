@@ -64,6 +64,7 @@ public class Main {
                     outFile.write(astPrinter.getString());
 
                 } else if (action.equals("semantic")) {
+
                     LookupTable lookupTable = new LookupTable();
                     AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
                     symbolTableVistor.visit(prog);
@@ -77,20 +78,14 @@ public class Main {
                     methodIdentifier.visit(prog);
                     Map<String, ArrayList<MethodOfClass>> methodsOfClasses = methodIdentifier.getMethodOfClasses();
 
-                    SemanticClassAndVarCheckVisitor classAndVarCheckVisitor = new SemanticClassAndVarCheckVisitor(lookupTable, childrenHierarchyMap, fathersHierarchyMap, methodsOfClasses);
+                    SemanticClassAndVarCheckVisitor classAndVarCheckVisitor = new SemanticClassAndVarCheckVisitor(lookupTable, childrenHierarchyMap, fathersHierarchyMap, methodsOfClasses,outFile);
                     classAndVarCheckVisitor.visit(prog);
 
-                    SemanticMethodDeclarationCheck methodDeclarationCheck = new SemanticMethodDeclarationCheck(childrenHierarchyMap, fathersHierarchyMap, methodsOfClasses);
+                    SemanticMethodDeclarationCheck methodDeclarationCheck = new SemanticMethodDeclarationCheck(lookupTable,childrenHierarchyMap, fathersHierarchyMap, methodsOfClasses,outFile);
                     methodDeclarationCheck.visit(prog);
-
-                    boolean SemanticError = methodDeclarationCheck.getERROR() && classAndVarCheckVisitor.getERROR();
-
-                    if(SemanticError){
-                        outFile.write("ERROR\n");
-                    }
-                    else{
-                        outFile.write("OK\n");
-                    }
+                    DefiniteInitilizationVisitor definiteInitilizationVisitor = new DefiniteInitilizationVisitor(outFile);
+                    definiteInitilizationVisitor.visit(prog);
+                    outFile.write("OK\n");
 
 
 

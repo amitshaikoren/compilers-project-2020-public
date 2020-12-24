@@ -1,9 +1,24 @@
 package ast;
 
+import java.io.PrintWriter;
+
 public class DefiniteInitilizationVisitor implements Visitor{
 
-    private DefiniteInitializationDict currInitilizationDict = new DefiniteInitializationDict();
+    private DefiniteInitializationDict currInitilizationDict;
     private boolean ifCase;
+    private PrintWriter outfile;
+
+    public DefiniteInitilizationVisitor(PrintWriter outfile){
+        this.currInitilizationDict = new DefiniteInitializationDict();
+        this.outfile=outfile;
+    }
+    public void RaiseError(){
+        outfile.write("ERROR\n");
+        outfile.flush();
+        outfile.close();
+        System.exit(0);
+
+    };
 
     @Override
     public void visit(Program program) {
@@ -81,11 +96,15 @@ public class DefiniteInitilizationVisitor implements Visitor{
 
     @Override
     public void visit(AssignStatement assignStatement) {
+        currInitilizationDict.ChangeVarState(assignStatement.lv(),true);
+        assignStatement.rv().accept(this);
 
     }
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
+        currInitilizationDict.ChangeVarState(assignArrayStatement.lv(),true);
+        assignArrayStatement.rv().accept(this);
 
     }
 
@@ -146,7 +165,9 @@ public class DefiniteInitilizationVisitor implements Visitor{
 
     @Override
     public void visit(IdentifierExpr e) {
-
+    if (!currInitilizationDict.get(e.id())){
+        RaiseError();
+    }
     }
 
     @Override

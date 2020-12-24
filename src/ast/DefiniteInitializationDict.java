@@ -8,9 +8,9 @@ public class DefiniteInitializationDict {
 
     private DefiniteInitializationDict outerBlock;
     private Map<String, Boolean> definiteInitializationMap = new HashMap<>();
-    private DefiniteInitializationDict ifSplitDict = new DefiniteInitializationDict();
-    private DefiniteInitializationDict elseSplitDict = new DefiniteInitializationDict();
-    private DefiniteInitializationDict whileSplitDict = new DefiniteInitializationDict();
+    private DefiniteInitializationDict ifSplitDict ;
+    private DefiniteInitializationDict elseSplitDict ;
+    private DefiniteInitializationDict whileSplitDict ;
 
 
     public DefiniteInitializationDict(Map<String, Boolean> definiteInitializationMap, DefiniteInitializationDict outerBlock){

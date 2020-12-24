@@ -1,5 +1,6 @@
 package ast;
 
+import java.io.PrintWriter;
 import java.util.*;
 
 public class SemanticClassAndVarCheckVisitor implements Visitor{
@@ -33,6 +34,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private String arrayLengthType;
     private  String arrayAssignmentindex;
     private String arrayAssignmentrv;
+    private PrintWriter outfile;
 
     private  String arrayAccessType;
     private  String arrayIndexType;
@@ -50,15 +52,11 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private Set<String> currLocals = new HashSet<>();
 
 
-    private boolean ERROR = false;
 
-    public boolean getERROR(){
-        return ERROR;
-    }
 
     private String currClassCheck;
 
-    public SemanticClassAndVarCheckVisitor(LookupTable lookupTable, Map<String,Set<String>> childrenHierarchyMap, Map<String,Set<String>> fathersHierarchyMap,  Map<String, ArrayList<MethodOfClass>> methodOfClasses){
+    public SemanticClassAndVarCheckVisitor(LookupTable lookupTable, Map<String,Set<String>> childrenHierarchyMap, Map<String,Set<String>> fathersHierarchyMap,  Map<String, ArrayList<MethodOfClass>> methodOfClasses,PrintWriter outfile){
         this.classes = new HashSet<>();
         this.allClasses = new HashSet<>();
         this.classFields = new HashMap<>();
@@ -68,9 +66,14 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         this.childrenHierarchyMap = childrenHierarchyMap;
         this.fathersHierarchyMap = fathersHierarchyMap;
         this.methodOfClasses= methodOfClasses;
+        this.outfile = outfile;
     }
     public void RaiseError(){
-        ERROR = true;
+        outfile.write("ERROR\n");
+        outfile.flush();
+        outfile.close();
+        System.exit(0);
+
     };
 
     public Set<String> getFathers(String className){
@@ -131,7 +134,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
 
     @Override
-    public void visit(Program program) {
+    public void visit(Program program)  {
 
         //Get main class name
         program.mainClass().accept(this);
@@ -599,7 +602,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         e.arrayExpr().accept(this);
         arraylengthexp=false;
 
-        if(rvTypeCheck){
+        if(rvTypeCheck){ //(9)
             rvType = "int";
         }
         //(17) + (21)
@@ -649,14 +652,14 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if (systemOutCheck){ //(20)
             for ( var check : methodOfClasses.get(callMethod)){
-                if (check.equals(e.methodId())){
+                if (check.getMethodName().equals(e.methodId())){
                     systemOutType=check.getDecl();
                 }
             }
         }
         if(rvTypeCheck){ //(16)
             for ( var check : methodOfClasses.get(callMethod)){
-                if (check.equals(e.methodId())){
+                if (check.getMethodName().equals(e.methodId())){
                     rvType=check.getDecl();
                 }
             }
@@ -666,7 +669,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         ExprTranslation exp;
             String type=null;
             for ( var check : methodOfClasses.get(callMethod)){
-                if (check.equals(e.methodId())){
+                if (check.getMethodName().equals(e.methodId())){
                      type=check.getDecl();
                 }
             }
@@ -692,6 +695,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         }
         if(arrayLengthCheck){ //(25)
             arrayLengthType=type;
+        }
+        if(rvTypeCheck){
+            rvType=type;
         }
 
 
@@ -803,7 +809,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     @Override
     public void visit(IdentifierExpr e) {
         String type =findType(e);
-
+    if(rvTypeCheck){
+        rvType=type;
+    }
         if (methodCallExpr){ //(10)
             if (!allClasses.contains(type)){ // check if the type is int , int [] , boolean
                 RaiseError();
@@ -851,6 +859,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(arrayLengthCheck){ //(25)
             arrayLengthType=type;
         }
+
         }
 
 

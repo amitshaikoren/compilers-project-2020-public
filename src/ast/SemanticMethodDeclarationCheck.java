@@ -1,5 +1,6 @@
 package ast;
 
+import java.io.PrintWriter;
 import java.util.*;
 
 public class SemanticMethodDeclarationCheck implements Visitor{
@@ -7,13 +8,17 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     Map<String,Set<String>> childrenHierarchyMap;
     Map<String,Set<String>> fathersHierarchyMap;
     Map<String, ArrayList<MethodOfClass>> methodOfClasses;
+    private PrintWriter outfile;
 
 
 
-    public SemanticMethodDeclarationCheck(Map<String,Set<String>> childrenHierarchyMap, Map<String,Set<String>> fathersHierarchyMap, Map<String, ArrayList<MethodOfClass>> methodOfClasses){
+    public SemanticMethodDeclarationCheck(LookupTable lookupTable,Map<String,Set<String>> childrenHierarchyMap, Map<String,Set<String>> fathersHierarchyMap, Map<String, ArrayList<MethodOfClass>> methodOfClasses,PrintWriter outfile){
         this.childrenHierarchyMap = childrenHierarchyMap;
         this.fathersHierarchyMap = fathersHierarchyMap;
         this.methodOfClasses= methodOfClasses;
+        this.lookupTable=lookupTable;
+        this.outfile=outfile;
+
 
     }
 
@@ -38,14 +43,14 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     private boolean methodActualCheck;
     private String currMethodActual;
 
-    private boolean ERROR = false;
 
-    public boolean getERROR(){
-        return ERROR;
-    }
 
     public void RaiseError(){
-        ERROR = true;
+        outfile.write("ERROR\n");
+        outfile.flush();
+        outfile.close();
+        System.exit(0);
+
     };
 
 
@@ -210,13 +215,17 @@ public class SemanticMethodDeclarationCheck implements Visitor{
                 }
             }
         }
+        for (var varDecl : methodDecl.vardecls()) {
+            this.currSymbolTable=lookupTable.getSymbolTable(varDecl);
+            varDecl.accept(this);
+        }
         //new method
         MethodSemanticCheckInfo newMethod=new MethodSemanticCheckInfo(methodDecl.name(),currRetType,methodDecl.formals(),currClassCheck);
         classMethods.get(currClassCheck).add(newMethod);
         checkRetType=true;
         methodDecl.ret().accept(this);
         checkRetType=false;
-        if (!retType.equals(retType)){
+        if (!retType.equals(returnType)){
             //The static type of e in return e is valid according to the definition of the current method. Note subtyping!(18)
             if(!getFathers(retType).contains(returnType)) {
 
@@ -328,7 +337,15 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
         // ExprOwner is a refrence variable
         else{
-            if(!classMethods.get(currExprOwnerType).contains(e.methodId())){
+            boolean error=true;
+            for (var something : classMethods.get(currExprOwnerType))
+            {
+                if (something.getName().equals(e.methodId())){
+                    error=false;
+                    break;
+                }
+            }
+            if (error){
                 RaiseError();
             }
         }
@@ -336,7 +353,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         MethodOfClass currmethod=null;
         //Checking that method actual parameters are valid
         for ( var check : methodOfClasses.get(currExprOwnerType)){
-            if (check.equals(e.methodId())){
+            if (check.getMethodName().equals(e.methodId())){
                 currmethod=check;
                 break;
             }
@@ -359,6 +376,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             index++;
 
 
+        }
+        if(checkRetType){
+            retType=currmethod.getDecl();
         }
 
     }
