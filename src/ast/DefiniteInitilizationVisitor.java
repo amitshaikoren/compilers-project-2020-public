@@ -7,6 +7,9 @@ public class DefiniteInitilizationVisitor implements Visitor{
     private DefiniteInitializationDict currInitilizationDict;
     private boolean ifCase;
     private PrintWriter outfile;
+    private DefiniteInitializationDict classInitilizationDict;
+    private  boolean fields;
+
 
     public DefiniteInitilizationVisitor(PrintWriter outfile){
         this.currInitilizationDict = new DefiniteInitializationDict();
@@ -29,7 +32,12 @@ public class DefiniteInitilizationVisitor implements Visitor{
 
     @Override
     public void visit(ClassDecl classDecl) {
+        classInitilizationDict=new DefiniteInitializationDict();
+        for (var fieldDecl : classDecl.fields()) {
+            classInitilizationDict.AddVar(fieldDecl.name(),true);
+        }
         for(var methodDecl : classDecl.methoddecls()){
+            currInitilizationDict = classInitilizationDict.copy();
             methodDecl.accept(this);
         }
     }
@@ -41,6 +49,11 @@ public class DefiniteInitilizationVisitor implements Visitor{
 
     @Override
     public void visit(MethodDecl methodDecl) {
+        for (var formal : methodDecl.formals()) {
+            currInitilizationDict.AddVar(formal.name(), false);
+            formal.accept(this);
+        }
+
         for (var varDecl : methodDecl.vardecls()) {
             currInitilizationDict.AddVar(varDecl.name(), false);
             varDecl.accept(this);

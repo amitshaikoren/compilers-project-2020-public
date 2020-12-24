@@ -159,6 +159,8 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         for (ClassDecl classdecl : program.classDecls()) {
             classdecl.accept(this);
         }
+        program.mainClass().accept(this);
+
     }
 
     @Override
@@ -184,7 +186,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(MainClass mainClass) {
-
+        mainClass.mainStatement().accept(this);
     }
 
     @Override
