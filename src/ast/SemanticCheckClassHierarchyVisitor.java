@@ -1,20 +1,37 @@
 package ast;
 
+import java.io.PrintWriter;
 import java.util.*;
 
 public class SemanticCheckClassHierarchyVisitor implements Visitor{
 
     Map<String, Set<String>> childrenMap = new HashMap<>();
     Map<String, Set<String>> fathersMap = new HashMap<>();
+    private PrintWriter outfile;
+    public SemanticCheckClassHierarchyVisitor(PrintWriter outfile){
+        this.outfile=outfile;
+    }
+    public void RaiseError(){
+        outfile.write("ERROR\n");
+        outfile.flush();
+        outfile.close();
+        System.exit(0);
 
+    };
 
     private void PutClass(String className, String superClass){
         childrenMap.put(className, new HashSet<>());
         fathersMap.put(className, new HashSet<>());
         if(superClass != null){
+            if (!childrenMap.containsKey(superClass)){
+                RaiseError();
+            }
             childrenMap.get(superClass).add(className);
             for(var classVar : fathersMap.get(superClass)){
                 childrenMap.get(classVar).add(className);
+            }
+            if (!fathersMap.containsKey(className)){
+                RaiseError();
             }
             fathersMap.get(className).add(superClass);
             for(var classVar : fathersMap.get(superClass)){

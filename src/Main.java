@@ -64,13 +64,13 @@ public class Main {
                     outFile.write(astPrinter.getString());
 
                 } else if (action.equals("semantic")) {
-                    try {
+
 
                         LookupTable lookupTable = new LookupTable();
                         AstCreateSymbolTableVisitor symbolTableVistor = new AstCreateSymbolTableVisitor(lookupTable);
                         symbolTableVistor.visit(prog);
 
-                        SemanticCheckClassHierarchyVisitor classHierarchyVisitor = new SemanticCheckClassHierarchyVisitor();
+                        SemanticCheckClassHierarchyVisitor classHierarchyVisitor = new SemanticCheckClassHierarchyVisitor(outFile);
                         classHierarchyVisitor.visit(prog);
                         Map<String, Set<String>> childrenHierarchyMap = classHierarchyVisitor.getChildrenMap();
                         Map<String, Set<String>> fathersHierarchyMap = classHierarchyVisitor.getFathersMap();
@@ -87,11 +87,7 @@ public class Main {
                         DefiniteInitilizationVisitor definiteInitilizationVisitor = new DefiniteInitilizationVisitor(outFile);
                         definiteInitilizationVisitor.visit(prog);
                         outFile.write("OK\n");
-                    }
-                    catch (RuntimeException e){
-                        outFile.write("ERROR\n");
 
-                    }
 
 
 
