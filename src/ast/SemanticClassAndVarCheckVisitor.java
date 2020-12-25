@@ -182,7 +182,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
         // class extends, and we take its set of field names.
         else{
-            classFields.put(currClassCheck, classFields.get(superClassName));
+            Set<String> copyofset = new HashSet<>();
+            copyofset.addAll(classFields.get(superClassName));
+            classFields.put(currClassCheck,copyofset );
         }
 
         updatingClassFields = true;
@@ -229,6 +231,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         for (var stmt : methodDecl.body()) {
             stmt.accept(this);
         }
+        methodDecl.ret().accept(this);
 
     }
 
@@ -237,7 +240,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         formalArg.type().accept(this);//(8)
 
         if(formalsRedeclarationCheck) {//(24)
-            if (!currFormals.contains(formalArg.name())) {
+            if (!currFormals.contains(formalArg.name()) ) {
                 currFormals.add(formalArg.name());
             }
             else{
@@ -262,11 +265,18 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(localsRedeclarationCheck) {//(24)
             if (!currLocals.contains(varDecl.name())) {
                 currLocals.add(varDecl.name());
+            } else {
+                RaiseError();
             }
-            else{
+
+            if (classFields.get(currClassCheck).contains(varDecl.name()) ) {
+                RaiseError();
+            }
+            if (currFormals.contains(varDecl.name())){
                 RaiseError();
             }
         }
+
         varDecl.type().accept(this);//(8)
     }
 
@@ -841,7 +851,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
                 callMethod=type; //is legal type
             }
         }
-        if (arraylengthexp){ //(13)
+        if (arraylengthexp && !methodCallExpr){ //(13)
             if (!type.equals("intArr")){
                 RaiseError();
             }
@@ -941,6 +951,14 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if (rvTypeCheck){
             rvType=e.classId();
         }
+        ExprTranslation exp;
+
+        if (currExpr == null) {
+            exp = new ExprTranslation(null, null, null, e.classId());
+        } else {
+            exp = new ExprTranslation(currExpr, null, null, e.classId());
+        }
+        currExpr = exp;
     }
 
     @Override

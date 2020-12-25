@@ -189,7 +189,10 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         else{
             classMethods.put(currClassCheck, classMethods.get(superClassName));
         }
-
+        for(var fieldDecl : classDecl.fields()){
+            this.currSymbolTable=lookupTable.getSymbolTable(fieldDecl);
+            fieldDecl.accept(this);
+        }
         for(var methodDecl : classDecl.methoddecls()){
             this.currSymbolTable=lookupTable.getSymbolTable(classDecl);
             updatingMethodFields = true;
@@ -239,6 +242,13 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         //new method
         MethodSemanticCheckInfo newMethod=new MethodSemanticCheckInfo(methodDecl.name(),currRetType,methodDecl.formals(),currClassCheck);
         classMethods.get(currClassCheck).add(newMethod);
+        for (var formal : methodDecl.formals()) {
+            this.currSymbolTable=lookupTable.getSymbolTable(formal);
+            formal.accept(this);
+        }
+        for (var stmt : methodDecl.body()) {
+            stmt.accept(this);
+        }
         checkRetType=true;
         methodDecl.ret().accept(this);
         checkRetType=false;
@@ -262,13 +272,8 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             }
 
         }
-        for (var formal : methodDecl.formals()) {
-            this.currSymbolTable=lookupTable.getSymbolTable(formal);
-            formal.accept(this);
-        }
-        for (var stmt : methodDecl.body()) {
-            stmt.accept(this);
-        }
+
+
 
     }
 
@@ -493,7 +498,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             for ( var method :methodOfClasses.get(currClassCheck) ) {
 
 
-                if (!method.getMethodName().equals(e.methodId())) {
+                if (method.getMethodName().equals(e.methodId())) {
                     iserror=false;
                     break;
                 }
@@ -634,7 +639,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         }
         currExpr = exp;
         if(checkRetType){ //(18)
-            retType="boolean";
+            retType="bool";
         }
         if(methodActualCheck){
             currMethodActual="bool";
