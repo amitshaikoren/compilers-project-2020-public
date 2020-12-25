@@ -86,7 +86,12 @@ public class Main {
                         }
                         catch (RuntimeException e){
                             outFile.write("ERROR\n");
+
                         }
+
+
+
+
                 } else if (action.equals("compile")) {
                     LookupTable lookupTable = new LookupTable();
                     AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);

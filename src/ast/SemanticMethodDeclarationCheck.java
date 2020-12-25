@@ -53,7 +53,6 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         throw new RuntimeException();
 
 
-
     };
 
 

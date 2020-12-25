@@ -290,7 +290,7 @@ public class AstRenamingVisitor implements Visitor {
         SymbolTable st;
 
         //if called from new, we get currMethodRefType != null
-        if(this.currMethodRefType != null) {
+        if(this.currMethodRefType != null && !this.currMethodRefType.equals("int")&& !this.currMethodRefType.equals("intArr")&& !this.currMethodRefType.equals("bool")) {
             AstNode node = lookupTable.getClassDeclName(this.currMethodRefType);
             st = lookupTable.getSymbolTable(node);
         }

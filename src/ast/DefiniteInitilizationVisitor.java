@@ -19,6 +19,7 @@ public class DefiniteInitilizationVisitor implements Visitor{
     public void RaiseError(){
         throw new RuntimeException();
 
+
     };
 
     @Override
