@@ -136,7 +136,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
                 RaiseError();
             }
-            if(!getFathers(oldMethod.getReturnType()).contains(newMethod.getReturnType()))
+            if(!getChildren(oldMethod.getReturnType()).contains(newMethod.getReturnType()))
             {
                 return false;
             }
