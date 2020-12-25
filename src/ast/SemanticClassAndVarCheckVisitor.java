@@ -192,6 +192,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             this.currSymbolTable=lookupTable.getSymbolTable(fieldDecl);
             fieldDecl.accept(this);
         }
+        updatingClassFields = false;
 
         for (var methodDecl : classDecl.methoddecls()) {
             this.currSymbolTable=lookupTable.getSymbolTable(methodDecl);
@@ -889,6 +890,24 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     public void visit(ThisExpr e) {
         if (methodCallExpr){ //(12)
             callMethod = "this"; //this is legal type for call method
+        }
+        if (rvTypeCheck){
+            rvType=currClassCheck;
+        }
+        if(arrayIndexCheck){ //(22)
+            arrayIndexType=currClassCheck;
+        }
+        if (arrayAccessCheck){ //(22)
+            arrayAccessType=currClassCheck;
+        }
+        if(arrayAssignmentrvCheck){ //(23)
+            arrayAssignmentrv=currClassCheck;
+        }
+        if(arrayAssignmentindexCheck){ //(23)
+            arrayAssignmentindex=currClassCheck;
+        }
+        if(arrayLengthCheck){ //(25)
+            arrayLengthType=currClassCheck;
         }
     }
 

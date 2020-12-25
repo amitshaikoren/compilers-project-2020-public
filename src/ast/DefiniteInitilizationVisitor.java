@@ -50,7 +50,7 @@ public class DefiniteInitilizationVisitor implements Visitor{
     @Override
     public void visit(MethodDecl methodDecl) {
         for (var formal : methodDecl.formals()) {
-            currInitilizationDict.AddVar(formal.name(), false);
+            currInitilizationDict.AddVar(formal.name(), true);
             formal.accept(this);
         }
 

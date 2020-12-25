@@ -262,6 +262,10 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             }
 
         }
+        for (var formal : methodDecl.formals()) {
+            this.currSymbolTable=lookupTable.getSymbolTable(formal);
+            formal.accept(this);
+        }
         for (var stmt : methodDecl.body()) {
             stmt.accept(this);
         }
@@ -299,6 +303,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(SysoutStatement sysoutStatement) {
+        sysoutStatement.arg().accept(this);
 
     }
 
@@ -421,7 +426,14 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(ArrayAccessExpr e) {
+        ExprTranslation exp;
 
+        if (currExpr == null) {
+            exp = new ExprTranslation(null, null, null, "int");
+        } else {
+            exp = new ExprTranslation(currExpr, null, null, "int");
+        }
+        currExpr = exp;
     }
 
     @Override
@@ -438,6 +450,14 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         if (checkExprOwner){
             currExprOwnerType="int";
         }
+        ExprTranslation exp;
+
+        if (currExpr == null) {
+            exp = new ExprTranslation(null, null, null, "int");
+        } else {
+            exp = new ExprTranslation(currExpr, null, null, "int");
+        }
+        currExpr = exp;
     }
 
     @Override
@@ -460,9 +480,19 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         }
 
         if(currExprOwnerType.equals("this")){
-            if(!classMethods.get(currClassCheck).contains(e.methodId())){
+            boolean iserror=true;
+            for ( var method :methodOfClasses.get(currClassCheck) ) {
+
+
+                if (!method.getMethodName().equals(e.methodId())) {
+                    iserror=false;
+                    break;
+                }
+            }
+            if (iserror){
                 RaiseError();
             }
+
         }
 
         // ExprOwner is a refrence variable
@@ -482,6 +512,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
         MethodOfClass currmethod=null;
         //Checking that method actual parameters are valid
+        if (currExprOwnerType.equals("this")){
+            currExprOwnerType=currClassCheck;
+        }
         for ( var check : methodOfClasses.get(currExprOwnerType)){
             if (check.getMethodName().equals(e.methodId())){
                 currmethod=check;
@@ -489,6 +522,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             }
         }
         int index=0;
+        if(e.actuals().size()!=currmethod.getFormals().size()){
+            RaiseError();
+        }
         for(var actual : e.actuals()){
             methodActualCheck = true;
             actual.accept(this);
@@ -499,9 +535,11 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
                 RaiseError();
             }
-            if (!getFathers(currMethodActual).contains(currmethod.getFormals().get(index))){
-                RaiseError();
+            if (!currMethodActual.equals(currmethod.getFormals().get(index))) {
+                if (!getFathers(currMethodActual).contains(currmethod.getFormals().get(index))) {
+                    RaiseError();
 
+                }
             }
             index++;
 
@@ -510,6 +548,22 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         if(checkRetType){
             retType=currmethod.getDecl();
         }
+        ExprTranslation exp;
+        String type=null;
+        for ( var check : methodOfClasses.get(currExprOwnerType)){
+            if (check.getMethodName().equals(e.methodId())){
+                type=check.getDecl();
+            }
+        }
+        if(type == null){
+            RaiseError();
+        }
+        if (currExpr == null) {
+            exp = new ExprTranslation(null, null, null, type);
+        } else {
+            exp = new ExprTranslation(currExpr, null, null, type);
+        }
+        currExpr = exp;
 
     }
 
@@ -524,20 +578,53 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         if (checkExprOwner){
             currExprOwnerType="int";
         }
+        ExprTranslation exp;
+
+        if (currExpr == null) {
+            exp = new ExprTranslation(null, null, null, "int");
+        } else {
+            exp = new ExprTranslation(currExpr, null, null, "int");
+        }
+        currExpr = exp;
+
+        if(methodActualCheck){
+            currMethodActual="int";
+        }
     }
 
     @Override
     public void visit(TrueExpr e) {
+        ExprTranslation exp;
 
+        if (currExpr == null) {
+            exp = new ExprTranslation(null, null, null, "bool");
+        } else {
+            exp = new ExprTranslation(currExpr, null, null, "bool");
+        }
+        currExpr = exp;
         if(checkRetType){//(18)
             retType="bool";
+        }
+        if(methodActualCheck){
+            currMethodActual="bool";
         }
     }
 
     @Override
     public void visit(FalseExpr e) {
+        ExprTranslation exp;
+
+        if (currExpr == null) {
+            exp = new ExprTranslation(null, null, null, "bool");
+        } else {
+            exp = new ExprTranslation(currExpr, null, null, "bool");
+        }
+        currExpr = exp;
         if(checkRetType){ //(18)
             retType="boolean";
+        }
+        if(methodActualCheck){
+            currMethodActual="bool";
         }
     }
 
@@ -556,6 +643,17 @@ public class SemanticMethodDeclarationCheck implements Visitor{
                 RaiseError();
             }
         }
+        if (methodActualCheck){
+            currMethodActual=type;
+        }
+        ExprTranslation exp;
+
+        if (currExpr == null) {
+            exp = new ExprTranslation(null, null, null, type);
+        } else {
+            exp = new ExprTranslation(currExpr, null, null, type);
+        }
+        currExpr = exp;
     }
 
 
@@ -564,6 +662,14 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         if(checkExprOwner){ //(11)
             currExprOwnerType = "this";
         }
+        if(checkRetType){ //(18)
+            retType=currClassCheck;
+        }
+        if (checkReturnType){ //(18)
+            returnType=currClassCheck;
+        }
+
+
     }
 
     @Override
