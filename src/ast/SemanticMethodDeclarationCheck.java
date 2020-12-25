@@ -434,6 +434,15 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             exp = new ExprTranslation(currExpr, null, null, "int");
         }
         currExpr = exp;
+        if(checkRetType){ //(18)
+            retType="int";
+        }
+        if (checkReturnType){ //(18)
+            returnType="int";
+        }
+        if (checkExprOwner){
+            currExprOwnerType="int";
+        }
     }
 
     @Override
@@ -564,7 +573,11 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             exp = new ExprTranslation(currExpr, null, null, type);
         }
         currExpr = exp;
-
+        if(arraylength){
+                if (!type.equals("intArr")){
+                    RaiseError();
+                }
+        }
     }
 
     @Override
@@ -637,7 +650,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         if(checkExprOwner){//(11)
             currExprOwnerType = type;
         }
-        if (arraylength){
+        if (arraylength && !checkExprOwner ){
             if (!type.equals("intArr"))
             {
                 RaiseError();
@@ -668,6 +681,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         if (checkReturnType){ //(18)
             returnType=currClassCheck;
         }
+        if(methodActualCheck){
+            currMethodActual=currClassCheck;
+        }
 
 
     }
@@ -687,6 +703,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         }
         if (checkReturnType){
             retType=e.classId();
+        }
+        if(methodActualCheck){
+            currMethodActual=e.classId();
         }
     }
 
