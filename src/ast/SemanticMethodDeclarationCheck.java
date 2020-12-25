@@ -44,14 +44,14 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     private boolean checkExprOwner;
     private boolean methodActualCheck;
     private String currMethodActual;
+    private boolean prevMethodActualCheck;
+    private String prevMethodActual;
 
 
 
     public void RaiseError(){
-        outfile.write("ERROR\n");
-        outfile.flush();
-        outfile.close();
-        System.exit(0);
+        throw new RuntimeException();
+
 
 
     };
@@ -235,16 +235,17 @@ public class SemanticMethodDeclarationCheck implements Visitor{
                 }
             }
         }
-        for (var varDecl : methodDecl.vardecls()) {
-            this.currSymbolTable=lookupTable.getSymbolTable(varDecl);
-            varDecl.accept(this);
-        }
+
         //new method
         MethodSemanticCheckInfo newMethod=new MethodSemanticCheckInfo(methodDecl.name(),currRetType,methodDecl.formals(),currClassCheck);
         classMethods.get(currClassCheck).add(newMethod);
         for (var formal : methodDecl.formals()) {
             this.currSymbolTable=lookupTable.getSymbolTable(formal);
             formal.accept(this);
+        }
+        for (var varDecl : methodDecl.vardecls()) {
+            this.currSymbolTable=lookupTable.getSymbolTable(varDecl);
+            varDecl.accept(this);
         }
         for (var stmt : methodDecl.body()) {
             stmt.accept(this);
@@ -298,12 +299,15 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(IfStatement ifStatement) {
-
+        ifStatement.cond().accept(this);
+        ifStatement.elsecase().accept(this);
+        ifStatement.thencase().accept(this);
     }
 
     @Override
     public void visit(WhileStatement whileStatement) {
-
+        whileStatement.cond().accept(this);
+        whileStatement.body().accept(this);
     }
 
     @Override
@@ -319,6 +323,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
+        assignArrayStatement.index().accept(this);
         assignArrayStatement.rv().accept(this);
 
     }
@@ -431,6 +436,8 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(ArrayAccessExpr e) {
+        e.arrayExpr().accept(this);
+        e.indexExpr().accept(this);
         ExprTranslation exp;
 
         if (currExpr == null) {
@@ -535,6 +542,11 @@ public class SemanticMethodDeclarationCheck implements Visitor{
                 break;
             }
         }
+        if(methodActualCheck){
+            prevMethodActualCheck=true;
+            prevMethodActual=currmethod.getDecl();
+            currMethodActual=currmethod.getDecl();
+        }
         int index=0;
         if(e.actuals().size()!=currmethod.getFormals().size()){
             RaiseError();
@@ -543,6 +555,10 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             methodActualCheck = true;
             actual.accept(this);
             methodActualCheck = false;
+            if(prevMethodActualCheck){
+                currMethodActual=prevMethodActual;
+                prevMethodActualCheck=false;
+            }
             if(     currMethodActual.equals("int") && !currmethod.getFormals().get(index).equals("int")||
                     currMethodActual.equals("intArr") && !currmethod.getFormals().get(index).equals("intArr")||
                     currMethodActual.equals("bool") && !currmethod.getFormals().get(index).equals("bool")){
@@ -672,6 +688,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
             exp = new ExprTranslation(currExpr, null, null, type);
         }
         currExpr = exp;
+
     }
 
 
@@ -695,6 +712,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(NewIntArrayExpr e) {
+        e.lengthExpr().accept(this);
 
     }
 

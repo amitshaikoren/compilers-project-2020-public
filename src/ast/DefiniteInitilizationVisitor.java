@@ -7,10 +7,8 @@ import java.util.Map;
 public class DefiniteInitilizationVisitor implements Visitor{
 
     private DefiniteInitializationDict currInitilizationDict;
-    private boolean ifCase;
     private PrintWriter outfile;
     private DefiniteInitializationDict classInitilizationDict;
-    private  boolean fields;
     private Map<String,DefiniteInitializationDict > classInitilizationDictMap = new HashMap<>();
 
 
@@ -19,10 +17,7 @@ public class DefiniteInitilizationVisitor implements Visitor{
         this.outfile=outfile;
     }
     public void RaiseError(){
-        outfile.write("ERROR\n");
-        outfile.flush();
-        outfile.close();
-        System.exit(0);
+        throw new RuntimeException();
 
     };
 
@@ -128,44 +123,58 @@ public class DefiniteInitilizationVisitor implements Visitor{
         assignArrayStatement.rv().accept(this);
 
     }
+    private void visitBinaryExpr(BinaryExpr e) {
 
+        e.e1().accept(this);
+        e.e2().accept(this);
+
+
+    }
     @Override
     public void visit(AndExpr e) {
-
+        visitBinaryExpr(e);
     }
 
     @Override
     public void visit(LtExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(AddExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(SubtractExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(MultExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(ArrayAccessExpr e) {
+        e.arrayExpr().accept(this);
+        e.indexExpr().accept(this);
 
     }
 
     @Override
     public void visit(ArrayLengthExpr e) {
+        e.arrayExpr().accept(this);
 
     }
 
     @Override
     public void visit(MethodCallExpr e) {
+        e.ownerExpr().accept(this);
 
     }
 
@@ -198,6 +207,7 @@ public class DefiniteInitilizationVisitor implements Visitor{
 
     @Override
     public void visit(NewIntArrayExpr e) {
+        e.lengthExpr().accept(this);
 
     }
 
@@ -208,6 +218,7 @@ public class DefiniteInitilizationVisitor implements Visitor{
 
     @Override
     public void visit(NotExpr e) {
+        e.e().accept(this);
 
     }
 
