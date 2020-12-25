@@ -1,6 +1,8 @@
 package ast;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DefiniteInitilizationVisitor implements Visitor{
 
@@ -9,6 +11,7 @@ public class DefiniteInitilizationVisitor implements Visitor{
     private PrintWriter outfile;
     private DefiniteInitializationDict classInitilizationDict;
     private  boolean fields;
+    private Map<String,DefiniteInitializationDict > classInitilizationDictMap = new HashMap<>();
 
 
     public DefiniteInitilizationVisitor(PrintWriter outfile){
@@ -33,9 +36,14 @@ public class DefiniteInitilizationVisitor implements Visitor{
     @Override
     public void visit(ClassDecl classDecl) {
         classInitilizationDict=new DefiniteInitializationDict();
+        if (classDecl.superName()!=null){
+            classInitilizationDict =classInitilizationDictMap.get(classDecl.superName()).copy();
+        }
         for (var fieldDecl : classDecl.fields()) {
             classInitilizationDict.AddVar(fieldDecl.name(),true);
         }
+        classInitilizationDictMap.put(classDecl.name(),classInitilizationDict);
+
         for(var methodDecl : classDecl.methoddecls()){
             currInitilizationDict = classInitilizationDict.copy();
             methodDecl.accept(this);
