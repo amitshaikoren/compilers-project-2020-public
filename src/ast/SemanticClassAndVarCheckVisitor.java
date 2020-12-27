@@ -31,18 +31,18 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     private  boolean arrayAssignmentindexCheck;
     private boolean arrayAssignmentrvCheck;
     private boolean arrayLengthCheck;
-    private String arrayLengthType;
-    private  String arrayAssignmentindex;
-    private String arrayAssignmentrv;
+    private String arrayLengthType="";
+    private  String arrayAssignmentindex="";
+    private String arrayAssignmentrv="";
     private PrintWriter outfile;
 
-    private  String arrayAccessType;
-    private  String arrayIndexType;
+    private  String arrayAccessType="";
+    private  String arrayIndexType="";
 
-    private String systemOutType;
+    private String systemOutType="";
 
     private boolean rvTypeCheck;
-    private String rvType;
+    private String rvType="";
 
     private ExprTranslation currExpr;
 
@@ -73,7 +73,6 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
 
     };
-
     public Set<String> getFathers(String className){
         return fathersHierarchyMap.get(className);
     }
@@ -83,7 +82,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     }
 
     private SymbolTable getSTnameResolution(SymbolTable symbolTableOfDecl,String name)
-    {
+    {    if(symbolTableOfDecl==null){
+        RaiseError();
+    }
         if(symbolTableOfDecl.isInVarEntries(name))
         {
             return symbolTableOfDecl;
@@ -103,6 +104,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     //Returns type of reference identifier
     private String findType(IdentifierExpr e)
     {
+        if(currSymbolTable==null){
+        RaiseError();
+    }
         SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
         if (stOfDecl==null){ //(14)
             RaiseError();
@@ -112,6 +116,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     private String findType(String id)
     {
+
+        if(currSymbolTable==null){
+            RaiseError();
+        }
         SymbolTable stOfDecl=getSTnameResolution(currSymbolTable, id);
         if (stOfDecl==null){ //(14)
             RaiseError();
@@ -122,6 +130,10 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     //Returns type of reference method
     private String findType(MethodCallExpr e)
     {
+
+        if(currSymbolTable==null){
+            RaiseError();
+        }
         SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.methodId());
         if (stOfDecl==null){ //(14)
             RaiseError();
@@ -205,6 +217,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
 
     @Override
     public void visit(MainClass mainClass) {
+        currClassCheck = mainClassName;
         mainClass.mainStatement().accept(this);
     }
 
@@ -266,14 +279,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             } else {
                 RaiseError();
             }
+        }
 
-            if (classFields.get(currClassCheck).contains(varDecl.name()) ) {
-                RaiseError();
-            }
             if (currFormals.contains(varDecl.name())){
                 RaiseError();
             }
-        }
+
 
         varDecl.type().accept(this);//(8)
     }
@@ -316,7 +327,7 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
     @Override
     public void visit(SysoutStatement sysoutStatement) {
         systemOutCheck=true;
-        systemOutType=null;
+        systemOutType="";
         sysoutStatement.arg().accept(this);
         systemOutCheck=false;
         if (!systemOutType.equals("int")){
@@ -394,6 +405,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         e.e2().accept(this);
         exp.setE2(currExpr);
         currExpr=exp;
+        if(currExpr.getE2().getResult()==null || currExpr.getE1().getResult()==null){
+            RaiseError();
+        }
 
     }
 
@@ -669,8 +683,12 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
             RaiseError();
         }
         if (callMethod.equals("this")){
+            if (currClassCheck.equals(mainClassName)){
+                RaiseError();
+            }
             callMethod=currClassCheck;
         }
+
         if (systemOutCheck){ //(20)
             for ( var check : methodOfClasses.get(callMethod)){
                 if (check.getMethodName().equals(e.methodId())){
@@ -917,11 +935,17 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(arrayLengthCheck){ //(25)
             arrayLengthType=currClassCheck;
         }
+
     }
 
     @Override
     public void visit(NewIntArrayExpr e) {
         //updated In an array allocation new int[e], e is an int. (25)
+
+        if(arrayIndexCheck)
+        {
+            RaiseError();
+        }
         arrayLengthCheck=true;
         e.lengthExpr().accept(this);
         arrayLengthCheck=false;

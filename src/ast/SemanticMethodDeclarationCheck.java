@@ -10,6 +10,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     Map<String, ArrayList<MethodOfClass>> methodOfClasses;
     private PrintWriter outfile;
     private ExprTranslation currExpr;
+    private boolean arrayindex;
 
 
 
@@ -53,6 +54,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         throw new RuntimeException();
 
 
+
     };
 
 
@@ -74,6 +76,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     private SymbolTable getSTnameResolution(SymbolTable symbolTableOfDecl,String name)
     {
+        if(symbolTableOfDecl==null){
+            RaiseError();
+        }
         if(symbolTableOfDecl.isInVarEntries(name))
         {
             return symbolTableOfDecl;
@@ -93,6 +98,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     //Returns type of reference identifier
     private String findType(IdentifierExpr e)
     {
+        if(currSymbolTable==null){
+            RaiseError();
+        }
         SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.id());
         if (stOfDecl==null){ //(14)
             RaiseError();
@@ -103,6 +111,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     //Returns type of reference method
     private String findType(MethodCallExpr e)
     {
+        if(currSymbolTable==null){
+            RaiseError();
+        }
         SymbolTable stOfDecl=getSTnameResolution(currSymbolTable,e.methodId());
         if (stOfDecl==null){ //(14)
             RaiseError();
@@ -112,6 +123,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     private String findType(String id)
     {
+        if(currSymbolTable==null){
+            RaiseError();
+        }
         SymbolTable stOfDecl=getSTnameResolution(currSymbolTable, id);
         if (stOfDecl==null){ //(14)
             RaiseError();
@@ -317,13 +331,16 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(AssignStatement assignStatement) {
-    assignStatement.rv().accept(this);
+
+        assignStatement.rv().accept(this);
+
     }
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
         assignArrayStatement.index().accept(this);
         assignArrayStatement.rv().accept(this);
+
 
     }
     private void visitBinaryExpr(BinaryExpr e) {
@@ -336,6 +353,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         e.e2().accept(this);
         exp.setE2(currExpr);
         currExpr=exp;
+        if(currExpr.getE2().getResult()==null || currExpr.getE1().getResult()==null){
+            RaiseError();
+        }
 
     }
     @Override
@@ -356,6 +376,13 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     @Override
     public void visit(LtExpr e) {
         visitBinaryExpr(e);
+        if (!currExpr.getE1().getResult().equals("int")||
+                !currExpr.getE2().getResult().equals("int")){ //(21)
+            RaiseError();
+        }
+        else {
+            currExpr.setResult("bool"); //(17)
+        }
         if(checkRetType){
             retType="bool";
         }
@@ -436,7 +463,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     @Override
     public void visit(ArrayAccessExpr e) {
         e.arrayExpr().accept(this);
+        arrayindex=true;
         e.indexExpr().accept(this);
+        arrayindex=false;
         ExprTranslation exp;
 
         if (currExpr == null) {
@@ -711,7 +740,11 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(NewIntArrayExpr e) {
+
         e.lengthExpr().accept(this);
+       if (checkRetType){
+           retType="intArr";
+       }
 
     }
 
@@ -733,7 +766,13 @@ public class SemanticMethodDeclarationCheck implements Visitor{
 
     @Override
     public void visit(NotExpr e) {
-
+        ExprTranslation exp;
+        if (currExpr == null) {
+            exp = new ExprTranslation(null, null, null, "bool");
+        } else {
+            exp = new ExprTranslation(currExpr, null, null, "bool");
+        }
+        currExpr=exp;
     }
 
     @Override

@@ -64,7 +64,6 @@ public class Main {
                     outFile.write(astPrinter.getString());
 
                 } else if (action.equals("semantic")) {
-
                         try {
                             LookupTable lookupTable = new LookupTable();
                             AstCreateSymbolTableVisitor symbolTableVistor = new AstCreateSymbolTableVisitor(lookupTable);
@@ -88,7 +87,6 @@ public class Main {
                             outFile.write("ERROR\n");
 
                         }
-
 
 
 

@@ -19,7 +19,6 @@ public class DefiniteInitilizationVisitor implements Visitor{
     public void RaiseError(){
         throw new RuntimeException();
 
-
     };
 
     @Override
@@ -59,13 +58,21 @@ public class DefiniteInitilizationVisitor implements Visitor{
         }
 
         for (var varDecl : methodDecl.vardecls()) {
-            currInitilizationDict.AddVar(varDecl.name(), false);
+            if(currInitilizationDict.isExists(varDecl.name())){
+                currInitilizationDict.ChangeVarState(varDecl.name(),false);
+
+            }
+            else {
+                currInitilizationDict.AddVar(varDecl.name(), false);
+            }
             varDecl.accept(this);
         }
 
         for (var stmt : methodDecl.body()) {
             stmt.accept(this);
         }
+        methodDecl.ret().accept(this);
+
 
     }
 
@@ -89,7 +96,7 @@ public class DefiniteInitilizationVisitor implements Visitor{
     @Override
     public void visit(IfStatement ifStatement) {
         currInitilizationDict.IfSplit();
-
+        ifStatement.cond().accept(this);
         currInitilizationDict = currInitilizationDict.getIfBlock();
         ifStatement.thencase().accept(this);
         currInitilizationDict = currInitilizationDict.getOuterBlock();
@@ -103,25 +110,37 @@ public class DefiniteInitilizationVisitor implements Visitor{
 
     @Override
     public void visit(WhileStatement whileStatement) {
-
+    whileStatement.cond().accept(this);
+    currInitilizationDict.WhileSplit();
+    DefiniteInitializationDict initilization = new DefiniteInitializationDict();
+    initilization = currInitilizationDict;
+        currInitilizationDict=currInitilizationDict.getWhileSplitDict();
+        whileStatement.body().accept(this);
+    currInitilizationDict=initilization;
     }
 
     @Override
     public void visit(SysoutStatement sysoutStatement) {
+        sysoutStatement.arg().accept(this);
 
     }
 
     @Override
     public void visit(AssignStatement assignStatement) {
-        currInitilizationDict.ChangeVarState(assignStatement.lv(),true);
         assignStatement.rv().accept(this);
+        currInitilizationDict.ChangeVarState(assignStatement.lv(),true);
+
 
     }
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
-        currInitilizationDict.ChangeVarState(assignArrayStatement.lv(),true);
+        if (!currInitilizationDict.get(assignArrayStatement.lv())){
+            RaiseError();
+        }
+        assignArrayStatement.index().accept(this);
         assignArrayStatement.rv().accept(this);
+
 
     }
     private void visitBinaryExpr(BinaryExpr e) {
@@ -176,6 +195,10 @@ public class DefiniteInitilizationVisitor implements Visitor{
     @Override
     public void visit(MethodCallExpr e) {
         e.ownerExpr().accept(this);
+        for(var actual : e.actuals()) {
+            actual.accept(this);
+        }
+
 
     }
 
@@ -208,6 +231,7 @@ public class DefiniteInitilizationVisitor implements Visitor{
 
     @Override
     public void visit(NewIntArrayExpr e) {
+
         e.lengthExpr().accept(this);
 
     }

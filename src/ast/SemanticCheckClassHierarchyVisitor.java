@@ -91,12 +91,11 @@ public class SemanticCheckClassHierarchyVisitor implements Visitor{
 
     @Override
     public void visit(WhileStatement whileStatement) {
-
+   ;
     }
 
     @Override
     public void visit(SysoutStatement sysoutStatement) {
-
     }
 
     @Override
