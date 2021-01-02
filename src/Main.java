@@ -88,10 +88,6 @@ public class Main {
 
                     }
 
-
-
-
-
                 } else if (action.equals("compile")) {
                     LookupTable lookupTable = new LookupTable();
                     AstCreateSymbolTableVisitor symbolTableVistor  = new AstCreateSymbolTableVisitor(lookupTable);
