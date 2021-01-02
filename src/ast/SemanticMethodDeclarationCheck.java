@@ -54,7 +54,6 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         throw new RuntimeException();
 
 
-
     };
 
 
@@ -224,7 +223,7 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         checkReturnType=true;
         methodDecl.returnType().accept(this);
         checkReturnType=false;
-
+    boolean newmethod = true;
         for(var method : classMethods.get(currClassCheck))
         {
             if(method.getName().equals(methodDecl.name()))
@@ -239,7 +238,9 @@ public class SemanticMethodDeclarationCheck implements Visitor{
                 {
                     classMethods.get(currClassCheck).remove(method);
                     classMethods.get(currClassCheck).add(newMethod);
-                    return;
+                    newmethod=false;
+                    break;
+
                 }
                 else
                 {
@@ -250,19 +251,22 @@ public class SemanticMethodDeclarationCheck implements Visitor{
         }
 
         //new method
-        MethodSemanticCheckInfo newMethod=new MethodSemanticCheckInfo(methodDecl.name(),currRetType,methodDecl.formals(),currClassCheck);
-        classMethods.get(currClassCheck).add(newMethod);
-        for (var formal : methodDecl.formals()) {
-            this.currSymbolTable=lookupTable.getSymbolTable(formal);
-            formal.accept(this);
+        if (newmethod) {
+            MethodSemanticCheckInfo newMethod = new MethodSemanticCheckInfo(methodDecl.name(), currRetType, methodDecl.formals(), currClassCheck);
+            classMethods.get(currClassCheck).add(newMethod);
         }
-        for (var varDecl : methodDecl.vardecls()) {
-            this.currSymbolTable=lookupTable.getSymbolTable(varDecl);
-            varDecl.accept(this);
-        }
-        for (var stmt : methodDecl.body()) {
-            stmt.accept(this);
-        }
+            for (var formal : methodDecl.formals()) {
+                this.currSymbolTable = lookupTable.getSymbolTable(formal);
+                formal.accept(this);
+            }
+            for (var varDecl : methodDecl.vardecls()) {
+                this.currSymbolTable = lookupTable.getSymbolTable(varDecl);
+                varDecl.accept(this);
+            }
+            for (var stmt : methodDecl.body()) {
+                stmt.accept(this);
+            }
+
         checkRetType=true;
         methodDecl.ret().accept(this);
         checkRetType=false;
@@ -361,6 +365,13 @@ public class SemanticMethodDeclarationCheck implements Visitor{
     @Override
     public void visit(AndExpr e) {
         visitBinaryExpr(e);
+        if (!currExpr.getE1().getResult().equals("bool")||
+                !currExpr.getE2().getResult().equals("bool")){ //(21)
+            RaiseError();
+        }
+        else {
+            currExpr.setResult("bool"); //(17)
+        }
         if(checkRetType){
             retType="bool";
         }

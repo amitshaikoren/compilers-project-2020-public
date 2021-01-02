@@ -44,8 +44,10 @@
 
     <target name="clean"
             description="clean up">
+        <delete file="mjavac.jar"/>
         <delete dir="${build}"/>
         <delete file="${src}/Lexer.java"/>
         <delete file="${src}/Parser.java"/>
+        <delete file="${src}/sym.java"/>
     </target>
 </project>

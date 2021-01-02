@@ -955,6 +955,9 @@ public class SemanticClassAndVarCheckVisitor implements Visitor{
         if(!arrayLengthType.equals("int")){
             RaiseError();
         }
+        if(arrayAccessCheck){
+            arrayAccessType="intArr";
+        }
 
 
     }
