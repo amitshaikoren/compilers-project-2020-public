@@ -12,10 +12,8 @@ public class SemanticCheckClassHierarchyVisitor implements Visitor{
         this.outfile=outfile;
     }
     public void RaiseError(){
-        outfile.write("ERROR\n");
-        outfile.flush();
-        outfile.close();
-        System.exit(0);
+        throw new RuntimeException();
+
 
     };
 
@@ -93,12 +91,11 @@ public class SemanticCheckClassHierarchyVisitor implements Visitor{
 
     @Override
     public void visit(WhileStatement whileStatement) {
-
+   ;
     }
 
     @Override
     public void visit(SysoutStatement sysoutStatement) {
-
     }
 
     @Override

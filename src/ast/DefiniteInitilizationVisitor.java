@@ -1,14 +1,15 @@
 package ast;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DefiniteInitilizationVisitor implements Visitor{
 
     private DefiniteInitializationDict currInitilizationDict;
-    private boolean ifCase;
     private PrintWriter outfile;
     private DefiniteInitializationDict classInitilizationDict;
-    private  boolean fields;
+    private Map<String,DefiniteInitializationDict > classInitilizationDictMap = new HashMap<>();
 
 
     public DefiniteInitilizationVisitor(PrintWriter outfile){
@@ -16,10 +17,8 @@ public class DefiniteInitilizationVisitor implements Visitor{
         this.outfile=outfile;
     }
     public void RaiseError(){
-        outfile.write("ERROR\n");
-        outfile.flush();
-        outfile.close();
-        System.exit(0);
+        throw new RuntimeException();
+
 
     };
 
@@ -33,9 +32,14 @@ public class DefiniteInitilizationVisitor implements Visitor{
     @Override
     public void visit(ClassDecl classDecl) {
         classInitilizationDict=new DefiniteInitializationDict();
+        if (classDecl.superName()!=null){
+            classInitilizationDict =classInitilizationDictMap.get(classDecl.superName()).copy();
+        }
         for (var fieldDecl : classDecl.fields()) {
             classInitilizationDict.AddVar(fieldDecl.name(),true);
         }
+        classInitilizationDictMap.put(classDecl.name(),classInitilizationDict);
+
         for(var methodDecl : classDecl.methoddecls()){
             currInitilizationDict = classInitilizationDict.copy();
             methodDecl.accept(this);
@@ -50,18 +54,26 @@ public class DefiniteInitilizationVisitor implements Visitor{
     @Override
     public void visit(MethodDecl methodDecl) {
         for (var formal : methodDecl.formals()) {
-            currInitilizationDict.AddVar(formal.name(), false);
+            currInitilizationDict.AddVar(formal.name(), true);
             formal.accept(this);
         }
 
         for (var varDecl : methodDecl.vardecls()) {
-            currInitilizationDict.AddVar(varDecl.name(), false);
+            if(currInitilizationDict.isExists(varDecl.name())){
+                currInitilizationDict.ChangeVarState(varDecl.name(),false);
+
+            }
+            else {
+                currInitilizationDict.AddVar(varDecl.name(), false);
+            }
             varDecl.accept(this);
         }
 
         for (var stmt : methodDecl.body()) {
             stmt.accept(this);
         }
+        methodDecl.ret().accept(this);
+
 
     }
 
@@ -85,7 +97,7 @@ public class DefiniteInitilizationVisitor implements Visitor{
     @Override
     public void visit(IfStatement ifStatement) {
         currInitilizationDict.IfSplit();
-
+        ifStatement.cond().accept(this);
         currInitilizationDict = currInitilizationDict.getIfBlock();
         ifStatement.thencase().accept(this);
         currInitilizationDict = currInitilizationDict.getOuterBlock();
@@ -99,65 +111,95 @@ public class DefiniteInitilizationVisitor implements Visitor{
 
     @Override
     public void visit(WhileStatement whileStatement) {
-
+    whileStatement.cond().accept(this);
+    currInitilizationDict.WhileSplit();
+    DefiniteInitializationDict initilization = new DefiniteInitializationDict();
+    initilization = currInitilizationDict;
+        currInitilizationDict=currInitilizationDict.getWhileSplitDict();
+        whileStatement.body().accept(this);
+    currInitilizationDict=initilization;
     }
 
     @Override
     public void visit(SysoutStatement sysoutStatement) {
+        sysoutStatement.arg().accept(this);
 
     }
 
     @Override
     public void visit(AssignStatement assignStatement) {
-        currInitilizationDict.ChangeVarState(assignStatement.lv(),true);
         assignStatement.rv().accept(this);
+        currInitilizationDict.ChangeVarState(assignStatement.lv(),true);
+
 
     }
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
-        currInitilizationDict.ChangeVarState(assignArrayStatement.lv(),true);
+        if (!currInitilizationDict.get(assignArrayStatement.lv())){
+            RaiseError();
+        }
+        assignArrayStatement.index().accept(this);
         assignArrayStatement.rv().accept(this);
 
-    }
 
+    }
+    private void visitBinaryExpr(BinaryExpr e) {
+
+        e.e1().accept(this);
+        e.e2().accept(this);
+
+
+    }
     @Override
     public void visit(AndExpr e) {
-
+        visitBinaryExpr(e);
     }
 
     @Override
     public void visit(LtExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(AddExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(SubtractExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(MultExpr e) {
+        visitBinaryExpr(e);
 
     }
 
     @Override
     public void visit(ArrayAccessExpr e) {
+        e.arrayExpr().accept(this);
+        e.indexExpr().accept(this);
 
     }
 
     @Override
     public void visit(ArrayLengthExpr e) {
+        e.arrayExpr().accept(this);
 
     }
 
     @Override
     public void visit(MethodCallExpr e) {
+        e.ownerExpr().accept(this);
+        for(var actual : e.actuals()) {
+            actual.accept(this);
+        }
+
 
     }
 
@@ -191,6 +233,8 @@ public class DefiniteInitilizationVisitor implements Visitor{
     @Override
     public void visit(NewIntArrayExpr e) {
 
+        e.lengthExpr().accept(this);
+
     }
 
     @Override
@@ -200,6 +244,7 @@ public class DefiniteInitilizationVisitor implements Visitor{
 
     @Override
     public void visit(NotExpr e) {
+        e.e().accept(this);
 
     }
 

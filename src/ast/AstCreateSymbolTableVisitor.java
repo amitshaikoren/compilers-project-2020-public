@@ -138,6 +138,7 @@ public class AstCreateSymbolTableVisitor implements Visitor {
 
     @Override
     public void visit(IfStatement ifStatement) {
+
         ifStatement.cond().accept(this);
         ifStatement.elsecase().accept(this);
         ifStatement.thencase().accept(this);
@@ -145,6 +146,7 @@ public class AstCreateSymbolTableVisitor implements Visitor {
 
     @Override
     public void visit(WhileStatement whileStatement) {
+
         whileStatement.cond().accept(this);
         whileStatement.body().accept(this);
     }
@@ -163,6 +165,7 @@ public class AstCreateSymbolTableVisitor implements Visitor {
 
     @Override
     public void visit(AssignArrayStatement assignArrayStatement) {
+
         assignArrayStatement.index().accept(this);
         assignArrayStatement.rv().accept(this);
     }
@@ -199,6 +202,7 @@ public class AstCreateSymbolTableVisitor implements Visitor {
 
     @Override
     public void visit(ArrayAccessExpr e) {
+
         e.arrayExpr().accept(this);
         e.indexExpr().accept(this);
     }
@@ -246,7 +250,6 @@ public class AstCreateSymbolTableVisitor implements Visitor {
 
     @Override
     public void visit(NewIntArrayExpr e) {
-        e.lengthExpr().accept(this);
     }
 
     @Override

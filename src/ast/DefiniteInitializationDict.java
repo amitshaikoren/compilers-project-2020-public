@@ -66,6 +66,9 @@ public class DefiniteInitializationDict {
     public boolean get(String varName){
         return definiteInitializationMap.get(varName);
     }
+    public boolean isExists(String varName){
+        return definiteInitializationMap.containsKey(varName);
+    }
 
     public DefiniteInitializationDict getOuterBlock(){
         return outerBlock;
