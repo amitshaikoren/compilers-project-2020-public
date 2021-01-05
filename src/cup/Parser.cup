@@ -88,6 +88,27 @@ terminal EOF;
 /*****************/
 non terminal Program prog;
 non terminal MainClass mainClass;
+non terminal ClassDecleration classDecleration;
+non terminal LinkedList<ClassDecleration> classDeclerationList;
+non terminal EXTEND extend;
+non terminal Nothing nothing;
+non terminal VarDecleration varDecleration;
+non terminal LinkedList<VarDecleration> varDeclerationList;
+non terminal MethodDecleration methodDecleration;
+non terminal LinkedList<MethodDecleration> methodDeclerationList;
+non terminal TYPE type;
+non terminal Formals formals;
+non terminal FormalArgs formalArgs;
+non terminal LinkedList<FormalArgs> formalArgsList;
+non terminal Vars vars;
+non terminal Methods methods;
+non terminal Statements statements;
+non terminal Statement statement;
+non terminal LinkedList<Statement> statementList;
+non terminal EXP exp;
+
+
+/*
 non terminal ClassDecl classDecl;
 non terminal LinkedList<ClassDecl> ClassDeclList;
 non terminal VarDecl varDecl;
@@ -97,7 +118,6 @@ non terminal LinkedList<MethodDecl> methodDeclList;
 non terminal MainClass mainClass;
 non terminal FormalArg formalArg;
 non terminal LinkedList<FormalArg> formalArgList;
-non terminal Statement statement;
 non terminal LinkedList<Statement> statementList;
 non terminal BlockStatement blockStatement;
 non terminal IfStatement ifStatement;
@@ -125,6 +145,7 @@ non terminal IntAstType t;
 non terminal BoolAstType t;
 non terminal IntArrayAstType t;
 non terminal RefType t;
+*/
 
 /***********************/
 /* OPERATOR PRECEDENCE */
@@ -139,5 +160,23 @@ start with prog;
 /* PRODUCTION RULES */
 /********************/
 
-prog            ::=  mainClass:m  ClassDeclList:c1   {: RESULT = new Program(m, c1); :};
-mainClass       ::=
+prog              ::=  mainClass:m  classDeclerationList:c1 EOF  {: RESULT = new Program(m, c1); :};
+mainClass         ::=  CLASS ID:i1 LCPAREN PUBLIC STATIC VOID MAIN LPAREN STRING LSPAREN RSPAREN ID:i2 RPAREN LCPAREN Statement:s RCPAREN RCPAREN  {: RESULT = new MainClass(i1, i2, s); :};
+classDecleration  ::=  CLASS ID:i1 extend:i2 LCPAREN LPAREN vars:v RPAREN LPAREN methods:m RPAREN RCPAREN {: RESULT = new ClassDecl(i1,i2,v,m); :};
+extend            ::=  LPAREN EXTENDS ID:id2 RPAREN {: RESULT = id2; :}
+                       |  /* empty */    {: RESULT = Null; :};
+vars              ::=  varDeclerationList:v {: RESULT = *************************************; :}
+                       |/* empty */     {: RESULT = Null; :};
+methods           ::=  methodDeclerationList:m {: RESULT = *************************************; :}
+                       |/* empty */     {: RESULT = Null; :};
+varDecleration    ::=  type:t ID:id SEMICOLON  {: RESULT = new VarDecl(t, id); :};
+type              ::=  INT
+                       | BOOLEAN
+                       | INT LSPAREN RSPAREN
+                       | ID:id  {: RESULT = id; :};
+methodDecleration ::=  PUBLIC type:t ID:i1 LPAREN formals:f RPAREN LCPAREN vars:v statements:st RETURN exp:e SEMICOLON RCPAREN  {: RESULT = new MethodDecl(t,i1,f,v,st,e); :};
+formals           ::=  formalArgList:f {: RESULT = *************************************; :}
+                       | /* empty */    {: RESULT = Null; :};
+formalArg         ::=
+statements        ::= statementList:st  {: RESULT = *************************************; :}
+                      |/* empty */     {: RESULT = Null; :};
