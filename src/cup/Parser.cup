@@ -63,12 +63,68 @@ scan with
 /*************/
 /* TERMINALS */
 /*************/
-terminal PUBLIC;
+terminal PUBLIC,STATIC,VOID,MAIN,STRING;
+terminal LPAREN,RPAREN,LCPAREN,RCPAREN,LSPAREN,RSPAREN;
+terminal CLASS,EXTENDS;
+terminal RETURN;
+terminal SEMICOLON;
+terminal INT,BOOLEAN;
+terminal IF,ELSE,WHILE;
+terminal PRINT;
+terminal EQUALS,AND,LT,PLUS,MINUS,MULT;
+terminal DOT,COMMA;
+terminal LENGTH;
+terminal TRUE,FALSE;
+terminal THIS;
+terminal NEW;
+terminal NOT;
+terminal int NUMBER;
+terminal String ID;
+terminal EOF;
+
 
 /*****************/
 /* NON TERMINALS */
 /*****************/
-non terminal prog;
+non terminal Program prog;
+non terminal MainClass mainClass;
+non terminal ClassDecl classDecl;
+non terminal LinkedList<ClassDecl> ClassDeclList;
+non terminal VarDecl varDecl;
+non terminal LinkedList<VarDecl> fieldDeclList;
+non terminal MethodDecl methodDecl;
+non terminal LinkedList<MethodDecl> methodDeclList;
+non terminal MainClass mainClass;
+non terminal FormalArg formalArg;
+non terminal LinkedList<FormalArg> formalArgList;
+non terminal Statement statement;
+non terminal LinkedList<Statement> statementList;
+non terminal BlockStatement blockStatement;
+non terminal IfStatement ifStatement;
+non terminal WhileStatement whileStatement;
+non terminal SysoutStatement sysoutStatement;
+non terminal AssignStatement assignStatement;
+non terminal AssignArrayStatement assignArrayStatement;
+non terminal AndExpr e;
+non terminal LtExpr e;
+non terminal AddExpr e;
+non terminal SubtractExpr e;
+non terminal MultExpr e;
+non terminal ArrayAccessExpr e;
+non terminal ArrayLengthExpr e;
+non terminal MethodCallExpr e;
+non terminal IntegerLiteralExpr e;
+non terminal TrueExpr e;
+non terminal FalseExpr e;
+non terminal IdentifierExpr e;
+non terminal ThisExpr e;
+non terminal NewIntArrayExpr e;
+non terminal NewObjectExpr e;
+non terminal NotExpr e;
+non terminal IntAstType t;
+non terminal BoolAstType t;
+non terminal IntArrayAstType t;
+non terminal RefType t;
 
 /***********************/
 /* OPERATOR PRECEDENCE */
@@ -83,4 +139,5 @@ start with prog;
 /* PRODUCTION RULES */
 /********************/
 
-prog            ::=     ;
+prog            ::=  mainClass:m  ClassDeclList:c1   {: RESULT = new Program(m, c1); :};
+mainClass       ::=
