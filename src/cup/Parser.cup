@@ -80,7 +80,6 @@ terminal NEW;
 terminal NOT;
 terminal int NUMBER;
 terminal String ID;
-terminal EOF;
 
 
 /*****************/
@@ -97,59 +96,20 @@ non terminal LinkedList<VarDecleration> varDeclerationList;
 non terminal MethodDecleration methodDecleration;
 non terminal LinkedList<MethodDecleration> methodDeclerationList;
 non terminal TYPE type;
-non terminal Formals formals;
 non terminal FormalArgs formalArgs;
 non terminal LinkedList<FormalArgs> formalArgsList;
-non terminal Vars vars;
 non terminal Methods methods;
-non terminal Statements statements;
 non terminal Statement statement;
 non terminal LinkedList<Statement> statementList;
 non terminal EXP exp;
+non terminal LinkedList<EXP> expList;
+non terminal Identifier identifier;
 
-
-/*
-non terminal ClassDecl classDecl;
-non terminal LinkedList<ClassDecl> ClassDeclList;
-non terminal VarDecl varDecl;
-non terminal LinkedList<VarDecl> fieldDeclList;
-non terminal MethodDecl methodDecl;
-non terminal LinkedList<MethodDecl> methodDeclList;
-non terminal MainClass mainClass;
-non terminal FormalArg formalArg;
-non terminal LinkedList<FormalArg> formalArgList;
-non terminal LinkedList<Statement> statementList;
-non terminal BlockStatement blockStatement;
-non terminal IfStatement ifStatement;
-non terminal WhileStatement whileStatement;
-non terminal SysoutStatement sysoutStatement;
-non terminal AssignStatement assignStatement;
-non terminal AssignArrayStatement assignArrayStatement;
-non terminal AndExpr e;
-non terminal LtExpr e;
-non terminal AddExpr e;
-non terminal SubtractExpr e;
-non terminal MultExpr e;
-non terminal ArrayAccessExpr e;
-non terminal ArrayLengthExpr e;
-non terminal MethodCallExpr e;
-non terminal IntegerLiteralExpr e;
-non terminal TrueExpr e;
-non terminal FalseExpr e;
-non terminal IdentifierExpr e;
-non terminal ThisExpr e;
-non terminal NewIntArrayExpr e;
-non terminal NewObjectExpr e;
-non terminal NotExpr e;
-non terminal IntAstType t;
-non terminal BoolAstType t;
-non terminal IntArrayAstType t;
-non terminal RefType t;
-*/
 
 /***********************/
 /* OPERATOR PRECEDENCE */
 /***********************/
+
 
 /************************/
 /* INITIAL NON TERMINAL */
@@ -160,23 +120,53 @@ start with prog;
 /* PRODUCTION RULES */
 /********************/
 
-prog              ::=  mainClass:m  classDeclerationList:c1 EOF  {: RESULT = new Program(m, c1); :};
-mainClass         ::=  CLASS ID:i1 LCPAREN PUBLIC STATIC VOID MAIN LPAREN STRING LSPAREN RSPAREN ID:i2 RPAREN LCPAREN Statement:s RCPAREN RCPAREN  {: RESULT = new MainClass(i1, i2, s); :};
-classDecleration  ::=  CLASS ID:i1 extend:i2 LCPAREN LPAREN vars:v RPAREN LPAREN methods:m RPAREN RCPAREN {: RESULT = new ClassDecl(i1,i2,v,m); :};
-extend            ::=  LPAREN EXTENDS ID:id2 RPAREN {: RESULT = id2; :}
+
+prog              ::=  mainClass:m  classDeclerationList:c1  {: RESULT = new Program(m, c1); :};
+mainClass         ::=  CLASS identifier:i1 LCPAREN PUBLIC STATIC VOID MAIN LPAREN STRING LSPAREN RSPAREN identifier:i2 RPAREN LCPAREN statement:s RCPAREN RCPAREN  {: RESULT = new MainClass(i1, i2, s); :};
+classDecleration  ::=  CLASS identifier:i1 extend:i2 LCPAREN LPAREN varDecleration:var varDeclerationList:v RPAREN LPAREN methods:m RPAREN RCPAREN {: v.addFirst(var); RESULT = new ClassDecl(i1,i2,v,m); :};
+extend            ::=  LPAREN EXTENDS identifier:id2 RPAREN {: RESULT = id2; :}
                        |  /* empty */    {: RESULT = Null; :};
-vars              ::=  varDeclerationList:v {: RESULT = *************************************; :}
-                       |/* empty */     {: RESULT = Null; :};
-methods           ::=  methodDeclerationList:m {: RESULT = *************************************; :}
-                       |/* empty */     {: RESULT = Null; :};
-varDecleration    ::=  type:t ID:id SEMICOLON  {: RESULT = new VarDecl(t, id); :};
-type              ::=  INT
-                       | BOOLEAN
-                       | INT LSPAREN RSPAREN
-                       | ID:id  {: RESULT = id; :};
-methodDecleration ::=  PUBLIC type:t ID:i1 LPAREN formals:f RPAREN LCPAREN vars:v statements:st RETURN exp:e SEMICOLON RCPAREN  {: RESULT = new MethodDecl(t,i1,f,v,st,e); :};
-formals           ::=  formalArgList:f {: RESULT = *************************************; :}
-                       | /* empty */    {: RESULT = Null; :};
-formalArg         ::=
-statements        ::= statementList:st  {: RESULT = *************************************; :}
-                      |/* empty */     {: RESULT = Null; :};
+varDeclerationList::=  varDecleration:var varDeclerationList:v {: v.addFirst(var); RESULT = v; :}
+                       |/* empty */     {: RESULT = new LinkedList<VarDecleration>(); :};
+methodDeclerationList ::= methodDecleration:method methodDeclerationList:m {:m.addFirst(method) RESULT = m; :}
+                       |/* empty */     {: RESULT = new LinkedList<MethodDecleration>(); :};
+varDecleration    ::=  type:t identifier:id SEMICOLON  {: RESULT = new VarDecl(t, id); :};
+type              ::=  INT {: RESULT = new IntAstType(); :}
+                       | BOOLEAN {: RESULT = BoolAstType(); :}
+                       | INT LSPAREN RSPAREN {: RESULT = id; :}
+                       | identifier:id  {: RESULT = id; :};
+methodDecleration ::=  PUBLIC type:t identifier:i1 LPAREN formalArgs:formal formalArgsList:f RPAREN LCPAREN varDecleration:var varDeclerationList:v statement:st statementList:stLst RETURN exp:e SEMICOLON RCPAREN  {: stLst.addFirst(st); f.addFirst(formal); v.addFirst(var); RESULT = new MethodDecl(t,i1,f,v,st,e); :};
+formalArgsList           ::= COMMA formalArgs:formal formalArgsList:f {:f.addFirst(formal) RESULT = f :}
+                       | /* empty */    {: RESULT = new LinkedList<FormalArg>(); :};
+formalArgs         ::=  type:t identifier:id {: RESULT = new FormalArg(t, id); :};
+statementList  ::= statement:stmt statementList:st  {: st.addFirst(stmt); RESULT = st; :}
+                      |/* empty */     {: RESULT = new LinkedList<Statement>; :};
+statement         ::= LCPAREN statementList:st RCPAREN  {: RESULT = new BlockStatement(st) ; :}
+                      |IF LPAREN exp:e RPAREN statement:st1 ELSE statement:st2 {: RESULT = new IfStatement(e,st1,st2); :}
+                      |WHILE LPAREN exp:e RPAREN statement:st {: RESULT = new WhileStatement(e,st); :}
+                      |PRINT LPAREN exp:e RPAREN SEMICOLON {: RESULT = new SysoutStatement(e); :}
+                      |identifier:id EQUALS exp:e SEMICOLON {: RESULT = new AssignmentStatement(id, e); :}
+                      |identifier:id LSPAREN exp:e1 RSPAREN EQUALS exp:e2 SEMICOLON {: RESULT = new AssignArrayStatment(id, e1, e2); :};
+exp               ::= exp:e1 AND exp:e2  {: RESULT = new AndExpr(e1, e2); :}
+                      |exp:e1 PLUS exp:e2  {: RESULT = new AddExpr(e1, e2); :}
+                      |exp:e1 MULT exp:e2  {: RESULT = new MultExpr(e1, e2); :}
+                      |exp:e1 LT exp:e2  {: RESULT = new LtExpr(e1, e2); :}
+                      |exp:e1 MINUS exp:e2  {: RESULT = new SubstractExpr(e1, e2); :}
+                      |exp:e1 LSPAREN exp:e2 RSPAREN {: RESULT = new ArrayAccessExpr(e1, e2); :}
+                      |exp:e1 DOT LENGTH {: RESULT = new ArrayLengthExpr(e1, e2); :}
+                      |exp:e1 DOT identifier:id LPAREN exp:e2 expList:eLst RPAREN {:eLst.addFirst(e2) RESULT = new MethodCallExpr(e1, id, eLst); :}
+                      |NUMBER:num {: RESULT = new IntegerLiteralExpr(num); :}
+                      |TRUE {: RESULT = new TrueExpr(); :}
+                      |FALSE {: RESULT = new FalseExpr(); :}
+                      |identifier:id {: RESULT = new IdentifierExpr(id); :}
+                      |THIS {: RESULT = new ThisExpr(); :}
+                      |NEW INT LSPAREN exp:e2 RSPAREN {: RESULT = new NewIntArrayExpr(); :}
+                      |NEW identifier:id LPAREN RPAREN {: RESULT = new NewObjectExpr(id); :}
+                      |NOT exp:e1 {: RESULT = new NotExpr(e1); :}
+                      |LPAREN exp:e1 RPAREN {: RESULT = new ExprWrapper(e1); :};
+
+expList           ::= COMMA exp:e expList:eLst {:eLst.addFirst(e); RESULT = eLst; :}
+                      |/* empty */     {: RESULT = new LinkedList<Expr>; :};
+
+identifier        ::= ID:id {: RESULT = new IdentifierExpr(id); :};
+
