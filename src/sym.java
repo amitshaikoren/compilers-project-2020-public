@@ -9,6 +9,7 @@ public interface sym {
   public static final int RSPAREN = 12;
   public static final int MULT = 28;
   public static final int EQUALS = 23;
+  public static final int COMMENT = 40;
   public static final int LPAREN = 7;
   public static final int INT = 17;
   public static final int MINUS = 27;
@@ -42,6 +43,7 @@ public interface sym {
   public static final int EXTENDS = 14;
   public static final int STRING = 6;
   public static final int FALSE = 33;
+  public static final int INLINE_COMMENT = 39;
   public static final int LSPAREN = 11;
   public static final int PRINT = 22;
   public static final int LENGTH = 31;
@@ -84,7 +86,9 @@ public interface sym {
   "NEW",
   "NOT",
   "NUMBER",
-  "ID"
+  "ID",
+  "INLINE_COMMENT",
+  "COMMENT"
   };
 }
 
