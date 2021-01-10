@@ -52,6 +52,7 @@ public class Main {
                 AstXMLSerializer xmlSerializer = new AstXMLSerializer();
                 prog = xmlSerializer.deserialize(new File(filename));
             } else {
+
                 throw new UnsupportedOperationException("unknown input method " + inputMethod);
             }
 
@@ -166,7 +167,7 @@ public class Main {
             System.out.println("General error: " + e);
             e.printStackTrace();
         }
-    }
+     }
 
 
 }

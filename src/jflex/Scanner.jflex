@@ -64,13 +64,12 @@ import java_cup.runtime.*;
 /* MACRO DECALARATIONS */
 /***********************/
 
-INTEGER_LITERAL     = O |[1-9][0-9]*
-LineTerminator	= \r|\n|\r\n
-WhiteSpace		= [\t ] | {LineTerminator}
-ID				= [a-zA-Z][a-zA-Z0-9_]*
+INTEGER_LITERAL     = 0 |[1-9][0-9]*
+LineTerminator	    = \r|\n|\r\n
+WhiteSpace		    = [\t ] | {LineTerminator}
+ID				    = [a-zA-Z][a-zA-Z0-9_]*
 INLINE_COMMENT    = "//" [^\n\r]* {LineTerminator}?
 COMMENT	= "/*"(("/"*"*"*("*"*[^]"*"*| "*"*{LineTerminator}"*"* | [^]+"/"* | {LineTerminator}"/"* )* ) ) "*/"
-
 
 /******************************/
 /* DOLAR DOLAR - DON'T TOUCH! */
@@ -128,8 +127,8 @@ COMMENT	= "/*"(("/"*"*"*("*"*[^]"*"*| "*"*{LineTerminator}"*"* | [^]+"/"* | {Lin
 {WhiteSpace}            { /* do nothing */ }
 {ID}		            {return symbol(sym.ID, new String(yytext())); }
 {LineTerminator}        { /* do nothing */ }
-INLINE_COMMENT          { /* do nothing */ }
-COMMENT                 { /* do nothing */ }
+{INLINE_COMMENT}          { /* do nothing */ }
+{COMMENT}                 { /* do nothing */ }
 <<EOF>>				    {return symbol(sym.EOF); }
 
 }
