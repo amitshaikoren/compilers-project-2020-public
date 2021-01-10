@@ -163,7 +163,7 @@ formalArgsList           ::=  formalArgs:formal  COMMA formalArgsList:f {:f.addF
 formalArgs               ::=  type:t ID:id {: RESULT = new FormalArg(t, id,lexer.getLine()); :};
 
 statementList            ::= statement:stmt statementList:st  {: st.addFirst(stmt); RESULT = st; :}
-                             |/* empty */     {: RESULT = new LinkedList<Statement>(); :}
+                             |/* empty */     {: RESULT = new LinkedList<Statement>(); :};
 
 statement                ::= LCPAREN statementList:st RCPAREN  {: RESULT = new BlockStatement(st) ; :}
                             |IF LPAREN exp:e RPAREN statement:st1 ELSE statement:st2 {: RESULT = new IfStatement(e,st1,st2); :}
