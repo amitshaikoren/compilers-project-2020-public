@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<?xml-model href="ast.xsd" ?>
 <program>
     <mainclass>
         <name>Factorial</name>
@@ -32,14 +31,12 @@
             <fields />
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>19</lineNumber>
                     <returnType>
                         <int />
                     </returnType>
                     <name>ComputeFac</name>
                     <formals>
                         <formal>
-                            <lineNumber>9</lineNumber>
                             <type>
                                 <int />
                             </type>
@@ -48,7 +45,6 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>11</lineNumber>
                             <type>
                                 <int />
                             </type>

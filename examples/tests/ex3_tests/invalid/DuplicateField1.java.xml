@@ -24,19 +24,16 @@
             <name>A</name>
             <fields>
                 <field>
-                    <lineNumber>8</lineNumber>
                     <type><bool/></type>
                     <name>dup</name>
                 </field>
                 <field>
-                    <lineNumber>9</lineNumber>
                     <type><bool/></type>
                     <name>dup</name>
                 </field>
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>10</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -60,7 +57,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>16</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>

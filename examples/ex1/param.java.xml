@@ -31,14 +31,12 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>13</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>run</name>
                     <formals>
                         <formal>
-                            <lineNumber>8</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -72,7 +70,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>18</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -80,7 +77,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>15</lineNumber>
                             <type>
 <int/>
                             </type>

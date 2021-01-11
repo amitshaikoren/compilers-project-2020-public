@@ -19,7 +19,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>15</lineNumber>
                     <returnType>
                         <int-array/>
                     </returnType>
@@ -27,7 +26,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>10</lineNumber>
                             <type>
 <int-array/>
                             </type>
@@ -74,7 +72,6 @@
             <superName>A</superName>
             <fields>
                 <field>
-                    <lineNumber>12</lineNumber>
                     <type>
                         <ref>
                             <id>A</id>
@@ -85,7 +82,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>15</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>

@@ -19,14 +19,12 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>10</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>run</name>
                     <formals>
                         <formal>
-                            <lineNumber>11</lineNumber>
                             <type>
                                 <bool/>
                             </type>

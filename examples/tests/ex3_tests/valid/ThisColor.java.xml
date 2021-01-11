@@ -24,14 +24,12 @@
             <name>Color</name>
             <fields>
                 <field>
-                    <lineNumber>8</lineNumber>
                     <type>
                         <int-array/>
                     </type>
                     <name>rgb</name>
                 </field>
                 <field>
-                    <lineNumber>9</lineNumber>
                     <type>
                         <ref><id>Color</id></ref>
                     </type>
@@ -40,14 +38,12 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>11</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>initColorArray</name>
                     <formals>
                         <formal>
-                            <lineNumber>11</lineNumber>
                             <type>
                                 <int-array/>
                             </type>
@@ -140,24 +136,20 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>19</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>initColorInt</name>
                     <formals>
                         <formal>
-                            <lineNumber>19</lineNumber>
                             <type><int/></type>
                             <name>r</name>
                         </formal>
                         <formal>
-                            <lineNumber>19</lineNumber>
                             <type><int/></type>
                             <name>g</name>
                         </formal>
                         <formal>
-                            <lineNumber>19</lineNumber>
                             <type><int/></type>
                             <name>b</name>
                         </formal>
@@ -221,7 +213,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>27</lineNumber>
                     <returnType>
                         <int-array/>
                     </returnType>
@@ -238,14 +229,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>31</lineNumber>
                     <returnType>
                         <ref><id>Color</id></ref>
                     </returnType>
                     <name>addIn</name>
                     <formals>
                         <formal>
-                            <lineNumber>31</lineNumber>
                             <type>
                                 <ref><id>Color</id></ref>
                             </type>
@@ -254,7 +243,6 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>32</lineNumber>
                             <type>
                                 <int-array/>
                             </type>
@@ -402,14 +390,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>40</lineNumber>
                     <returnType>
                         <ref><id>Color</id></ref>
                     </returnType>
                     <name>addOut</name>
                     <formals>
                         <formal>
-                            <lineNumber>40</lineNumber>
                             <type>
                                 <ref><id>Color</id></ref>
                             </type>
@@ -418,7 +404,6 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>41</lineNumber>
                             <type>
                                 <ref><id>Color</id></ref>
                             </type>
@@ -452,14 +437,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>46</lineNumber>
                     <returnType>
                         <ref><id>Color</id></ref>
                     </returnType>
                     <name>switchTo</name>
                     <formals>
                         <formal>
-                            <lineNumber>46</lineNumber>
                             <type>
                                 <ref><id>Color</id></ref>
                             </type>
@@ -482,7 +465,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>51</lineNumber>
                     <returnType>
                         <ref><id>Color</id></ref>
                     </returnType>
@@ -490,14 +472,12 @@
                     <formals></formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>52</lineNumber>
                             <type>
                                 <ref><id>Color</id></ref>
                             </type>
                             <name>doubled</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>53</lineNumber>
                             <type>
                                 <int-array/>
                             </type>
@@ -625,7 +605,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>62</lineNumber>
                     <returnType>
                         <ref><id>Color</id></ref>
                     </returnType>
@@ -645,7 +624,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>67</lineNumber>
                     <returnType>
                         <ref><id>Color</id></ref>
                     </returnType>
@@ -659,7 +637,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>71</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -725,14 +702,12 @@
             <name>Test</name>
             <fields>
                 <field>
-                    <lineNumber>78</lineNumber>
                     <type>
                         <ref><id>Color</id></ref>
                     </type>
                     <name>c1</name>
                 </field>
                 <field>
-                    <lineNumber>79</lineNumber>
                     <type>
                         <ref><id>Color</id></ref>
                     </type>
@@ -741,7 +716,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>81</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
@@ -749,35 +723,30 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>82</lineNumber>
                             <type>
                                 <int-array/>
                             </type>
                             <name>c1RGB</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>83</lineNumber>
                             <type>
                                 <int/>
                             </type>
                             <name>c2R</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>84</lineNumber>
                             <type>
                                 <int/>
                             </type>
                             <name>c2G</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>85</lineNumber>
                             <type>
                                 <int/>
                             </type>
                             <name>c2B</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>86</lineNumber>
                             <type>
                                 <bool/>
                             </type>
@@ -924,7 +893,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>103</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -932,14 +900,12 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>104</lineNumber>
                             <type>
                                 <bool/>
                             </type>
                             <name>placeholder</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>105</lineNumber>
                             <type>
                                 <ref><id>Color</id></ref>
                             </type>

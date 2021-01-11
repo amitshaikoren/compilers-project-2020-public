@@ -19,7 +19,6 @@
             <name>Base</name>
             <fields>
                 <field>
-                    <lineNumber>30</lineNumber>
                     <type>
                         <int/>
                     </type>
@@ -34,14 +33,12 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>47</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>set</name>
                     <formals>
                         <formal>
-                            <lineNumber>42</lineNumber>
                             <type>
 <int/>
                             </type>

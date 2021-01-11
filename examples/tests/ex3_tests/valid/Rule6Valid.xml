@@ -19,14 +19,12 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>25</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>run</name>
                     <formals>
                         <formal>
-                            <lineNumber>30</lineNumber>
                             <type>
                                 <ref>
                                     <id>Parent</id>
@@ -35,7 +33,6 @@
                             <name>x</name>
                         </formal>
                         <formal>
-                            <lineNumber>31</lineNumber>
                             <type>
                                 <int/>
                             </type>
@@ -58,14 +55,12 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>27</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>run</name>
                     <formals>
                         <formal>
-                            <lineNumber>30</lineNumber>
                             <type>
                                 <ref>
                                     <id>Parent</id>
@@ -74,7 +69,6 @@
                             <name>xx</name>
                         </formal>
                         <formal>
-                            <lineNumber>31</lineNumber>
                             <type>
                                 <int/>
                             </type>

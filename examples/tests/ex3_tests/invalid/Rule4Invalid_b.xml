@@ -18,14 +18,12 @@
             <name>Base</name>
             <fields>
                 <field>
-                    <lineNumber>16</lineNumber>
                     <type>
                         <bool/>
                     </type>
                     <name>A</name>
                 </field>
                 <field>
-                    <lineNumber>17</lineNumber>
                     <type>
                         <int/>
                     </type>

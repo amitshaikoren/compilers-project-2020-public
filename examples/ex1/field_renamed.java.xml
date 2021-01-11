@@ -24,7 +24,6 @@
             <name>Example</name>
             <fields>
                 <field>
-                    <lineNumber>10</lineNumber>
                     <type>
                         <int/>
                     </type>
@@ -33,7 +32,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>15</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -66,7 +64,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>20</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -74,7 +71,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>17</lineNumber>
                             <type>
 <int/>
                             </type>

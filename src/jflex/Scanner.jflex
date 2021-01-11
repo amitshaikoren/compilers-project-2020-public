@@ -69,7 +69,8 @@ LineTerminator	    = \r|\n|\r\n
 WhiteSpace		    = [\t ] | {LineTerminator}
 ID				    = [a-zA-Z][a-zA-Z0-9_]*
 INLINE_COMMENT    = "//" [^\n\r]* {LineTerminator}?
-COMMENT	= "/*"(("/"*"*"*("*"*[^]"*"*| "*"*{LineTerminator}"*"* | [^]+"/"* | {LineTerminator}"/"* )* ) ) "*/"
+COMMENT	            = "/*"([^*]|[\r\n]|("*"+([^*/]|[\r\n])))*"*"+"/"
+
 
 /******************************/
 /* DOLAR DOLAR - DON'T TOUCH! */

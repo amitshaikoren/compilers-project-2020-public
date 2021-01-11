@@ -24,7 +24,6 @@
             <superName>A</superName>
             <fields>
                 <field>
-                    <lineNumber>12</lineNumber>
                     <type>
                         <int/>
                     </type>
@@ -33,7 +32,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>15</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -54,7 +52,6 @@
             <superName>A</superName>
             <fields>
                 <field>
-                    <lineNumber>20</lineNumber>
                     <type>
                         <int/>
                     </type>
@@ -63,7 +60,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>23</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -85,21 +81,18 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>39</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>bar</name>
                     <formals>
                         <formal>
-                            <lineNumber>26</lineNumber>
                             <type>
                                 <int/>
                             </type>
                             <name>renamedVar</name>
                         </formal>
                         <formal>
-                            <lineNumber>26</lineNumber>
                             <type>
                                 <int/>
                             </type>
@@ -108,7 +101,6 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>29</lineNumber>
                             <type>
                                 <int-array/>
                             </type>
@@ -160,7 +152,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>70</lineNumber>
                     <returnType>
                         <ref>
                             <id>D</id>

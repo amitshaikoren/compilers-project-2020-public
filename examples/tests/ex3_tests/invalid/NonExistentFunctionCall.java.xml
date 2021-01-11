@@ -24,14 +24,12 @@
             <name>Example</name>
             <fields>
                 <field>
-                    <lineNumber>8</lineNumber>
                     <type>
                         <int/>
                     </type>
                     <name>field</name>
                 </field>
                 <field>
-                    <lineNumber>9</lineNumber>
                     <type>
                         <int/>
                     </type>
@@ -40,7 +38,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>11</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>

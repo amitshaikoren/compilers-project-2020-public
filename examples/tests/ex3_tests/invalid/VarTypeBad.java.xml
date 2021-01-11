@@ -25,7 +25,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>19</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -33,14 +32,12 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>10</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>x</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>12</lineNumber>
                             <type>
 <bool/>
                             </type>

@@ -3,7 +3,6 @@ class Main {
         System.out.println(3);
     }
 }
-
 class Tree {
     Tree left;
     // Tree right;
@@ -15,7 +14,7 @@ class Tree {
     public int fun() {
         int x;
         x = 1;
-        /* x = 0; ** */
+        /* x = 0; */
         return x;
     }
 }

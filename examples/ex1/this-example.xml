@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <program>
     <mainclass>
-        <lineNumber>1</lineNumber>
         <name>Main</name>
         <argsName>args</argsName>
 
         <mainStatement>
-            <lineNumber>2</lineNumber>
             <sysout>
-                <lineNumber>3</lineNumber>
                 <arg>
                     <call>
-                        <lineNumber>4</lineNumber>
                         <ownerExpr>
                             <new-object>
                                 <classId>Dog</classId>
@@ -27,11 +23,9 @@
 
     <classdecls>
         <classdecl>
-            <lineNumber>5</lineNumber>
             <name>Animal</name>
             <fields>
                 <field>
-                    <lineNumber>6</lineNumber>
                     <type>
                         <int/>
                     </type>
@@ -40,7 +34,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>7</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -49,7 +42,6 @@
                     <vardecls/>
                     <body>
                         <assign>
-                            <lineNumber>8</lineNumber>
                             <lv>x</lv>
                             <rv>
                                 <int-literal>
@@ -60,7 +52,6 @@
                     </body>
                     <ret>
                         <add>
-                            <lineNumber>9</lineNumber>
                             <e1>
                                 <ref-id>
                                     <id>x</id>
@@ -75,14 +66,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>10</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>sleep</name>
                     <formals>
                         <formal>
-                            <lineNumber>11 </lineNumber>
                             <type>
                                 <int/>
                             </type>
@@ -92,7 +81,6 @@
                     <vardecls/>
                     <body>
                         <assign>
-                            <lineNumber>12</lineNumber>
                             <lv>y</lv>
                             <rv>
                                 <int-literal>
@@ -103,7 +91,6 @@
                     </body>
                     <ret>
                         <ref-id>
-                            <lineNumber>13</lineNumber>
                             <id>y</id>
                         </ref-id>
                     </ret>
@@ -111,20 +98,17 @@
             </methoddecls>
         </classdecl>
         <classdecl>
-            <lineNumber>5</lineNumber>
             <name>Dog</name>
             <superName>Animal</superName>
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>14</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>sleep</name>
                     <formals>
                         <formal>
-                            <lineNumber>15 </lineNumber>
                             <type>
                                 <int/>
                             </type>
@@ -134,7 +118,6 @@
                     <vardecls/>
                     <body>
                         <assign>
-                            <lineNumber>16</lineNumber>
                             <lv>y</lv>
                             <rv>
                                 <int-literal>
@@ -144,12 +127,9 @@
                         </assign>
                     </body>
                     <ret>
-                        <lineNumber>17</lineNumber>
                         <call>
-                            <lineNumber>18</lineNumber>
                             <ownerExpr>
                                 <this>
-                                    <lineNumber>19</lineNumber>
                                 </this>
                             </ownerExpr>
                             <methodId>bark</methodId>
@@ -159,7 +139,6 @@
                 </methoddecl>
 
                 <methoddecl>
-                    <lineNumber>20</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -168,14 +147,11 @@
                     <vardecls/>
                     <body>
                         <assign>
-                            <lineNumber>21</lineNumber>
                             <lv>x</lv>
                             <rv>
                                 <call>
-                                    <lineNumber>22</lineNumber>
                                     <ownerExpr>
                                         <this>
-                                            <lineNumber>23</lineNumber>
                                         </this>
                                     </ownerExpr>
                                     <methodId>sleep</methodId>
@@ -186,7 +162,6 @@
                     </body>
                     <ret>
                         <ref-id>
-                            <lineNumber>24</lineNumber>
                             <id>x</id>
                         </ref-id>
                     </ret>

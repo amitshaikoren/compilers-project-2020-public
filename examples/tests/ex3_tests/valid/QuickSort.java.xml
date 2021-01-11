@@ -30,14 +30,12 @@
             <name>QS</name>
             <fields>
                 <field>
-                    <lineNumber>14</lineNumber>
                     <type>
                         <int-array/>
                     </type>
                     <name>number</name>
                 </field>
                 <field>
-                    <lineNumber>18</lineNumber>
                     <type>
                         <int/>
                     </type>
@@ -46,14 +44,12 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>31</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>Start</name>
                     <formals>
                         <formal>
-                            <lineNumber>18</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -62,7 +58,6 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>20</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -167,21 +162,18 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>82</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>Sort</name>
                     <formals>
                         <formal>
-                            <lineNumber>31</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>left</name>
                         </formal>
                         <formal>
-                            <lineNumber>31</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -190,56 +182,48 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>33</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>v</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>34</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>i</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>35</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>j</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>36</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>nt</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>37</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>t</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>38</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>cont01</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>39</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>cont02</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>40</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -748,7 +732,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>94</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -756,7 +739,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>84</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -835,14 +817,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>112</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>Init</name>
                     <formals>
                         <formal>
-                            <lineNumber>94</lineNumber>
                             <type>
 <int/>
                             </type>

@@ -25,7 +25,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>13</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -47,7 +46,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>19</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -73,7 +71,6 @@
             <name>E</name>
             <fields>
                 <field>
-                    <lineNumber>26</lineNumber>
                     <type>
                         <ref>
                             <id>D</id>
@@ -84,14 +81,12 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>30</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>anotherMethod</name>
                     <formals>
                         <formal>
-                            <lineNumber>26</lineNumber>
                             <type>
                                 <ref>
                                     <id>B</id>

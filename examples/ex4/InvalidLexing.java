@@ -7,7 +7,6 @@ class Main {
     class Tree {
         Tree left;
         // Tree right;
-
         public Tree getLeft() {
             return left;
         }

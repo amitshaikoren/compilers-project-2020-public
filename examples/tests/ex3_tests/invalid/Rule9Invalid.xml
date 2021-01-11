@@ -25,7 +25,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>25</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -33,7 +32,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>10</lineNumber>
                             <type>
                                 <ref>
                                     <id>Base</id>

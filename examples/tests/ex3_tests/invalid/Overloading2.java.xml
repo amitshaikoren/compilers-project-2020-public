@@ -24,14 +24,12 @@
             <name>A</name>
             <fields>
                 <field>
-                    <lineNumber>8</lineNumber>
                     <type><bool/></type>
                     <name>dup</name>
                 </field>
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>9</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -48,14 +46,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>13</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>test</name>
                     <formals>
                         <formal>
-                            <lineNumber>13</lineNumber>
                             <type><int/></type>
                             <name>a</name>
                         </formal>
@@ -77,7 +73,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>19</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>

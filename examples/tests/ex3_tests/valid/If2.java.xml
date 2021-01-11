@@ -30,21 +30,18 @@
             <name>Simple</name>
             <fields>
                 <field>
-                    <lineNumber>8</lineNumber>
                     <type><bool/></type>
                     <name>cond</name>
                 </field>
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>10</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>number</name>
                     <formals>
                         <formal>
-                            <lineNumber>10</lineNumber>
                             <type><int/></type>
                             <name>num</name>
                         </formal>
@@ -65,36 +62,30 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>14</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>test</name>
                     <formals>
                         <formal>
-                            <lineNumber>14</lineNumber>
                             <type><int/></type>
                             <name>d</name>
                         </formal>
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>15</lineNumber>
                             <type><int/></type>
                             <name>a</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>16</lineNumber>
                             <type><int/></type>
                             <name>b</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>17</lineNumber>
                             <type><int/></type>
                             <name>c</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>18</lineNumber>
                             <type><ref><id>Simple</id></ref></type>
                             <name>s</name>
                         </vardecl>

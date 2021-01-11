@@ -25,7 +25,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>25</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -33,7 +32,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>10</lineNumber>
                             <type>
 <ref>
     <id>Base</id>
@@ -42,7 +40,6 @@
                             <name>b</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>12</lineNumber>
                             <type>
 <ref>
     <id>Derived</id>
@@ -145,7 +142,6 @@
             <name>Base</name>
             <fields>
                 <field>
-                    <lineNumber>30</lineNumber>
                     <type>
                         <int/>
                     </type>
@@ -154,14 +150,12 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>36</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>set</name>
                     <formals>
                         <formal>
-                            <lineNumber>30</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -186,7 +180,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>39</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -208,14 +201,12 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>47</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>set</name>
                     <formals>
                         <formal>
-                            <lineNumber>42</lineNumber>
                             <type>
 <int/>
                             </type>

@@ -19,7 +19,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>25</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -41,7 +40,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>27</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>

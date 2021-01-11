@@ -24,7 +24,6 @@
             <superName>A</superName>
             <fields>
                 <field>
-                    <lineNumber>12</lineNumber>
                     <type>
                         <int-array/>
                     </type>
@@ -33,7 +32,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>15</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -58,7 +56,6 @@
             <superName>A</superName>
             <fields>
                 <field>
-                    <lineNumber>20</lineNumber>
                     <type>
                         <int-array/>
                     </type>
@@ -67,7 +64,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>23</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -93,14 +89,12 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>29</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>bar</name>
                     <formals>
                         <formal>
-                            <lineNumber>26</lineNumber>
                             <type>
                                 <int/>
                             </type>

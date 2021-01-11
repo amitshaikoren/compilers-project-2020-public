@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<?xml-model href="ast.xsd" ?>
 <program>
     <mainclass>
         <name>Main</name>
@@ -20,7 +19,6 @@
             <fields />
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>13</lineNumber>
                     <returnType>
                         <int />
                     </returnType>
@@ -28,7 +26,6 @@
                     <formals />
                     <vardecls>
                         <vardecl>
-                            <lineNumber>10</lineNumber>
                             <type>
                                 <bool />
                             </type>

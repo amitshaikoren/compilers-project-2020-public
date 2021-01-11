@@ -24,7 +24,6 @@
             <name>Classes</name>
             <fields>
             <field>
-                <lineNumber>10</lineNumber>
                 <type>
                     <ref>
                         <id>Base</id>
@@ -35,7 +34,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>25</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>

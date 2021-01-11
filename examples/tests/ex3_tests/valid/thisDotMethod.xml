@@ -25,7 +25,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>8</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -46,7 +45,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>14</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -54,7 +52,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>15</lineNumber>
                             <type>
                                 <int/>
                             </type>
@@ -88,7 +85,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>22</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -116,7 +112,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>32</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -138,7 +133,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>38</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -146,7 +140,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>39</lineNumber>
                             <type>
                                 <int/>
                             </type>

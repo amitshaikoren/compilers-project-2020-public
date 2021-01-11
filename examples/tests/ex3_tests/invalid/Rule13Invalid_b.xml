@@ -24,7 +24,6 @@
             <superName>A</superName>
             <fields>
                 <field>
-                    <lineNumber>12</lineNumber>
                     <type>
                         <ref>
                             <id>A</id>
@@ -35,7 +34,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>15</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>

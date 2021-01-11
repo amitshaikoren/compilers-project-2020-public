@@ -17,7 +17,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>17</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -25,7 +24,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>11</lineNumber>
                             <type>
 <int/>
                             </type>

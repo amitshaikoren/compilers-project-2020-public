@@ -18,7 +18,6 @@
             <name>Shared</name>
             <fields>
                 <field>
-                    <lineNumber>10</lineNumber>
                     <type>
                         <int/>
                     </type>
@@ -27,7 +26,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>13</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -55,7 +53,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>21</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
@@ -75,7 +72,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>27</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -97,7 +93,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>35</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -105,7 +100,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>33</lineNumber>
                             <type>
                                 <int/>
                             </type>
@@ -127,14 +121,12 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>41</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>theThing</name>
                     <formals>
                         <formal>
-                            <lineNumber>38</lineNumber>
                             <type>
                                 <int/>
                             </type>

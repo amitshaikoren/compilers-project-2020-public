@@ -24,14 +24,12 @@
             <name>Simple</name>
             <fields>
                 <field>
-                    <lineNumber>11</lineNumber>
                     <type>
                         <bool/>
                     </type>
                     <name>a</name>
                 </field>
                 <field>
-                    <lineNumber>10</lineNumber>
                     <type>
                         <bool/>
                     </type>
@@ -41,7 +39,6 @@
 
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>25</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -50,14 +47,12 @@
                     <vardecls>
 
                         <vardecl>
-                            <lineNumber>11</lineNumber>
                             <type>
                                 <bool/>
                             </type>
                             <name>c</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>13</lineNumber>
                             <type>
                                 <int/>
                             </type>

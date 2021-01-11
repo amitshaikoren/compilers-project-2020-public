@@ -26,7 +26,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>8</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -35,22 +34,18 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>9</lineNumber>
                             <type><ref><id>A</id></ref></type>
                             <name>a</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>10</lineNumber>
                             <type><ref><id>B</id></ref></type>
                             <name>b</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>11</lineNumber>
                             <type><ref><id>C</id></ref></type>
                             <name>c</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>12</lineNumber>
                             <type><ref><id>D</id></ref></type>
                             <name>d</name>
                         </vardecl>
@@ -145,19 +140,16 @@
             <name>A</name>
             <fields>
                 <field>
-                    <lineNumber>26</lineNumber>
                     <type><int/></type>
                     <name>intField</name>
                 </field>
                 <field>
-                    <lineNumber>27</lineNumber>
                     <type><bool/></type>
                     <name>boolField</name>
                 </field>
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>29</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -192,14 +184,12 @@
             <superName>A</superName>
             <fields>
                 <field>
-                    <lineNumber>37</lineNumber>
                     <type><int-array/></type>
                     <name>arrField</name>
                 </field>
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>39</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -308,14 +298,12 @@
             <superName>B</superName>
             <fields>
                 <field>
-                    <lineNumber>51</lineNumber>
                     <type><ref><id>D</id></ref></type>
                     <name>objField</name>
                 </field>
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>53</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -323,7 +311,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>54</lineNumber>
                             <type><int/></type>
                             <name>dNum</name>
                         </vardecl>
@@ -454,21 +441,18 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>65</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>getNumber</name>
                     <formals>
                         <formal>
-                            <lineNumber>65</lineNumber>
                             <type><bool/></type>
                             <name>bool</name>
                         </formal>
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>66</lineNumber>
                             <type><int/></type>
                             <name>res</name>
                         </vardecl>
@@ -511,14 +495,12 @@
             <superName>B</superName>
             <fields>
                 <field>
-                    <lineNumber>78</lineNumber>
                     <type><ref><id>C</id></ref></type>
                     <name>objField</name>
                 </field>
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>80</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -526,7 +508,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>81</lineNumber>
                             <type><int/></type>
                             <name>cNum</name>
                         </vardecl>
@@ -657,21 +638,18 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>65</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>getNumber</name>
                     <formals>
                         <formal>
-                            <lineNumber>92</lineNumber>
                             <type><bool/></type>
                             <name>bool</name>
                         </formal>
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>93</lineNumber>
                             <type><int/></type>
                             <name>res</name>
                         </vardecl>

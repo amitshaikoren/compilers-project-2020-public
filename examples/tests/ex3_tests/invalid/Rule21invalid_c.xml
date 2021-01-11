@@ -19,21 +19,18 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>10</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>run</name>
                     <formals>
                         <formal>
-                            <lineNumber>11</lineNumber>
                             <type>
                                 <int-array/>
                             </type>
                             <name>x</name>
                         </formal>
                         <formal>
-                            <lineNumber>11</lineNumber>
                             <type>
                                 <int/>
                             </type>

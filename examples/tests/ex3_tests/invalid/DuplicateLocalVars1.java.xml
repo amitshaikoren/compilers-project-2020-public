@@ -30,33 +30,28 @@
             <name>A</name>
             <fields>
                 <field>
-                    <lineNumber>8</lineNumber>
                     <type><bool/></type>
                     <name>bool</name>
                 </field>
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>9</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>test</name>
                     <formals>
                         <formal>
-                            <lineNumber>9</lineNumber>
                             <type><int/></type>
                             <name>num</name>
                         </formal>
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>10</lineNumber>
                             <type><int-array/></type>
                             <name>arr</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>11</lineNumber>
                             <type><bool/></type>
                             <name>arr</name>
                         </vardecl>
@@ -83,7 +78,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>16</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
