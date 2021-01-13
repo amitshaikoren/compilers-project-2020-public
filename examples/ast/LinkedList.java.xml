@@ -24,21 +24,18 @@
             <name>Element</name>
             <fields>
                 <field>
-                    <lineNumber>9</lineNumber>
                     <type>
                         <int/>
                     </type>
                     <name>Age</name>
                 </field>
                 <field>
-                    <lineNumber>10</lineNumber>
                     <type>
                         <int/>
                     </type>
                     <name>Salary</name>
                 </field>
                 <field>
-                    <lineNumber>13</lineNumber>
                     <type>
                         <bool/>
                     </type>
@@ -47,28 +44,24 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>20</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>Init</name>
                     <formals>
                         <formal>
-                            <lineNumber>13</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>v_Age</name>
                         </formal>
                         <formal>
-                            <lineNumber>13</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>v_Salary</name>
                         </formal>
                         <formal>
-                            <lineNumber>13</lineNumber>
                             <type>
 <bool/>
                             </type>
@@ -107,7 +100,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>24</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -122,7 +114,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>28</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -137,7 +128,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>34</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
@@ -152,14 +142,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>61</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>Equal</name>
                     <formals>
                         <formal>
-                            <lineNumber>34</lineNumber>
                             <type>
 <ref>
     <id>Element</id>
@@ -170,28 +158,24 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>36</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>ret_val</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>37</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>aux01</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>38</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>aux02</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>39</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -394,21 +378,18 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>72</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>Compare</name>
                     <formals>
                         <formal>
-                            <lineNumber>61</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>num1</name>
                         </formal>
                         <formal>
-                            <lineNumber>61</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -417,14 +398,12 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>63</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>retval</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>64</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -530,7 +509,6 @@
             <name>List</name>
             <fields>
                 <field>
-                    <lineNumber>76</lineNumber>
                     <type>
                         <ref>
                             <id>Element</id>
@@ -539,7 +517,6 @@
                     <name>elem</name>
                 </field>
                 <field>
-                    <lineNumber>77</lineNumber>
                     <type>
                         <ref>
                             <id>List</id>
@@ -548,7 +525,6 @@
                     <name>next</name>
                 </field>
                 <field>
-                    <lineNumber>80</lineNumber>
                     <type>
                         <bool/>
                     </type>
@@ -557,7 +533,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>86</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
@@ -577,14 +552,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>94</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>InitNew</name>
                     <formals>
                         <formal>
-                            <lineNumber>86</lineNumber>
                             <type>
 <ref>
     <id>Element</id>
@@ -593,7 +566,6 @@
                             <name>v_elem</name>
                         </formal>
                         <formal>
-                            <lineNumber>86</lineNumber>
                             <type>
 <ref>
     <id>List</id>
@@ -602,7 +574,6 @@
                             <name>v_next</name>
                         </formal>
                         <formal>
-                            <lineNumber>86</lineNumber>
                             <type>
 <bool/>
                             </type>
@@ -641,7 +612,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>106</lineNumber>
                     <returnType>
                         <ref>
                             <id>List</id>
@@ -650,7 +620,6 @@
                     <name>Insert</name>
                     <formals>
                         <formal>
-                            <lineNumber>94</lineNumber>
                             <type>
 <ref>
     <id>Element</id>
@@ -661,14 +630,12 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>96</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>ret_val</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>97</lineNumber>
                             <type>
 <ref>
     <id>List</id>
@@ -677,7 +644,6 @@
                             <name>aux03</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>98</lineNumber>
                             <type>
 <ref>
     <id>List</id>
@@ -737,14 +703,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>112</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>SetNext</name>
                     <formals>
                         <formal>
-                            <lineNumber>106</lineNumber>
                             <type>
 <ref>
     <id>List</id>
@@ -769,7 +733,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>158</lineNumber>
                     <returnType>
                         <ref>
                             <id>List</id>
@@ -778,7 +741,6 @@
                     <name>Delete</name>
                     <formals>
                         <formal>
-                            <lineNumber>112</lineNumber>
                             <type>
 <ref>
     <id>Element</id>
@@ -789,7 +751,6 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>114</lineNumber>
                             <type>
 <ref>
     <id>List</id>
@@ -798,21 +759,18 @@
                             <name>my_head</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>115</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>ret_val</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>116</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>aux05</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>117</lineNumber>
                             <type>
 <ref>
     <id>List</id>
@@ -821,7 +779,6 @@
                             <name>aux01</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>118</lineNumber>
                             <type>
 <ref>
     <id>List</id>
@@ -830,14 +787,12 @@
                             <name>prev</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>119</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>var_end</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>120</lineNumber>
                             <type>
 <ref>
     <id>Element</id>
@@ -846,14 +801,12 @@
                             <name>var_elem</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>121</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>aux04</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>124</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -1182,14 +1135,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>181</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>Search</name>
                     <formals>
                         <formal>
-                            <lineNumber>158</lineNumber>
                             <type>
 <ref>
     <id>Element</id>
@@ -1200,14 +1151,12 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>160</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>int_ret_val</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>161</lineNumber>
                             <type>
 <ref>
     <id>List</id>
@@ -1216,7 +1165,6 @@
                             <name>aux01</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>162</lineNumber>
                             <type>
 <ref>
     <id>Element</id>
@@ -1225,14 +1173,12 @@
                             <name>var_elem</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>163</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>var_end</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>165</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -1380,7 +1326,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>185</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
@@ -1395,7 +1340,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>189</lineNumber>
                     <returnType>
                         <ref>
                             <id>Element</id>
@@ -1412,7 +1356,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>195</lineNumber>
                     <returnType>
                         <ref>
                             <id>List</id>
@@ -1429,7 +1372,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>212</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
@@ -1437,7 +1379,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>197</lineNumber>
                             <type>
 <ref>
     <id>List</id>
@@ -1446,14 +1387,12 @@
                             <name>aux01</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>198</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>var_end</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>200</lineNumber>
                             <type>
 <ref>
     <id>Element</id>
@@ -1569,7 +1508,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>278</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -1577,7 +1515,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>222</lineNumber>
                             <type>
 <ref>
     <id>List</id>
@@ -1586,7 +1523,6 @@
                             <name>head</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>223</lineNumber>
                             <type>
 <ref>
     <id>List</id>
@@ -1595,14 +1531,12 @@
                             <name>last_elem</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>224</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>aux01</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>225</lineNumber>
                             <type>
 <ref>
     <id>Element</id>
@@ -1611,7 +1545,6 @@
                             <name>el01</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>226</lineNumber>
                             <type>
 <ref>
     <id>Element</id>
@@ -1620,7 +1553,6 @@
                             <name>el02</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>228</lineNumber>
                             <type>
 <ref>
     <id>Element</id>

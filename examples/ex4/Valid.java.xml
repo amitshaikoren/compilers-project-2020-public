@@ -18,7 +18,6 @@
             <name>Tree</name>
             <fields>
                 <field>
-                    <lineNumber>11</lineNumber>
                     <type>
                         <ref>
                             <id>Tree</id>
@@ -29,7 +28,6 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>15</lineNumber>
                     <returnType>
                         <ref>
                             <id>Tree</id>
@@ -46,7 +44,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>21</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -54,7 +51,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>17</lineNumber>
                             <type>
 <int/>
                             </type>

@@ -25,7 +25,7 @@ parser code
 	// Override default error reporting in parser
 	public void report_error(String message, Object info)
 	{
-	    System.err.print("Syntax error at line " + lexer.getLine() + " of input. Parser\n");
+	    System.err.print("Syntax error at line " + lexer.getLine() + " of input.\n");
 		System.exit(1);
 	}
 :}
@@ -54,7 +54,7 @@ scan with
 	// System.out.print("\n");
 	return s;
      } catch (java.lang.Error e) {
-         System.err.print("Syntax error at line " + lexer.getLine() + " of input. Lexer\n");
+         System.err.print("Syntax error at line " + lexer.getLine() + " of input.\n");
          System.exit(1);
          return null;
      }
@@ -80,8 +80,6 @@ terminal NEW;
 terminal NOT;
 terminal int NUMBER;
 terminal String ID;
-terminal INLINE_COMMENT;
-terminal COMMENT;
 
 
 /*****************/
@@ -98,10 +96,13 @@ non terminal LinkedList<MethodDecl> methodDeclerationList;
 non terminal AstType type;
 non terminal FormalArg formalArgs;
 non terminal LinkedList<FormalArg> formalArgsList;
+non terminal LinkedList<FormalArg> formalArgsListWithComma;
+
 non terminal Statement statement;
 non terminal LinkedList<Statement> statementList;
 non terminal Expr exp;
 non terminal LinkedList<Expr> expList;
+non terminal LinkedList<Expr> expListWithComma;
 
 
 /***********************/
@@ -155,10 +156,12 @@ type                    ::=  INT {: RESULT = new IntAstType(); :}
 methodDecleration       ::=  PUBLIC type:t ID:i1 LPAREN formalArgsList:f  RPAREN LCPAREN  varDeclerationList:v  statementList:stLst RETURN exp:e SEMICOLON RCPAREN  {:  RESULT = new MethodDecl(t,i1,f,v,stLst,e,lexer.getLine()); :};
 
 
-formalArgsList           ::=  formalArgs:formal  COMMA formalArgsList:f {:f.addFirst(formal) ;RESULT = f ;:}
+formalArgsList           ::=  formalArgs:formal  COMMA formalArgsListWithComma:f {:f.addFirst(formal) ;RESULT = f ;:}
                              |     {: RESULT = new LinkedList<FormalArg>(); :}
                              |formalArgs:formal {:RESULT=new LinkedList<FormalArg>(); RESULT.add(formal);:};
 
+formalArgsListWithComma ::= formalArgs:formal  COMMA formalArgsListWithComma:f {:f.addFirst(formal) ;RESULT = f ;:}
+                            |formalArgs:formal {:RESULT=new LinkedList<FormalArg>(); RESULT.add(formal);:};
 
 formalArgs               ::=  type:t ID:id {: RESULT = new FormalArg(t, id,lexer.getLine()); :};
 
@@ -190,7 +193,9 @@ exp                      ::= exp:e1 AND exp:e2  {: RESULT = new AndExpr(e1, e2);
                             |NOT exp:e1 {: RESULT = new NotExpr(e1); :}
                             |LPAREN exp:e1 RPAREN {: RESULT = e1; :};
 
-expList                 ::=  exp:e COMMA expList:eLst  {:eLst.addFirst(e); RESULT = eLst; :}
+expList                 ::=  exp:e COMMA expListWithComma:eLst  {:eLst.addFirst(e); RESULT = eLst; :}
                             |exp:e1     {: RESULT = new LinkedList<Expr>(); RESULT.add(e1); :}
                             |/* empty */  {: RESULT = new LinkedList<Expr>(); :};
 
+expListWithComma        ::=  exp:e COMMA expListWithComma:eLst  {:eLst.addFirst(e); RESULT = eLst; :}
+                            |exp:e1     {: RESULT = new LinkedList<Expr>(); RESULT.add(e1); :};

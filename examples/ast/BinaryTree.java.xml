@@ -25,7 +25,6 @@
             <fields/>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>42</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -33,7 +32,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>14</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -42,14 +40,12 @@
                             <name>root</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>15</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>ntb</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>17</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -435,7 +431,6 @@
             <name>Tree</name>
             <fields>
                 <field>
-                    <lineNumber>46</lineNumber>
                     <type>
                         <ref>
                             <id>Tree</id>
@@ -444,7 +439,6 @@
                     <name>left</name>
                 </field>
                 <field>
-                    <lineNumber>47</lineNumber>
                     <type>
                         <ref>
                             <id>Tree</id>
@@ -453,28 +447,24 @@
                     <name>right</name>
                 </field>
                 <field>
-                    <lineNumber>48</lineNumber>
                     <type>
                         <int/>
                     </type>
                     <name>key</name>
                 </field>
                 <field>
-                    <lineNumber>49</lineNumber>
                     <type>
                         <bool/>
                     </type>
                     <name>has_left</name>
                 </field>
                 <field>
-                    <lineNumber>50</lineNumber>
                     <type>
                         <bool/>
                     </type>
                     <name>has_right</name>
                 </field>
                 <field>
-                    <lineNumber>53</lineNumber>
                     <type>
                         <ref>
                             <id>Tree</id>
@@ -485,14 +475,12 @@
             </fields>
             <methoddecls>
                 <methoddecl>
-                    <lineNumber>61</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>Init</name>
                     <formals>
                         <formal>
-                            <lineNumber>53</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -527,14 +515,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>67</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>SetRight</name>
                     <formals>
                         <formal>
-                            <lineNumber>61</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -559,14 +545,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>72</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>SetLeft</name>
                     <formals>
                         <formal>
-                            <lineNumber>67</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -591,7 +575,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>76</lineNumber>
                     <returnType>
                         <ref>
                             <id>Tree</id>
@@ -608,7 +591,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>80</lineNumber>
                     <returnType>
                         <ref>
                             <id>Tree</id>
@@ -625,7 +607,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>84</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
@@ -640,14 +621,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>89</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>SetKey</name>
                     <formals>
                         <formal>
-                            <lineNumber>84</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -670,7 +649,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>93</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
@@ -685,7 +663,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>97</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
@@ -700,14 +677,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>102</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>SetHas_Left</name>
                     <formals>
                         <formal>
-                            <lineNumber>97</lineNumber>
                             <type>
 <bool/>
                             </type>
@@ -730,14 +705,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>110</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>SetHas_Right</name>
                     <formals>
                         <formal>
-                            <lineNumber>102</lineNumber>
                             <type>
 <bool/>
                             </type>
@@ -760,21 +733,18 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>124</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>Compare</name>
                     <formals>
                         <formal>
-                            <lineNumber>110</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>num1</name>
                         </formal>
                         <formal>
-                            <lineNumber>110</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -783,14 +753,12 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>112</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>ntb</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>114</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -891,14 +859,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>161</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>Insert</name>
                     <formals>
                         <formal>
-                            <lineNumber>124</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -907,7 +873,6 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>126</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -916,28 +881,24 @@
                             <name>new_node</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>127</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>ntb</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>128</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>cont</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>129</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>key_aux</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>131</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -1206,14 +1167,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>209</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>Delete</name>
                     <formals>
                         <formal>
-                            <lineNumber>161</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -1222,7 +1181,6 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>163</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -1231,7 +1189,6 @@
                             <name>current_node</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>164</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -1240,35 +1197,30 @@
                             <name>parent_node</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>165</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>cont</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>166</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>found</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>167</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>is_root</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>168</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>key_aux</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>170</lineNumber>
                             <type>
 <bool/>
                             </type>
@@ -1604,14 +1556,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>242</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>Remove</name>
                     <formals>
                         <formal>
-                            <lineNumber>209</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -1620,7 +1570,6 @@
                             <name>p_node</name>
                         </formal>
                         <formal>
-                            <lineNumber>209</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -1631,28 +1580,24 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>211</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>ntb</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>212</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>auxkey1</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>213</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>auxkey2</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>215</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -1904,14 +1849,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>264</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>RemoveRight</name>
                     <formals>
                         <formal>
-                            <lineNumber>242</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -1920,7 +1863,6 @@
                             <name>p_node</name>
                         </formal>
                         <formal>
-                            <lineNumber>242</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -1931,14 +1873,12 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>244</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>ntb</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>246</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -2073,14 +2013,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>283</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>RemoveLeft</name>
                     <formals>
                         <formal>
-                            <lineNumber>264</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -2089,7 +2027,6 @@
                             <name>p_node</name>
                         </formal>
                         <formal>
-                            <lineNumber>264</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -2100,14 +2037,12 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>266</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>ntb</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>268</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -2242,14 +2177,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>312</lineNumber>
                     <returnType>
                         <int/>
                     </returnType>
                     <name>Search</name>
                     <formals>
                         <formal>
-                            <lineNumber>283</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -2258,21 +2191,18 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>285</lineNumber>
                             <type>
 <bool/>
                             </type>
                             <name>cont</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>286</lineNumber>
                             <type>
 <int/>
                             </type>
                             <name>ifound</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>287</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -2281,7 +2211,6 @@
                             <name>current_node</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>289</lineNumber>
                             <type>
 <int/>
                             </type>
@@ -2476,7 +2405,6 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>322</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
@@ -2484,7 +2412,6 @@
                     <formals/>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>314</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -2493,7 +2420,6 @@
                             <name>current_node</name>
                         </vardecl>
                         <vardecl>
-                            <lineNumber>316</lineNumber>
                             <type>
 <bool/>
                             </type>
@@ -2531,14 +2457,12 @@
                     </ret>
                 </methoddecl>
                 <methoddecl>
-                    <lineNumber>339</lineNumber>
                     <returnType>
                         <bool/>
                     </returnType>
                     <name>RecPrint</name>
                     <formals>
                         <formal>
-                            <lineNumber>322</lineNumber>
                             <type>
 <ref>
     <id>Tree</id>
@@ -2549,7 +2473,6 @@
                     </formals>
                     <vardecls>
                         <vardecl>
-                            <lineNumber>325</lineNumber>
                             <type>
 <bool/>
                             </type>
